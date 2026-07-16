@@ -1,0 +1,38 @@
+name: DXView network probe
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Probe DXView
+        run: python scripts/probe_dxview.py
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dxview-probe
+          path: dxview-probe
+          retention-days: 14
