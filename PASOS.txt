@@ -1,0 +1,48 @@
+PASOS PARA SUBIRLO
+
+1. Descomprime este ZIP en tu ordenador.
+2. Entra en:
+   https://github.com/solunetspain/hf-propagation-data
+3. Vuelve a la pestaña Code y a la raíz del repositorio.
+4. Pulsa Add file > Upload files.
+5. Arrastra TODO el contenido de la carpeta descomprimida:
+   - .github
+   - scripts
+   - site
+   - requirements.txt
+   - PASOS.txt
+   No arrastres la carpeta exterior hf-propagation-github; arrastra su contenido.
+6. Escribe el mensaje:
+   Añadir colector KC2G y prueba DXView
+7. Marca Commit directly to the main branch.
+8. Pulsa Commit changes.
+
+ACTIVAR GITHUB PAGES
+
+1. Abre Settings.
+2. En la barra lateral, entra en Pages.
+3. En Source selecciona GitHub Actions.
+
+EJECUTAR LA PRIMERA PRUEBA
+
+1. Abre Actions.
+2. En la izquierda selecciona "KC2G data and GitHub Pages".
+3. Pulsa Run workflow > Run workflow.
+4. Espera a que los dos trabajos queden verdes.
+
+URL PREVISTA
+
+https://solunetspain.github.io/hf-propagation-data/
+
+DATOS PREVISTOS
+
+https://solunetspain.github.io/hf-propagation-data/data/kc2g-in91po.json
+https://solunetspain.github.io/hf-propagation-data/data/kc2g-spain.json
+https://solunetspain.github.io/hf-propagation-data/diagnostics/kc2g-diagnostic.json
+
+PRUEBA DXVIEW
+
+1. En Actions selecciona "DXView network probe".
+2. Pulsa Run workflow.
+3. Cuando termine, abre la ejecución.
+4. En Artifacts descarga "dxview-probe".
