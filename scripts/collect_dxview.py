@@ -30,7 +30,7 @@ SESSION = requests.Session()
 SESSION.headers.update(
     {
         "User-Agent": (
-            "solunetspain-hf-propagation-data/1.1 "
+            "solunetspain-hf-propagation-data/1.2 "
             "(+https://github.com/solunetspain/hf-propagation-data)"
         ),
         "Accept": "application/json",
@@ -350,18 +350,73 @@ def trend_label(values: list[int]) -> str:
     return "stable"
 
 
+def parse_iso_utc(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
 def append_history(
     previous: dict[str, Any] | None,
     snapshot: dict[str, Any],
 ) -> list[dict[str, Any]]:
-    history = []
+    """
+    Conserva todas las capturas, aunque dos consecutivas tengan la misma firma.
+
+    La firma describe el contenido, no la identidad temporal de la muestra.
+    Eliminar por firma hacía desaparecer intervalos reales de 15 minutos en los
+    que la propagación no había cambiado. Solo se elimina una repetición con la
+    misma marca temporal exacta, caso propio de un reintento de publicación.
+    """
+    history: list[dict[str, Any]] = []
     if previous and isinstance(previous.get("history"), list):
-        history = [
-            row for row in previous["history"]
-            if isinstance(row, dict) and row.get("signature") != snapshot["signature"]
-        ]
+        history = [row for row in previous["history"] if isinstance(row, dict)]
+
+    timestamp = snapshot.get("fetched_at_utc")
+    history = [row for row in history if row.get("fetched_at_utc") != timestamp]
     history.append(snapshot)
+
+    history.sort(
+        key=lambda row: parse_iso_utc(row.get("fetched_at_utc"))
+        or datetime.min.replace(tzinfo=timezone.utc)
+    )
     return history[-5:]
+
+
+def enrich_history_intervals(history: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Añade continuidad, cambio y separación real entre capturas."""
+    enriched: list[dict[str, Any]] = []
+    previous_row: dict[str, Any] | None = None
+    previous_dt: datetime | None = None
+
+    for row in history:
+        current = dict(row)
+        current_dt = parse_iso_utc(current.get("fetched_at_utc"))
+        if previous_row is None:
+            current["unchanged_from_previous"] = None
+            current["interval_minutes_from_previous"] = None
+        else:
+            current["unchanged_from_previous"] = (
+                current.get("signature") == previous_row.get("signature")
+            )
+            if current_dt is not None and previous_dt is not None:
+                current["interval_minutes_from_previous"] = round(
+                    (current_dt - previous_dt).total_seconds() / 60.0, 2
+                )
+            else:
+                current["interval_minutes_from_previous"] = None
+
+        enriched.append(current)
+        previous_row = current
+        previous_dt = current_dt
+
+    return enriched
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -492,7 +547,7 @@ def main() -> int:
         }
 
         previous = load_previous()
-        history = append_history(previous, snapshot)
+        history = enrich_history_intervals(append_history(previous, snapshot))
 
         trend = {}
         for band in band_summaries:
@@ -539,6 +594,16 @@ def main() -> int:
             "validation": validation,
             "bands": band_summaries,
             "history": history,
+            "history_policy": {
+                "maximum_samples": 5,
+                "unchanged_samples_are_preserved": True,
+                "deduplication_key": "fetched_at_utc",
+                "expected_schedule_minutes": 15,
+                "note": (
+                    "Los intervalos muestran la separación real de GitHub Actions; "
+                    "pueden desviarse algunos minutos del cuarto de hora programado."
+                ),
+            },
             "trend": trend,
             "interpretation_notes": {
                 "band_0": (
@@ -579,6 +644,15 @@ def main() -> int:
                 "response_signatures": signatures,
                 "valid_band_count": len(band_summaries),
                 "history_samples": len(history),
+                "history_policy": (
+                    "keep_every_capture_even_when_signature_is_unchanged; "
+                    "deduplicate_only_exact_fetched_at_utc"
+                ),
+                "history_intervals_minutes": [
+                    row.get("interval_minutes_from_previous")
+                    for row in history
+                    if row.get("interval_minutes_from_previous") is not None
+                ],
             }
         )
 
