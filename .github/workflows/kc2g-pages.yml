@@ -1,4 +1,4 @@
-name: KC2G data and GitHub Pages
+name: HF data and GitHub Pages
 
 on:
   workflow_dispatch:
@@ -9,6 +9,7 @@ on:
     paths:
       - ".github/workflows/kc2g-pages.yml"
       - "scripts/collect_kc2g.py"
+      - "scripts/collect_dxview.py"
       - "requirements.txt"
       - "site/**"
 
@@ -39,6 +40,17 @@ jobs:
 
       - name: Collect and validate KC2G
         run: python scripts/collect_kc2g.py
+
+      - name: Collect and validate DXView
+        id: dxview
+        continue-on-error: true
+        run: python scripts/collect_dxview.py
+
+      - name: Report DXView degradation
+        if: steps.dxview.outcome != 'success'
+        run: |
+          echo "::warning::DXView failed. KC2G will still be published."
+          cat public/diagnostics/dxview-diagnostic.json || true
 
       - name: Prepare web files
         run: |
