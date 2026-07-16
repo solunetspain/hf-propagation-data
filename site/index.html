@@ -16,34 +16,51 @@
 </head>
 <body>
   <h1>HF Propagation Data — España e IN91PO</h1>
-  <p>Datos automáticos de KC2G validados antes de su publicación.</p>
+  <p>Datos automáticos de KC2G y DXView validados antes de su publicación.</p>
 
   <div class="card">
-    <h2>Estado</h2>
-    <div id="status">Cargando…</div>
+    <h2>Estado KC2G</h2>
+    <div id="kc2g-status">Cargando…</div>
+  </div>
+
+  <div class="card">
+    <h2>Estado DXView</h2>
+    <div id="dxview-status">Cargando…</div>
   </div>
 
   <div class="card">
     <h2>Archivos JSON</h2>
     <p><a href="data/kc2g-in91po.json">KC2G IN91PO</a></p>
     <p><a href="data/kc2g-spain.json">KC2G España</a></p>
-    <p><a href="data/status.json">Estado de validación</a></p>
+    <p><a href="data/status.json">Estado de validación KC2G</a></p>
     <p><a href="diagnostics/kc2g-diagnostic.json">Diagnóstico KC2G</a></p>
+    <p><a href="data/dxview-in91po.json">DXView IN91PO procesado</a></p>
+    <p><a href="data/dxview-in91po-raw.json">DXView IN91PO bruto</a></p>
+    <p><a href="diagnostics/dxview-diagnostic.json">Diagnóstico DXView</a></p>
   </div>
 
   <script>
-    fetch("data/status.json", {cache: "no-store"})
-      .then(r => r.json())
-      .then(data => {
-        const cls = data.status === "ok" ? "ok" : "error";
-        document.getElementById("status").innerHTML =
-          `<p class="${cls}">${data.status.toUpperCase()}</p>` +
-          `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-      })
-      .catch(error => {
-        document.getElementById("status").innerHTML =
-          `<p class="error">No se pudo cargar el estado</p><pre>${error}</pre>`;
-      });
+    function render(url, elementId, statusSelector) {
+      fetch(url, {cache: "no-store"})
+        .then(r => r.json())
+        .then(data => {
+          let ok = statusSelector(data);
+          document.getElementById(elementId).innerHTML =
+            `<p class="${ok ? "ok" : "error"}">${ok ? "OK" : "ERROR"}</p>` +
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        })
+        .catch(error => {
+          document.getElementById(elementId).innerHTML =
+            `<p class="error">No se pudo cargar</p><pre>${error}</pre>`;
+        });
+    }
+
+    render("data/status.json", "kc2g-status", data => data.status === "ok");
+    render(
+      "data/dxview-in91po.json",
+      "dxview-status",
+      data => data.validation && data.validation.format_parsed === true
+    );
   </script>
 </body>
 </html>
