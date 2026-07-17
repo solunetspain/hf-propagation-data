@@ -33,6 +33,30 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def build_query_url() -> tuple[str, dict[str, Any]]:
+    """Build the documented PSKReporter grid query for IN91.
+
+    PSKReporter's retrieval API does not define a ``receiverLocator``
+    parameter. Grid searches use ``callsign=<grid>&modify=grid`` and may return
+    reports where either endpoint is in the requested grid. We still apply the
+    strict local, time and amateur-band filters after parsing.
+    """
+    params: dict[str, Any] = {
+        "callsign": "IN91",
+        "modify": "grid",
+        "flowStartSeconds": -3600,
+        "frange": "1800000-30000000",
+        "rptlimit": 5000,
+        "rronly": 1,
+        "noactive": 1,
+    }
+    return (
+        "https://retrieve.pskreporter.info/query?"
+        + urllib.parse.urlencode(params),
+        params,
+    )
+
+
 def band_for(frequency_hz: float) -> str | None:
     for minimum, maximum, name in HF_BANDS:
         if minimum <= frequency_hz <= maximum:
@@ -173,13 +197,14 @@ def main() -> int:
     parser.add_argument("--diagnostic", type=Path, default=Path("public/diagnostics/pskreporter-diagnostic.json"))
     args = parser.parse_args()
 
-    params = {"receiverLocator": "IN91", "flowStartSeconds": -3600, "rronly": 1}
-    url = "https://retrieve.pskreporter.info/query?" + urllib.parse.urlencode(params)
+    url, params = build_query_url()
     output: dict[str, Any] = {
         "source": "PSKReporter",
         "generated_at": now_iso(),
         "status": "partial",
         "query_url": url,
+        "query_parameters": params,
+        "query_strategy": "Official PSKReporter grid query: callsign=IN91 and modify=grid",
         "scope": "Reports with sender or receiver locator beginning IN91, amateur HF, last hour",
         "classification": "Observed reports after strict local post-filtering",
         "bands": {},
@@ -196,6 +221,7 @@ def main() -> int:
             "hf_filter_applied": False,
             "one_hour_filter_applied": False,
             "local_hf_reports_obtained": False,
+            "official_grid_query_used": True,
         },
     }
     try:
@@ -222,6 +248,7 @@ def main() -> int:
         )
         query_honored = all(
             str(report.get("receiverLocator", "")).upper().startswith("IN91")
+            or str(report.get("senderLocator", "")).upper().startswith("IN91")
             for report in raw_reports
         ) if raw_reports else False
         output.update(
@@ -230,7 +257,11 @@ def main() -> int:
                 "upstream_report_count": len(raw_reports),
                 "accepted_report_count": len(reports),
                 "rejected_report_counts": dict(sorted(rejected.items())),
-                "upstream_receiver_filter_honored": query_honored,
+                "upstream_grid_filter_honored": query_honored,
+                "upstream_filter_note": (
+                    "Grid query may match either sender or receiver in IN91; "
+                    "strict local post-filter remains mandatory."
+                ),
                 "bands": aggregate_reports(reports),
                 "examples": reports[:20],
                 "status": "ok" if reports else "partial",
