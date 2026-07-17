@@ -20,7 +20,7 @@ DIAG = PUBLIC / "diagnostics"
 
 IN91PO = {
     "locator": "IN91PO",
-    "name": "Nuez de Ebro / Zaragoza",
+    "name": "IN91PO",
     "latitude": 41.6041667,
     "longitude": -0.7083333,
 }
@@ -28,7 +28,7 @@ IN91PO = {
 SPAIN_POINTS = {
     "A_Coruna": (43.3623, -8.4115),
     "Bilbao": (43.2630, -2.9350),
-    "Nuez_de_Ebro": (IN91PO["latitude"], IN91PO["longitude"]),
+    "IN91PO": (IN91PO["latitude"], IN91PO["longitude"]),
     "Barcelona": (41.3874, 2.1686),
     "Madrid": (40.4168, -3.7038),
     "Valencia": (39.4699, -0.3763),
@@ -348,7 +348,7 @@ def main() -> int:
             )
 
         mainland_names = {
-            "A_Coruna", "Bilbao", "Nuez_de_Ebro", "Barcelona", "Madrid",
+            "A_Coruna", "Bilbao", "IN91PO", "Barcelona", "Madrid",
             "Valencia", "Murcia", "Sevilla", "Malaga"
         }
         mainland = [p for p in points if p["name"] in mainland_names]
