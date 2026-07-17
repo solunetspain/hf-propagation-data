@@ -12,6 +12,7 @@ on:
       - "scripts/collect_dxview.py"
       - "scripts/build_dxview_summary.py"
       - "scripts/collect_hamqsl.py"
+      - "scripts/build_reader_exports.py"
       - "requirements.txt"
       - "site/**"
 
@@ -62,6 +63,9 @@ jobs:
             --output public/data/hamqsl-summary.json \
             --diagnostic public/diagnostics/hamqsl-diagnostic.json \
             --last-good public/data/hamqsl-last-good.json
+
+      - name: Build reader-friendly exports
+        run: python scripts/build_reader_exports.py
 
       - name: Report DXView degradation
         if: steps.dxview.outcome != 'success'
