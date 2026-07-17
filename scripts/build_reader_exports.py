@@ -18,15 +18,26 @@ PUBLIC = Path("public")
 READER = PUBLIC / "reader"
 
 SOURCES = [
-    ("DXView summary diagnostic",
-     PUBLIC / "diagnostics/dxview-summary-diagnostic.json",
-     READER / "dxview-summary-diagnostic.txt"),
-    ("HamQSL summary",
-     PUBLIC / "data/hamqsl-summary.json",
-     READER / "hamqsl-summary.txt"),
-    ("HamQSL diagnostic",
-     PUBLIC / "diagnostics/hamqsl-diagnostic.json",
-     READER / "hamqsl-diagnostic.txt"),
+    (
+        "DXView summary diagnostic",
+        PUBLIC / "diagnostics/dxview-summary-diagnostic.json",
+        READER / "dxview-summary-diagnostic.txt",
+    ),
+    (
+        "DXView general diagnostic",
+        PUBLIC / "diagnostics/dxview-diagnostic.json",
+        READER / "dxview-diagnostic.txt",
+    ),
+    (
+        "HamQSL summary",
+        PUBLIC / "data/hamqsl-summary.json",
+        READER / "hamqsl-summary.txt",
+    ),
+    (
+        "HamQSL diagnostic",
+        PUBLIC / "diagnostics/hamqsl-diagnostic.json",
+        READER / "hamqsl-diagnostic.txt",
+    ),
 ]
 
 
