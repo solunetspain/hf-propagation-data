@@ -7,7 +7,7 @@ import statistics
 import sys
 import time
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -122,6 +122,10 @@ def fetch_band(band: int, bucket_id: int) -> tuple[dict[str, Any], dict[str, Any
         "status_code": response.status_code,
         "content_type": content_type,
         "cache_control": response.headers.get("cache-control"),
+        "http_date": response.headers.get("date"),
+        "age_seconds": response.headers.get("age"),
+        "etag": response.headers.get("etag"),
+        "last_modified": response.headers.get("last-modified"),
         "url": response.url,
         "bytes": len(response.content),
     }
@@ -477,6 +481,14 @@ def assess_history_quality(history: list[dict[str, Any]]) -> dict[str, Any]:
         and contiguous_tail >= HISTORY_MIN_TREND_SAMPLES
         and coverage >= HISTORY_SLOT_MINUTES * (HISTORY_MIN_TREND_SAMPLES - 1)
     )
+    ready_samples_needed = max(0, HISTORY_MIN_TREND_SAMPLES - contiguous_tail)
+    earliest_ready = (
+        valid_times[-1] + timedelta(
+            minutes=HISTORY_SLOT_MINUTES * ready_samples_needed
+        )
+        if valid_times and ready_samples_needed
+        else valid_times[-1] if valid_times else None
+    )
     return {
         "status": "valid" if valid_for_trend else "insufficient_data",
         "valid_for_trend": valid_for_trend,
@@ -485,6 +497,16 @@ def assess_history_quality(history: list[dict[str, Any]]) -> dict[str, Any]:
         "coverage_minutes": coverage,
         "slot_intervals_minutes": intervals,
         "required_contiguous_samples": HISTORY_MIN_TREND_SAMPLES,
+        "trend_ready_samples_needed": ready_samples_needed,
+        "earliest_trend_ready_utc": earliest_ready.isoformat() if earliest_ready else None,
+        "estimate_assumes_contiguous_future_slots": bool(ready_samples_needed),
+        "friendly_message": (
+            "Tendencia disponible"
+            if valid_for_trend
+            else f"Tendencia en preparación: {contiguous_tail}/"
+            f"{HISTORY_MIN_TREND_SAMPLES} muestras consecutivas; "
+            f"faltan {ready_samples_needed}."
+        ),
         "message": None if valid_for_trend else "No hay datos suficientes para calcular la tendencia",
     }
 
@@ -595,6 +617,22 @@ def main() -> int:
             meta.get("cache_control") for meta in metadata.values()
             if meta.get("cache_control")
         ]
+        http_dates = sorted(
+            {
+                str(meta.get("http_date"))
+                for meta in metadata.values()
+                if meta.get("http_date")
+            }
+        )
+        cache_max_ages = []
+        for value in cache_controls:
+            for item in str(value).split(","):
+                item = item.strip().lower()
+                if item.startswith("max-age="):
+                    try:
+                        cache_max_ages.append(int(item.split("=", 1)[1]))
+                    except ValueError:
+                        pass
 
         snapshot_bands = {
             band: {
@@ -652,8 +690,8 @@ def main() -> int:
                 "bucket": bucket,
                 "limitation": (
                     "DXView agrupa la perspectiva en una celda de 4° x 6°. "
-                    "El dato corresponde al bucket que contiene IN91PO, no a "
-                    "una medida puntual exacta en Nuez de Ebro."
+                    "El dato corresponde al bucket regional que contiene IN91PO; "
+                    "KC2G proporciona la referencia específica para el locator."
                 ),
             },
             "endpoint": {
@@ -665,6 +703,13 @@ def main() -> int:
                     "band": BANDS,
                 },
                 "cache_control_observed": sorted(set(cache_controls)),
+                "http_date_observed": http_dates,
+                "cache_max_age_seconds": max(cache_max_ages) if cache_max_ages else None,
+                "capture_timestamp_utc": generated_at,
+                "observation_time_basis": (
+                    "UTC capture time plus HTTP Date/cache metadata; the source "
+                    "does not publish a native observation timestamp."
+                ),
                 "source_observation_timestamp_available": False,
             },
             "validation": validation,
