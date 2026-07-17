@@ -13,6 +13,11 @@ on:
       - "scripts/build_dxview_summary.py"
       - "scripts/collect_hamqsl.py"
       - "scripts/build_reader_exports.py"
+      - "scripts/collect_noaa.py"
+      - "scripts/collect_weather_qrn.py"
+      - "scripts/collect_giro.py"
+      - "scripts/collect_pskreporter.py"
+      - "scripts/build_reader_exports.py"
       - "requirements.txt"
       - "site/**"
 
@@ -63,6 +68,22 @@ jobs:
             --output public/data/hamqsl-summary.json \
             --diagnostic public/diagnostics/hamqsl-diagnostic.json \
             --last-good public/data/hamqsl-last-good.json
+
+      - name: Collect NOAA SWPC
+        continue-on-error: true
+        run: python scripts/collect_noaa.py
+
+      - name: Collect modelled QRN risk
+        continue-on-error: true
+        run: python scripts/collect_weather_qrn.py
+
+      - name: Collect GIRO cross-check
+        continue-on-error: true
+        run: python scripts/collect_giro.py
+
+      - name: Collect PSKReporter HF observations
+        continue-on-error: true
+        run: python scripts/collect_pskreporter.py
 
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
