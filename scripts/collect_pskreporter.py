@@ -144,6 +144,9 @@ def filter_reports(
             direction = "received_in_IN91"
         else:
             direction = "transmitted_from_IN91"
+        exact_in91po = sender_locator.startswith("IN91PO") or receiver_locator.startswith(
+            "IN91PO"
+        )
         accepted.append(
             {
                 "timestamp_utc": datetime.fromtimestamp(timestamp, timezone.utc).isoformat(),
@@ -151,6 +154,7 @@ def filter_reports(
                 "band": band,
                 "mode": str(report.get("mode", "unknown")).strip().upper() or "UNKNOWN",
                 "direction": direction,
+                "local_scope": "exact_IN91PO" if exact_in91po else "regional_IN91",
                 "sender_callsign": report.get("senderCallsign"),
                 "sender_locator": sender_locator or None,
                 "receiver_callsign": report.get("receiverCallsign"),
@@ -176,9 +180,19 @@ def aggregate_reports(reports: list[dict[str, Any]]) -> dict[str, Any]:
             for value in (row.get("sender_callsign"), row.get("receiver_callsign"))
             if value
         }
+        routes = {
+            (
+                row.get("sender_callsign"),
+                row.get("sender_locator"),
+                row.get("receiver_callsign"),
+                row.get("receiver_locator"),
+            )
+            for row in rows
+        }
         result[band] = {
             "report_count": len(rows),
             "station_count": len(callsigns),
+            "route_count": len(routes),
             "modes": dict(sorted(Counter(row["mode"] for row in rows).items())),
             "directions": dict(sorted(Counter(row["direction"] for row in rows).items())),
             "distance_km": {
@@ -238,6 +252,9 @@ def main() -> int:
             if element.tag.split("}")[-1] == "receptionReport"
         ]
         reports, rejected = filter_reports(raw_reports)
+        exact_reports = [
+            report for report in reports if report["local_scope"] == "exact_IN91PO"
+        ]
         diagnostic["validation"].update(
             {
                 "local_filter_applied": True,
@@ -256,6 +273,12 @@ def main() -> int:
                 "content_type": content_type,
                 "upstream_report_count": len(raw_reports),
                 "accepted_report_count": len(reports),
+                "scope_summary": {
+                    "exact_in91po_report_count": len(exact_reports),
+                    "regional_in91_report_count": len(reports),
+                    "preferred_scope": "exact_IN91PO" if exact_reports else "regional_IN91",
+                    "exact_in91po_bands": aggregate_reports(exact_reports),
+                },
                 "rejected_report_counts": dict(sorted(rejected.items())),
                 "upstream_grid_filter_honored": query_honored,
                 "upstream_filter_note": (
