@@ -5,18 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HF Propagation Data — España e IN91PO</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 40px auto; padding: 0 20px; line-height: 1.45; }
-    h1, h2 { line-height: 1.15; }
-    .card { border: 1px solid #ccc; border-radius: 10px; padding: 18px; margin: 16px 0; }
-    .ok { color: #176b2c; font-weight: 700; }
-    .error { color: #a61b1b; font-weight: 700; }
-    code { background: #f2f2f2; padding: 2px 5px; border-radius: 4px; }
-    pre { background: #f5f5f5; padding: 15px; overflow: auto; border-radius: 8px; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.45;
+    }
+
+    h1, h2 {
+      line-height: 1.15;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .ok {
+      color: #176b2c;
+      font-weight: 700;
+    }
+
+    .error {
+      color: #a61b1b;
+      font-weight: 700;
+    }
+
+    .warning {
+      color: #8a5a00;
+      font-weight: 700;
+    }
+
+    code {
+      background: #f2f2f2;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      overflow: auto;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    ul {
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 7px 0;
+    }
   </style>
 </head>
 <body>
   <h1>HF Propagation Data — España e IN91PO</h1>
-  <p>Datos automáticos de KC2G y DXView validados antes de su publicación.</p>
+  <p>Datos automáticos de KC2G, DXView y HamQSL validados antes de su publicación.</p>
 
   <div class="card">
     <h2>Estado KC2G</h2>
@@ -29,37 +78,134 @@
   </div>
 
   <div class="card">
+    <h2>Estado resumen DXView</h2>
+    <div id="dxview-summary-status">Cargando…</div>
+  </div>
+
+  <div class="card">
+    <h2>Estado HamQSL</h2>
+    <div id="hamqsl-status">Cargando…</div>
+  </div>
+
+  <div class="card">
     <h2>Archivos JSON</h2>
-    <p><a href="data/kc2g-in91po.json">KC2G IN91PO</a></p>
-    <p><a href="data/kc2g-spain.json">KC2G España</a></p>
-    <p><a href="data/status.json">Estado de validación KC2G</a></p>
-    <p><a href="diagnostics/kc2g-diagnostic.json">Diagnóstico KC2G</a></p>
-    <p><a href="data/dxview-in91po.json">DXView IN91PO procesado</a></p>
-    <p><a href="data/dxview-in91po-raw.json">DXView IN91PO bruto</a></p>
-    <p><a href="diagnostics/dxview-diagnostic.json">Diagnóstico DXView</a></p>
+    <ul>
+      <li><a href="data/kc2g-in91po.json">KC2G IN91PO</a></li>
+      <li><a href="data/kc2g-spain.json">KC2G España</a></li>
+      <li><a href="data/status.json">Estado de validación KC2G</a></li>
+      <li><a href="diagnostics/kc2g-diagnostic.json">Diagnóstico KC2G</a></li>
+
+      <li><a href="data/dxview-in91po-summary.json">DXView resumen compacto</a></li>
+      <li><a href="diagnostics/dxview-summary-diagnostic.json">Diagnóstico DXView resumen</a></li>
+      <li><a href="data/dxview-in91po.json">DXView IN91PO procesado</a></li>
+      <li><a href="data/dxview-in91po-raw.json">DXView IN91PO bruto</a></li>
+      <li><a href="diagnostics/dxview-diagnostic.json">Diagnóstico DXView</a></li>
+
+      <li><a href="data/hamqsl-summary.json">HamQSL resumen</a></li>
+      <li><a href="diagnostics/hamqsl-diagnostic.json">Diagnóstico HamQSL</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Copias de lectura alternativa</h2>
+    <ul>
+      <li><a href="reader/dxview-summary-diagnostic.txt">Diagnóstico DXView resumen en texto</a></li>
+      <li><a href="reader/hamqsl-summary.txt">HamQSL resumen en texto</a></li>
+      <li><a href="reader/hamqsl-diagnostic.txt">Diagnóstico HamQSL en texto</a></li>
+      <li><a href="reader/">Página de lectura alternativa</a></li>
+    </ul>
   </div>
 
   <script>
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function render(url, elementId, statusSelector) {
-      fetch(url, {cache: "no-store"})
-        .then(r => r.json())
+      fetch(url, { cache: "no-store" })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
         .then(data => {
-          let ok = statusSelector(data);
+          const result = statusSelector(data);
+          const ok = result === true;
+          const warning = result === "warning";
+          const cssClass = ok ? "ok" : warning ? "warning" : "error";
+          const label = ok ? "OK" : warning ? "PARCIAL" : "ERROR";
+
           document.getElementById(elementId).innerHTML =
-            `<p class="${ok ? "ok" : "error"}">${ok ? "OK" : "ERROR"}</p>` +
-            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            `<p class="${cssClass}">${label}</p>` +
+            `<pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>`;
         })
         .catch(error => {
           document.getElementById(elementId).innerHTML =
-            `<p class="error">No se pudo cargar</p><pre>${error}</pre>`;
+            `<p class="error">No se pudo cargar</p>` +
+            `<pre>${escapeHtml(error)}</pre>`;
         });
     }
 
-    render("data/status.json", "kc2g-status", data => data.status === "ok");
+    render(
+      "data/status.json",
+      "kc2g-status",
+      data => data.status === "ok"
+    );
+
     render(
       "data/dxview-in91po.json",
       "dxview-status",
-      data => data.validation && data.validation.format_parsed === true
+      data =>
+        data.validation &&
+        data.validation.response_received === true &&
+        data.validation.format_parsed === true
+    );
+
+    render(
+      "diagnostics/dxview-summary-diagnostic.json",
+      "dxview-summary-status",
+      data =>
+        data.status === "ok" &&
+        data.validation &&
+        data.validation.input_exists === true &&
+        data.validation.input_parsed === true &&
+        data.validation.bands_found === true &&
+        data.validation.summary_written === true
+    );
+
+    render(
+      "diagnostics/hamqsl-diagnostic.json",
+      "hamqsl-status",
+      data => {
+        if (
+          data.status === "ok" &&
+          data.validation &&
+          data.validation.response_received === true &&
+          data.validation.xml_received === true &&
+          data.validation.format_parsed === true &&
+          data.validation.current_data_checked === true
+        ) {
+          return true;
+        }
+
+        if (
+          data.status === "partial" ||
+          data.status === "stale" ||
+          data.limitation === "javascript_challenge" ||
+          data.limitation === "anti_bot_challenge" ||
+          data.limitation === "html_instead_of_xml"
+        ) {
+          return "warning";
+        }
+
+        return false;
+      }
     );
   </script>
 </body>
