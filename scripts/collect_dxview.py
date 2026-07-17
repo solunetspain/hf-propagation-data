@@ -25,6 +25,9 @@ BANDS = [0, 1, 3, 5, 7, 10, 14, 18, 21, 24, 28, 50]
 PUBLIC = Path("public")
 DATA = PUBLIC / "data"
 DIAG = PUBLIC / "diagnostics"
+HISTORY_SLOT_MINUTES = 15
+HISTORY_MAX_SAMPLES = 5
+HISTORY_MIN_TREND_SAMPLES = 4
 
 SESSION = requests.Session()
 SESSION.headers.update(
@@ -362,61 +365,128 @@ def parse_iso_utc(value: Any) -> datetime | None:
     return dt.astimezone(timezone.utc)
 
 
+def history_slot_start(value: Any) -> str | None:
+    dt = parse_iso_utc(value)
+    if dt is None:
+        return None
+    minute = (dt.minute // HISTORY_SLOT_MINUTES) * HISTORY_SLOT_MINUTES
+    return dt.replace(minute=minute, second=0, microsecond=0).isoformat()
+
+
 def append_history(
     previous: dict[str, Any] | None,
     snapshot: dict[str, Any],
 ) -> list[dict[str, Any]]:
     """
-    Conserva todas las capturas, aunque dos consecutivas tengan la misma firma.
+    Conserva una captura por cuarto de hora, aunque la firma no cambie.
 
     La firma describe el contenido, no la identidad temporal de la muestra.
-    Eliminar por firma hacía desaparecer intervalos reales de 15 minutos en los
-    que la propagación no había cambiado. Solo se elimina una repetición con la
-    misma marca temporal exacta, caso propio de un reintento de publicación.
+    Eliminar por firma hacía desaparecer intervalos reales sin cambios. Las
+    ejecuciones manuales o por push dentro del mismo cuarto de hora se sustituyen
+    por la captura más reciente de ese slot y no deforman la tendencia.
     """
     history: list[dict[str, Any]] = []
     if previous and isinstance(previous.get("history"), list):
         history = [row for row in previous["history"] if isinstance(row, dict)]
 
-    timestamp = snapshot.get("fetched_at_utc")
-    history = [row for row in history if row.get("fetched_at_utc") != timestamp]
-    history.append(snapshot)
+    by_slot: dict[str, dict[str, Any]] = {}
+    for row in [*history, snapshot]:
+        slot = history_slot_start(row.get("fetched_at_utc"))
+        timestamp = parse_iso_utc(row.get("fetched_at_utc"))
+        if slot is None or timestamp is None:
+            continue
+        normalized = dict(row)
+        normalized["slot_start_utc"] = slot
+        previous_row = by_slot.get(slot)
+        previous_timestamp = (
+            parse_iso_utc(previous_row.get("fetched_at_utc"))
+            if previous_row else None
+        )
+        if previous_timestamp is None or timestamp >= previous_timestamp:
+            by_slot[slot] = normalized
 
-    history.sort(
-        key=lambda row: parse_iso_utc(row.get("fetched_at_utc"))
-        or datetime.min.replace(tzinfo=timezone.utc)
-    )
-    return history[-5:]
+    return [by_slot[key] for key in sorted(by_slot)][-HISTORY_MAX_SAMPLES:]
 
 
 def enrich_history_intervals(history: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Añade continuidad, cambio y separación real entre capturas."""
+    """Add slot continuity plus the real separation between HTTP captures."""
     enriched: list[dict[str, Any]] = []
     previous_row: dict[str, Any] | None = None
-    previous_dt: datetime | None = None
+    previous_capture_dt: datetime | None = None
+    previous_slot_dt: datetime | None = None
 
     for row in history:
         current = dict(row)
-        current_dt = parse_iso_utc(current.get("fetched_at_utc"))
+        capture_dt = parse_iso_utc(current.get("fetched_at_utc"))
+        slot = current.get("slot_start_utc") or history_slot_start(
+            current.get("fetched_at_utc")
+        )
+        current["slot_start_utc"] = slot
+        slot_dt = parse_iso_utc(slot)
         if previous_row is None:
             current["unchanged_from_previous"] = None
             current["interval_minutes_from_previous"] = None
+            current["capture_interval_minutes_from_previous"] = None
         else:
             current["unchanged_from_previous"] = (
                 current.get("signature") == previous_row.get("signature")
             )
-            if current_dt is not None and previous_dt is not None:
+            if slot_dt is not None and previous_slot_dt is not None:
                 current["interval_minutes_from_previous"] = round(
-                    (current_dt - previous_dt).total_seconds() / 60.0, 2
+                    (slot_dt - previous_slot_dt).total_seconds() / 60.0, 2
                 )
             else:
                 current["interval_minutes_from_previous"] = None
+            if capture_dt is not None and previous_capture_dt is not None:
+                current["capture_interval_minutes_from_previous"] = round(
+                    (capture_dt - previous_capture_dt).total_seconds() / 60.0, 2
+                )
+            else:
+                current["capture_interval_minutes_from_previous"] = None
 
         enriched.append(current)
         previous_row = current
-        previous_dt = current_dt
+        previous_capture_dt = capture_dt
+        previous_slot_dt = slot_dt
 
     return enriched
+
+
+def assess_history_quality(history: list[dict[str, Any]]) -> dict[str, Any]:
+    slot_times = [
+        parse_iso_utc(row.get("slot_start_utc"))
+        for row in history
+    ]
+    valid_times = [value for value in slot_times if value is not None]
+    intervals = [
+        round((current - previous).total_seconds() / 60.0, 2)
+        for previous, current in zip(valid_times, valid_times[1:])
+    ]
+    contiguous_tail = 1 if valid_times else 0
+    for interval in reversed(intervals):
+        if interval == HISTORY_SLOT_MINUTES:
+            contiguous_tail += 1
+        else:
+            break
+    coverage = (
+        round((valid_times[-1] - valid_times[0]).total_seconds() / 60.0, 2)
+        if len(valid_times) >= 2 else 0.0
+    )
+    valid_for_trend = (
+        len(valid_times) >= HISTORY_MIN_TREND_SAMPLES
+        and contiguous_tail >= HISTORY_MIN_TREND_SAMPLES
+        and coverage >= HISTORY_SLOT_MINUTES * (HISTORY_MIN_TREND_SAMPLES - 1)
+    )
+    return {
+        "status": "valid" if valid_for_trend else "insufficient_data",
+        "valid_for_trend": valid_for_trend,
+        "samples": len(valid_times),
+        "contiguous_tail_samples": contiguous_tail,
+        "coverage_minutes": coverage,
+        "slot_intervals_minutes": intervals,
+        "required_contiguous_samples": HISTORY_MIN_TREND_SAMPLES,
+        "message": None if valid_for_trend else "No hay datos suficientes para calcular la tendencia",
+    }
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -548,12 +618,17 @@ def main() -> int:
 
         previous = load_previous()
         history = enrich_history_intervals(append_history(previous, snapshot))
+        history_quality = assess_history_quality(history)
+        trend_history = (
+            history[-history_quality["contiguous_tail_samples"]:]
+            if history_quality["valid_for_trend"] else []
+        )
 
         trend = {}
         for band in band_summaries:
             rows = [
                 row["bands"][band]
-                for row in history
+                for row in trend_history
                 if isinstance(row.get("bands"), dict)
                 and isinstance(row["bands"].get(band), dict)
             ]
@@ -565,6 +640,7 @@ def main() -> int:
                 "active_sectors": trend_label(sector_values),
                 "activity_zone_series": activity_values,
                 "active_sector_series": sector_values,
+                "status": "ok" if history_quality["valid_for_trend"] else "insufficient_data",
             }
 
         payload = {
@@ -594,14 +670,16 @@ def main() -> int:
             "validation": validation,
             "bands": band_summaries,
             "history": history,
+            "history_quality": history_quality,
             "history_policy": {
-                "maximum_samples": 5,
+                "maximum_samples": HISTORY_MAX_SAMPLES,
                 "unchanged_samples_are_preserved": True,
-                "deduplication_key": "fetched_at_utc",
-                "expected_schedule_minutes": 15,
+                "deduplication_key": "15-minute UTC slot; newest capture wins within a slot",
+                "expected_schedule_minutes": HISTORY_SLOT_MINUTES,
+                "minimum_contiguous_samples_for_trend": HISTORY_MIN_TREND_SAMPLES,
                 "note": (
-                    "Los intervalos muestran la separación real de GitHub Actions; "
-                    "pueden desviarse algunos minutos del cuarto de hora programado."
+                    "Trend uses slot time only. Actual capture separation is retained "
+                    "separately as capture_interval_minutes_from_previous."
                 ),
             },
             "trend": trend,
@@ -644,9 +722,10 @@ def main() -> int:
                 "response_signatures": signatures,
                 "valid_band_count": len(band_summaries),
                 "history_samples": len(history),
+                "history_quality": history_quality,
                 "history_policy": (
-                    "keep_every_capture_even_when_signature_is_unchanged; "
-                    "deduplicate_only_exact_fetched_at_utc"
+                    "one newest capture per 15-minute UTC slot; preserve identical "
+                    "signatures across different slots"
                 ),
                 "history_intervals_minutes": [
                     row.get("interval_minutes_from_previous")
