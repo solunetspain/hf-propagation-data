@@ -13,7 +13,7 @@ except ModuleNotFoundError:
 
 from scripts.build_dxview_summary import calculate_trends
 from scripts.collect_dxview import append_history, assess_history_quality, enrich_history_intervals
-from scripts.collect_pskreporter import aggregate_reports, filter_reports
+from scripts.collect_pskreporter import aggregate_reports, build_query_url, filter_reports
 from scripts.collect_weather_qrn import POINTS, risk_for
 
 
@@ -29,8 +29,8 @@ def snapshot(timestamp, signature, value=1):
 
 class QrnTests(unittest.TestCase):
     def test_in91po_coordinate_is_not_old_wrong_longitude(self):
-        self.assertAlmostEqual(POINTS["IN91PO_Nuez_de_Ebro"][0], 41.6041667)
-        self.assertAlmostEqual(POINTS["IN91PO_Nuez_de_Ebro"][1], -0.7083333)
+        self.assertAlmostEqual(POINTS["IN91PO"][0], 41.6041667)
+        self.assertAlmostEqual(POINTS["IN91PO"][1], -0.7083333)
 
     def test_forecast_storm_does_not_raise_current_risk(self):
         result = risk_for(
@@ -50,6 +50,15 @@ class QrnTests(unittest.TestCase):
 
 
 class PskReporterTests(unittest.TestCase):
+    def test_query_uses_documented_grid_parameters(self):
+        url, params = build_query_url()
+
+        self.assertEqual(params["callsign"], "IN91")
+        self.assertEqual(params["modify"], "grid")
+        self.assertNotIn("receiverLocator", params)
+        self.assertIn("callsign=IN91", url)
+        self.assertIn("modify=grid", url)
+
     def test_only_recent_local_amateur_hf_reports_are_kept(self):
         reports = [
             {
@@ -89,10 +98,30 @@ class PskReporterTests(unittest.TestCase):
         self.assertEqual(len(accepted), 1)
         self.assertEqual(accepted[0]["band"], "20m")
         self.assertEqual(accepted[0]["direction"], "received_in_IN91")
+        self.assertEqual(accepted[0]["local_scope"], "exact_IN91PO")
         self.assertEqual(grouped["20m"]["report_count"], 1)
+        self.assertEqual(grouped["20m"]["station_count"], 2)
+        self.assertEqual(grouped["20m"]["route_count"], 1)
         self.assertEqual(rejected["outside_IN91"], 1)
         self.assertEqual(rejected["outside_HF"], 1)
         self.assertEqual(rejected["outside_one_hour_window"], 1)
+
+    def test_four_character_grid_is_kept_as_regional_not_exact(self):
+        reports = [
+            {
+                "receiverLocator": "IN91",
+                "receiverCallsign": "EA2AAA",
+                "senderLocator": "JN18AA",
+                "senderCallsign": "F1AAA",
+                "frequency": "18100000",
+                "flowStartSeconds": "9700",
+                "mode": "FT8",
+            }
+        ]
+
+        accepted, _ = filter_reports(reports, now_seconds=10_000)
+
+        self.assertEqual(accepted[0]["local_scope"], "regional_IN91")
 
 
 class DxviewHistoryTests(unittest.TestCase):

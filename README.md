@@ -1,6 +1,6 @@
 # HF Propagation Data — España e IN91PO
 
-Recopilación, validación y publicación automática de datos de propagación HF para España y para la cuadrícula Maidenhead **IN91PO**, correspondiente al entorno de Nuez de Ebro, Zaragoza.
+Recopilación, validación y publicación automática de datos de propagación HF para España y para la cuadrícula Maidenhead **IN91PO**.
 
 El objetivo del proyecto es generar datos estructurados y verificables que puedan utilizarse en informes periódicos de propagación HF, evitando depender únicamente de mapas visuales o predicciones genéricas.
 
@@ -19,7 +19,6 @@ El objetivo del proyecto es generar datos estructurados y verificables que pueda
 La evaluación local se realiza para:
 
 - **Locator:** IN91PO
-- **Zona:** Nuez de Ebro / Zaragoza
 - **Latitud aproximada:** 41.6042
 - **Longitud aproximada:** -0.7083
 
@@ -223,7 +222,7 @@ La hora de ejecución puede desplazarse unos minutos para evitar la saturación 
 
 ## Limitaciones
 
-- Los datos ionosféricos son interpolaciones y no una medida directa tomada en Nuez de Ebro.
+- Los datos ionosféricos de IN91PO son interpolaciones y no una medida directa de una ionosonda situada en el locator.
 - Una MUF local elevada no garantiza por sí sola una ruta DX completa; importa la peor zona de todo el trayecto.
 - La actividad observada depende de que existan operadores y estaciones automáticas transmitiendo.
 - Una banda sin spots no tiene por qué estar completamente cerrada.
