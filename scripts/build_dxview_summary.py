@@ -249,6 +249,7 @@ def compact_snapshot(snapshot: Any) -> dict[str, Any] | None:
         "fetched_at_utc": first_present(
             snapshot, ["fetched_at_utc", "generated_at", "timestamp_utc", "captured_at"]
         ),
+        "slot_start_utc": snapshot.get("slot_start_utc"),
         "signature": first_present(snapshot, ["signature", "activity_signature"]),
         "unchanged_from_previous": bool(snapshot.get("unchanged_from_previous", False)),
         "interval_minutes_from_previous": as_float(snapshot.get("interval_minutes_from_previous")),
@@ -265,23 +266,71 @@ def trend_direction(first: int, last: int) -> str:
     return "stable"
 
 
-def calculate_trends(history: list[dict[str, Any]]) -> dict[str, Any]:
-    if len(history) < 2:
+def parse_iso_utc(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def assess_history_quality(history: list[dict[str, Any]]) -> dict[str, Any]:
+    times = [parse_iso_utc(item.get("slot_start_utc")) for item in history]
+    valid_times = [item for item in times if item is not None]
+    intervals = [
+        round((current - previous).total_seconds() / 60.0, 2)
+        for previous, current in zip(valid_times, valid_times[1:])
+    ]
+    contiguous_tail = 1 if valid_times else 0
+    for interval in reversed(intervals):
+        if interval == 15:
+            contiguous_tail += 1
+        else:
+            break
+    coverage = (
+        round((valid_times[-1] - valid_times[0]).total_seconds() / 60.0, 2)
+        if len(valid_times) >= 2 else 0.0
+    )
+    valid_for_trend = len(valid_times) >= 4 and contiguous_tail >= 4 and coverage >= 45
+    return {
+        "status": "valid" if valid_for_trend else "insufficient_data",
+        "valid_for_trend": valid_for_trend,
+        "samples": len(valid_times),
+        "contiguous_tail_samples": contiguous_tail,
+        "coverage_minutes": coverage,
+        "slot_intervals_minutes": intervals,
+        "required_contiguous_samples": 4,
+        "message": None if valid_for_trend else "No hay datos suficientes para calcular la tendencia",
+    }
+
+
+def calculate_trends(
+    history: list[dict[str, Any]], quality: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    quality = quality if isinstance(quality, dict) else assess_history_quality(history)
+    if not quality.get("valid_for_trend", False):
         return {
             "status": "insufficient_data",
             "message": "No hay datos suficientes para calcular la tendencia",
             "bands": {},
         }
 
+    contiguous_samples = as_int(quality.get("contiguous_tail_samples"), 0)
+    trend_history = history[-contiguous_samples:]
+
     band_keys: set[str] = set()
-    for sample in history:
+    for sample in trend_history:
         band_keys.update(sample.get("bands", {}).keys())
 
     trends: dict[str, Any] = {}
     for band in sorted(band_keys, key=lambda x: float(x) if str(x).replace(".", "", 1).isdigit() else 999):
         values = []
         sectors = []
-        for sample in history:
+        for sample in trend_history:
             band_data = sample.get("bands", {}).get(band)
             if isinstance(band_data, dict):
                 values.append(as_int(band_data.get("activity_zone_count")))
@@ -343,6 +392,13 @@ def main() -> int:
                 if compact:
                     history.append(compact)
 
+        source_history_quality = source.get("history_quality")
+        history_quality = (
+            source_history_quality
+            if isinstance(source_history_quality, dict)
+            else assess_history_quality(history)
+        )
+
         perspective = source.get("perspective", {})
         validation = source.get("validation", {})
         endpoint = source.get("endpoint", {})
@@ -389,7 +445,8 @@ def main() -> int:
             },
             "bands": compact_bands,
             "history": history,
-            "trend": calculate_trends(history),
+            "history_quality": history_quality,
+            "trend": calculate_trends(history, history_quality),
         }
 
         args.output.parent.mkdir(parents=True, exist_ok=True)
