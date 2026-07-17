@@ -11,7 +11,7 @@ from typing import Any
 
 POINTS = {
     # Centro exacto del locator Maidenhead IN91PO.
-    "IN91PO_Nuez_de_Ebro": (41.6041667, -0.7083333),
+    "IN91PO": (41.6041667, -0.7083333),
     "Galicia": (42.75, -8.40),
     "Cantabrico": (43.30, -3.00),
     "Centro": (40.42, -3.70),
