@@ -84,7 +84,7 @@ class NoaaParserTests(unittest.TestCase):
         result = parse_drap(
             text,
             {
-                "IN91PO_Nuez_de_Ebro": (41.6041667, -0.7083333),
+                "IN91PO": (41.6041667, -0.7083333),
                 "Centro": (40.0, -1.0),
             },
         )
@@ -92,7 +92,7 @@ class NoaaParserTests(unittest.TestCase):
         self.assertEqual(result["status"], "parsed")
         self.assertEqual(result["timestamp_utc"], "2026-07-17T08:45:00+00:00")
         self.assertEqual(
-            result["points"]["IN91PO_Nuez_de_Ebro"]["highest_frequency_affected_1db_mhz"],
+            result["points"]["IN91PO"]["highest_frequency_affected_1db_mhz"],
             1.2,
         )
         self.assertEqual(result["spain"]["maximum_mhz"], 1.2)
