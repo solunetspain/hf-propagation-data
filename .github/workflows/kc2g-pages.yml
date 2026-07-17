@@ -10,6 +10,8 @@ on:
       - ".github/workflows/kc2g-pages.yml"
       - "scripts/collect_kc2g.py"
       - "scripts/collect_dxview.py"
+      - "scripts/build_dxview_summary.py"
+      - "scripts/collect_hamqsl.py"
       - "requirements.txt"
       - "site/**"
 
@@ -45,6 +47,21 @@ jobs:
         id: dxview
         continue-on-error: true
         run: python scripts/collect_dxview.py
+
+      - name: Build compact DXView summary
+        run: |
+          python scripts/build_dxview_summary.py \
+            --input public/data/dxview-in91po.json \
+            --output public/data/dxview-in91po-summary.json \
+            --diagnostic public/diagnostics/dxview-summary-diagnostic.json
+
+      - name: Collect HamQSL XML
+        continue-on-error: true
+        run: |
+          python scripts/collect_hamqsl.py \
+            --output public/data/hamqsl-summary.json \
+            --diagnostic public/diagnostics/hamqsl-diagnostic.json \
+            --last-good public/data/hamqsl-last-good.json
 
       - name: Report DXView degradation
         if: steps.dxview.outcome != 'success'
