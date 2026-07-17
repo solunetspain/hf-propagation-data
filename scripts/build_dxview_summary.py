@@ -54,17 +54,48 @@ def first_present(mapping: dict[str, Any], names: list[str], default: Any = None
     return default
 
 
-def normalize_sector(item: Any) -> dict[str, Any] | None:
+def normalize_sector(item: Any, sector_name: str | None = None) -> dict[str, Any] | None:
     if not isinstance(item, dict):
         return None
     az = first_present(item, ["azimuth", "azimuth_deg", "sector", "sector_center_deg"])
-    count = first_present(item, ["count", "zone_count", "activity_count"], 0)
-    minimum = first_present(item, ["min_distance_km", "nearest_km", "distance_min_km"])
-    maximum = first_present(item, ["max_distance_km", "farthest_km", "distance_max_km"])
+    activity_count = first_present(
+        item, ["activity_zone_count", "activity_zones", "activity_count", "count"], 0
+    )
+    muf_count = first_present(item, ["muf_zone_count", "muf_zones"], 0)
+    distances = item.get("distance_km", {})
+    if not isinstance(distances, dict):
+        distances = {}
+    minimum = first_present(
+        item,
+        ["min_distance_km", "nearest_km", "distance_min_km"],
+        distances.get("min"),
+    )
+    median = first_present(
+        item,
+        ["median_distance_km", "distance_median_km"],
+        distances.get("median"),
+    )
+    maximum = first_present(
+        item,
+        ["max_distance_km", "farthest_km", "distance_max_km"],
+        distances.get("max"),
+    )
+    modes = item.get("modes", {})
+    if not isinstance(modes, dict):
+        modes = {}
     return {
+        "sector": sector_name or (str(az) if isinstance(az, str) else None),
         "azimuth_deg": as_float(az),
-        "count": as_int(count),
+        "activity_zone_count": as_int(activity_count),
+        "muf_zone_count": as_int(muf_count),
+        "zone_count": as_int(first_present(item, ["zone_count", "zones"], 0)),
+        "modes": {
+            "digital": as_int(modes.get("digital")),
+            "cw": as_int(modes.get("cw")),
+            "ssb": as_int(modes.get("ssb")),
+        },
         "nearest_km": as_float(minimum),
+        "median_km": as_float(median),
         "farthest_km": as_float(maximum),
     }
 
@@ -90,40 +121,99 @@ def summarize_band(band_key: str, payload: Any) -> dict[str, Any]:
         ["main_sectors", "sectors", "active_sectors", "sector_summary"],
         [],
     )
-    normalized_sectors = []
+    normalized_sectors: list[dict[str, Any]] = []
     if isinstance(sectors, list):
         for sector in sectors[:12]:
             normalized = normalize_sector(sector)
             if normalized:
                 normalized_sectors.append(normalized)
+    elif isinstance(sectors, dict):
+        for name, sector in sectors.items():
+            normalized = normalize_sector(sector, str(name))
+            if normalized:
+                normalized_sectors.append(normalized)
+
+    normalized_sectors.sort(
+        key=lambda item: (
+            item["activity_zone_count"],
+            item["muf_zone_count"],
+            item["zone_count"],
+        ),
+        reverse=True,
+    )
+    active_sectors = [
+        item for item in normalized_sectors if item["activity_zone_count"] > 0
+    ]
+    classification = payload.get("classification", {})
+    if not isinstance(classification, dict):
+        classification = {}
+    mode_zone_counts = payload.get("mode_zone_counts", {})
+    if not isinstance(mode_zone_counts, dict):
+        mode_zone_counts = {}
+
+    def mode_sector_count(mode: str) -> int:
+        return sum(
+            1
+            for item in active_sectors
+            if as_int(item.get("modes", {}).get(mode)) > 0
+        )
+
+    distance_sectors = active_sectors or normalized_sectors
+    nearest_values = [
+        item["nearest_km"] for item in distance_sectors if item["nearest_km"] is not None
+    ]
+    farthest_values = [
+        item["farthest_km"] for item in distance_sectors if item["farthest_km"] is not None
+    ]
+
+    activity_fallback_names = [
+        "activity_zone_count", "activity_zones", "active_zone_count"
+    ]
+    # zone_count includes MUF zones in the current processed schema. It is only
+    # a safe legacy fallback when no explicit classification is present.
+    if not classification and not any(name in payload for name in activity_fallback_names):
+        activity_fallback_names.append("zone_count")
 
     return {
-        "band_mhz": as_float(first_present(payload, ["band", "band_mhz"], band_key)),
+        "band_mhz": as_float(first_present(
+            payload, ["requested_band_mhz", "band", "band_mhz"], band_key
+        )),
         "activity_zone_count": as_int(first_present(
-            payload, ["activity_zone_count", "activity_zones", "active_zone_count", "zone_count"], 0
+            classification, ["activity"], first_present(payload, activity_fallback_names, 0)
         )),
         "muf_zone_count": as_int(first_present(
-            payload, ["muf_zone_count", "muf_zones", "is_muf_zone_count"], 0
+            classification,
+            ["muf"],
+            first_present(payload, ["muf_zone_count", "muf_zones", "is_muf_zone_count"], 0),
         )),
         "active_sector_count": as_int(first_present(
-            payload, ["active_sector_count", "sector_count"], len(normalized_sectors)
+            payload, ["active_sector_count", "sector_count"], len(active_sectors)
         )),
         "digital_sector_count": as_int(first_present(
-            payload, ["digital_sector_count", "digital_sectors"], 0
+            payload, ["digital_sector_count", "digital_sectors"], mode_sector_count("digital")
         )),
         "cw_sector_count": as_int(first_present(
-            payload, ["cw_sector_count", "cw_sectors"], 0
+            payload, ["cw_sector_count", "cw_sectors"], mode_sector_count("cw")
         )),
         "ssb_sector_count": as_int(first_present(
-            payload, ["ssb_sector_count", "ssb_sectors"], 0
+            payload, ["ssb_sector_count", "ssb_sectors"], mode_sector_count("ssb")
         )),
+        "mode_zone_counts": {
+            "digital": as_int(mode_zone_counts.get("digital")),
+            "cw": as_int(mode_zone_counts.get("cw")),
+            "ssb": as_int(mode_zone_counts.get("ssb")),
+        },
         "nearest_km": as_float(first_present(
-            payload, ["nearest_km", "min_distance_km", "distance_min_km"]
+            payload,
+            ["nearest_km", "min_distance_km", "distance_min_km"],
+            min(nearest_values) if nearest_values else None,
         )),
         "farthest_km": as_float(first_present(
-            payload, ["farthest_km", "max_distance_km", "distance_max_km"]
+            payload,
+            ["farthest_km", "max_distance_km", "distance_max_km"],
+            max(farthest_values) if farthest_values else None,
         )),
-        "main_sectors": normalized_sectors,
+        "main_sectors": normalized_sectors[:12],
         "signature": first_present(payload, ["signature", "activity_signature"]),
     }
 

@@ -4,7 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import shutil
+import statistics
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
@@ -14,22 +16,37 @@ from typing import Any
 URLS = {
     "scales": "https://services.swpc.noaa.gov/products/noaa-scales.json",
     "kp": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
-    "plasma": [
-        "https://services.swpc.noaa.gov/products/solar-wind/plasma-2-hour.json",
-        "https://services.swpc.noaa.gov/products/solar-wind/plasma-6-hour.json",
-        "https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json",
-    ],
-    "mag": [
-        "https://services.swpc.noaa.gov/products/solar-wind/mag-2-hour.json",
-        "https://services.swpc.noaa.gov/products/solar-wind/mag-6-hour.json",
-        "https://services.swpc.noaa.gov/products/solar-wind/mag-1-day.json",
-    ],
+    "kp_estimated_1m": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
+    "plasma": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
+    "mag": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
     "xray": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
     "protons": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
     "electrons": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
-    "solar_flux": "https://services.swpc.noaa.gov/json/solar-radio-flux.json",
-    "sunspots": "https://services.swpc.noaa.gov/json/sunspot_report.json",
+    "solar_flux": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
+    "solar_indices": "https://services.swpc.noaa.gov/text/daily-solar-indices.txt",
     "drap": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
+}
+
+DRAP_POINTS = {
+    "IN91PO_Nuez_de_Ebro": (41.6041667, -0.7083333),
+    "Galicia": (42.75, -8.40),
+    "Cantabrico": (43.30, -3.00),
+    "Centro": (40.42, -3.70),
+    "Mediterraneo": (39.47, -0.38),
+    "Andalucia": (37.39, -5.99),
+    "Baleares": (39.57, 2.65),
+    "Canarias": (28.10, -15.42),
+}
+
+REQUIRED_SECTIONS = {
+    "scales",
+    "kp",
+    "solar_wind",
+    "magnetic_field",
+    "xray",
+    "solar_flux",
+    "sunspots",
+    "drap",
 }
 
 def now_iso() -> str:
@@ -98,18 +115,167 @@ def tabular_latest(data: Any) -> dict[str, Any] | None:
 def json_body(body: bytes) -> Any:
     return json.loads(body.decode("utf-8"))
 
-def fetch_first_tabular(urls: list[str], diagnostic: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
-    for url in urls:
+def fetch_json(url: str, diagnostic: dict[str, Any]) -> Any:
+    body, meta = fetch(url)
+    data = json_body(body)
+    diagnostic["requests"].append({**meta, "usable": data is not None})
+    return data
+
+def parse_datetime(value: Any) -> datetime | None:
+    parsed = parse_dt(value)
+    if not parsed:
+        return None
+    try:
+        return datetime.fromisoformat(parsed)
+    except ValueError:
+        return None
+
+def rtsw_summary(data: Any, field_map: dict[str, str]) -> dict[str, Any] | None:
+    """Select the active, good-quality RTSW source and median its last 5 minutes."""
+    if not isinstance(data, list):
+        return None
+    candidates = []
+    for item in data:
+        if not isinstance(item, dict) or item.get("active") is not True:
+            continue
+        if finite(item.get("overall_quality")) != 0:
+            continue
+        timestamp = parse_datetime(item.get("time_tag"))
+        if timestamp is None:
+            continue
+        if not any(finite(item.get(source)) is not None for source in field_map):
+            continue
+        candidates.append((timestamp, item))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda pair: pair[0])
+    latest_time, latest = candidates[-1]
+    source = latest.get("source")
+    recent = [
+        item
+        for timestamp, item in candidates
+        if item.get("source") == source
+        and 0 <= (latest_time - timestamp).total_seconds() <= 5 * 60
+    ]
+    result: dict[str, Any] = {
+        "timestamp_utc": latest_time.isoformat(),
+        "source": source,
+        "samples": len(recent),
+        "overall_quality": 0,
+        "selection": "active=true, overall_quality=0, median of up to 5 minutes",
+    }
+    for source_field, output_field in field_map.items():
+        values = [finite(item.get(source_field)) for item in recent]
+        usable = [value for value in values if value is not None]
+        result[output_field] = round(statistics.median(usable), 3) if usable else None
+    return result
+
+def parse_daily_solar_indices(text: str) -> dict[str, Any] | None:
+    """Parse the latest complete NOAA daily solar row (F10.7 and SESC SSN)."""
+    rows = []
+    for line in text.splitlines():
+        if not re.match(r"^\s*\d{4}\s+\d{2}\s+\d{2}\s+", line):
+            continue
+        fields = line.split()
+        if len(fields) < 5:
+            continue
         try:
-            body, meta = fetch(url)
-            data = json_body(body)
-            row = tabular_latest(data)
-            diagnostic["requests"].append({**meta, "usable": row is not None})
-            if row:
-                return row, url
-        except Exception as exc:  # noqa: BLE001
-            diagnostic["requests"].append({"url": url, "usable": False, "error": f"{type(exc).__name__}: {exc}"})
-    return None, None
+            date = datetime(
+                int(fields[0]), int(fields[1]), int(fields[2]), tzinfo=timezone.utc
+            )
+        except ValueError:
+            continue
+        rows.append(
+            {
+                "timestamp_utc": date.isoformat(),
+                "date": date.date().isoformat(),
+                "f107_sfu": finite(fields[3]),
+                "sunspot_number": finite(fields[4]),
+            }
+        )
+    return rows[-1] if rows else None
+
+def parse_drap(text: str, points: dict[str, tuple[float, float]] | None = None) -> dict[str, Any] | None:
+    """Parse NOAA's global highest-frequency-affected-by-1-dB grid."""
+    points = points or DRAP_POINTS
+    lines = text.splitlines()
+    timestamp = None
+    messages: dict[str, str] = {}
+    for line in lines:
+        match = re.search(r"Product Valid At\s*:\s*(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+UTC", line)
+        if match:
+            timestamp = parse_dt(f"{match.group(1)}T{match.group(2)}:00Z")
+        message = re.match(r"^#\s*(X-RAY|Proton) (Message|Warning)\s*:\s*(.*)$", line, re.I)
+        if message:
+            key = f"{message.group(1).lower().replace('-', '_')}_{message.group(2).lower()}"
+            messages[key] = message.group(3).strip()
+
+    longitudes: list[float] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "|" in line:
+            continue
+        tokens = stripped.split()
+        if len(tokens) >= 80:
+            try:
+                candidate = [float(token) for token in tokens]
+            except ValueError:
+                continue
+            if min(candidate) <= -170 and max(candidate) >= 170:
+                longitudes = candidate
+                break
+    if not longitudes:
+        return None
+
+    grid: list[tuple[float, list[float]]] = []
+    for line in lines:
+        match = re.match(r"^\s*(-?\d+(?:\.\d+)?)\s*\|\s*(.*)$", line)
+        if not match:
+            continue
+        try:
+            latitude = float(match.group(1))
+            values = [float(value) for value in match.group(2).split()]
+        except ValueError:
+            continue
+        if len(values) == len(longitudes):
+            grid.append((latitude, values))
+    if not grid:
+        return None
+
+    sampled: dict[str, Any] = {}
+    for name, (latitude, longitude) in points.items():
+        row_latitude, row_values = min(grid, key=lambda row: abs(row[0] - latitude))
+        longitude_index = min(
+            range(len(longitudes)), key=lambda index: abs(longitudes[index] - longitude)
+        )
+        sampled[name] = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "grid_latitude": row_latitude,
+            "grid_longitude": longitudes[longitude_index],
+            "highest_frequency_affected_1db_mhz": row_values[longitude_index],
+        }
+
+    spain_values = [
+        item["highest_frequency_affected_1db_mhz"] for item in sampled.values()
+    ]
+    return {
+        "status": "parsed",
+        "timestamp_utc": timestamp,
+        "metric": "highest frequency affected by at least 1 dB of D-region absorption",
+        "units": "MHz",
+        "grid": {
+            "longitude_count": len(longitudes),
+            "latitude_count": len(grid),
+            "sampling": "nearest NOAA grid point",
+        },
+        "messages": messages,
+        "points": sampled,
+        "spain": {
+            "median_mhz": round(statistics.median(spain_values), 2),
+            "maximum_mhz": round(max(spain_values), 2),
+        },
+    }
 
 def xray_class(flux: float | None) -> str | None:
     if flux is None or flux <= 0:
@@ -180,37 +346,74 @@ def main() -> int:
 
     # Kp and A
     try:
-        body, meta = fetch(URLS["kp"])
-        data = json_body(body)
+        data = fetch_json(URLS["kp"], diagnostic)
         row = latest_dict(data)
-        diagnostic["requests"].append({**meta, "usable": row is not None})
         if row:
             summary["current"]["geomagnetic"] = {
                 "timestamp_utc": parse_dt(row.get("time_tag")),
                 "kp": finite(row.get("Kp")),
                 "a_index": finite(row.get("a_running")),
                 "station_count": row.get("station_count"),
+                "classification": "official 3-hour planetary Kp",
             }
         diagnostic["validation"]["kp"] = row is not None
     except Exception as exc:
         diagnostic["errors"].append(f"kp: {exc}")
         diagnostic["validation"]["kp"] = False
 
-    # Solar wind
-    plasma, plasma_url = fetch_first_tabular(URLS["plasma"], diagnostic)
-    mag, mag_url = fetch_first_tabular(URLS["mag"], diagnostic)
+    # One-minute estimated Kp is useful for recency, but never replaces the
+    # official 3-hour value above.
+    try:
+        data = fetch_json(URLS["kp_estimated_1m"], diagnostic)
+        row = latest_dict(data)
+        if row:
+            summary["current"]["geomagnetic_estimated_1m"] = {
+                "timestamp_utc": parse_dt(row.get("time_tag")),
+                "kp": finite(row.get("kp_index")),
+                "estimated_kp": finite(row.get("estimated_kp")),
+                "kp_code": row.get("kp"),
+                "classification": "estimated 1-minute Kp; auxiliary, not official 3-hour Kp",
+            }
+        diagnostic["validation"]["kp_estimated_1m"] = row is not None
+    except Exception as exc:
+        diagnostic["errors"].append(f"kp_estimated_1m: {exc}")
+        diagnostic["validation"]["kp_estimated_1m"] = False
+
+    # Real-time solar wind. NOAA currently publishes object arrays, not the
+    # older tabular /products/solar-wind endpoints.
+    plasma = None
+    mag = None
+    try:
+        data = fetch_json(URLS["plasma"], diagnostic)
+        plasma = rtsw_summary(
+            data,
+            {
+                "proton_density": "density_p_cm3",
+                "proton_speed": "speed_km_s",
+                "proton_temperature": "temperature_k",
+            },
+        )
+    except Exception as exc:
+        diagnostic["errors"].append(f"solar_wind: {exc}")
+    try:
+        data = fetch_json(URLS["mag"], diagnostic)
+        mag = rtsw_summary(
+            data,
+            {
+                "bx_gsm": "bx_gsm_nt",
+                "by_gsm": "by_gsm_nt",
+                "bz_gsm": "bz_gsm_nt",
+                "bt": "bt_nt",
+            },
+        )
+    except Exception as exc:
+        diagnostic["errors"].append(f"magnetic_field: {exc}")
     if plasma or mag:
         summary["current"]["solar_wind"] = {
-            "timestamp_utc": parse_dt((plasma or mag or {}).get("time_tag")),
-            "density_p_cm3": finite((plasma or {}).get("density")),
-            "speed_km_s": finite((plasma or {}).get("speed")),
-            "temperature_k": finite((plasma or {}).get("temperature")),
-            "bx_gsm_nt": finite((mag or {}).get("bx_gsm")),
-            "by_gsm_nt": finite((mag or {}).get("by_gsm")),
-            "bz_gsm_nt": finite((mag or {}).get("bz_gsm")),
-            "bt_nt": finite((mag or {}).get("bt")),
-            "plasma_url_used": plasma_url,
-            "mag_url_used": mag_url,
+            "plasma": plasma,
+            "magnetic_field": mag,
+            "plasma_url_used": URLS["plasma"] if plasma else None,
+            "mag_url_used": URLS["mag"] if mag else None,
         }
     diagnostic["validation"]["solar_wind"] = plasma is not None
     diagnostic["validation"]["magnetic_field"] = mag is not None
@@ -254,63 +457,78 @@ def main() -> int:
             diagnostic["errors"].append(f"{name}: {exc}")
             diagnostic["validation"][name] = False
 
-    # Solar flux: keep latest row; schemas may change, retain useful fields.
+    # Official F10.7 at 2800 MHz.
     try:
-        body, meta = fetch(URLS["solar_flux"])
-        data = json_body(body)
+        data = fetch_json(URLS["solar_flux"], diagnostic)
         row = latest_dict(data, ("time_tag", "timestamp", "date"))
-        diagnostic["requests"].append({**meta, "usable": row is not None})
-        if row:
+        flux = finite(row.get("flux")) if row else None
+        frequency = finite(row.get("frequency")) if row else None
+        usable = row is not None and flux is not None and frequency == 2800
+        if usable and row:
             summary["current"]["solar_flux"] = {
                 "timestamp_utc": parse_dt(row.get("time_tag") or row.get("timestamp") or row.get("date")),
-                "observed_flux": finite(row.get("flux") or row.get("observed_flux") or row.get("f107")),
-                "adjusted_flux": finite(row.get("adjusted_flux")),
-                "raw": row,
+                "observed_flux_sfu": flux,
+                "frequency_mhz": frequency,
+                "reporting_schedule": row.get("reporting_schedule"),
+                "ninety_day_mean_sfu": finite(row.get("ninety_day_mean")),
+                "classification": "official NOAA F10.7 observation",
             }
-        diagnostic["validation"]["solar_flux"] = row is not None
+        diagnostic["validation"]["solar_flux"] = usable
     except Exception as exc:
         diagnostic["errors"].append(f"solar_flux: {exc}")
         diagnostic["validation"]["solar_flux"] = False
 
-    # Sunspots: expose last report, but do not pretend group count is official SSN.
+    # NOAA daily solar indices explicitly include SESC Sunspot Number. This is
+    # not derived from region/group records.
     try:
-        body, meta = fetch(URLS["sunspots"])
-        data = json_body(body)
-        row = latest_dict(data, ("observed_date", "time_tag", "date"))
-        diagnostic["requests"].append({**meta, "usable": row is not None})
+        body, meta = fetch(URLS["solar_indices"])
+        text = body.decode("utf-8", errors="replace")
+        row = parse_daily_solar_indices(text)
+        usable = row is not None and row.get("sunspot_number") is not None
+        diagnostic["requests"].append({**meta, "usable": usable})
         if row:
             summary["current"]["sunspots"] = {
-                "timestamp_utc": parse_dt(row.get("observed_date") or row.get("time_tag") or row.get("date")),
-                "sunspot_number": finite(row.get("sunspot_number") or row.get("ssn") or row.get("sunspot_count")),
-                "raw": row,
-                "note": "Only use sunspot_number when the field is explicitly present; do not derive SSN from groups.",
+                "timestamp_utc": row.get("timestamp_utc"),
+                "date": row.get("date"),
+                "sunspot_number": row.get("sunspot_number"),
+                "classification": "NOAA SESC daily sunspot number",
+                "daily_f107_sfu_cross_check": row.get("f107_sfu"),
             }
-        diagnostic["validation"]["sunspots"] = row is not None
+        diagnostic["validation"]["sunspots"] = usable
     except Exception as exc:
         diagnostic["errors"].append(f"sunspots: {exc}")
         diagnostic["validation"]["sunspots"] = False
 
-    # D-RAP text. Preserve a compact raw excerpt and numeric tokens.
+    # D-RAP: parse the global 1 dB highest-affected-frequency grid and expose
+    # Spain/IN91PO values. Do not mark raw text alone as validated.
     try:
         body, meta = fetch(URLS["drap"])
         text = body.decode("utf-8", errors="replace").strip()
-        lines = [line.strip() for line in text.splitlines() if line.strip()]
-        diagnostic["requests"].append({**meta, "usable": bool(lines)})
-        summary["drap"] = {
-            "status": "raw_available" if lines else "unavailable",
-            "lines": lines[:30],
-            "note": "NOAA D-RAP ASCII source preserved. Interpretation must follow the headings present in these lines.",
+        drap = parse_drap(text)
+        diagnostic["requests"].append({**meta, "usable": drap is not None})
+        summary["drap"] = drap or {
+            "status": "unparsed",
+            "note": "NOAA replied, but the D-RAP grid schema was not recognized.",
         }
-        diagnostic["validation"]["drap"] = bool(lines)
+        diagnostic["validation"]["drap"] = drap is not None
     except Exception as exc:
         diagnostic["errors"].append(f"drap: {exc}")
         diagnostic["validation"]["drap"] = False
 
     valid_count = sum(bool(v) for v in diagnostic["validation"].values())
-    summary["status"] = "ok" if valid_count >= 6 else "partial" if valid_count else "error"
+    missing_required = sorted(
+        section
+        for section in REQUIRED_SECTIONS
+        if not diagnostic["validation"].get(section, False)
+    )
+    summary["status"] = "ok" if not missing_required else "partial" if valid_count else "error"
     summary["validation"] = diagnostic["validation"]
+    summary["required_sections"] = sorted(REQUIRED_SECTIONS)
+    summary["missing_required_sections"] = missing_required
     diagnostic["status"] = summary["status"]
     diagnostic["valid_sections"] = valid_count
+    diagnostic["required_sections"] = sorted(REQUIRED_SECTIONS)
+    diagnostic["missing_required_sections"] = missing_required
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.diagnostic.parent.mkdir(parents=True, exist_ok=True)
