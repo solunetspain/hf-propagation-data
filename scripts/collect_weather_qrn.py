@@ -10,7 +10,8 @@ from pathlib import Path
 from typing import Any
 
 POINTS = {
-    "IN91PO_Nuez_de_Ebro": (41.59, -0.22),
+    # Centro exacto del locator Maidenhead IN91PO.
+    "IN91PO_Nuez_de_Ebro": (41.6041667, -0.7083333),
     "Galicia": (42.75, -8.40),
     "Cantabrico": (43.30, -3.00),
     "Centro": (40.42, -3.70),
@@ -37,40 +38,64 @@ def fetch_point(lat: float, lon: float) -> dict[str, Any]:
     with urllib.request.urlopen(req, timeout=30) as response:
         return json.loads(response.read().decode("utf-8"))
 
+def risk_level(score: int) -> str:
+    return "alto" if score >= 4 else "medio" if score >= 2 else "bajo"
+
 def risk_for(data: dict[str, Any]) -> dict[str, Any]:
+    """Separate present conditions from the following six-hour forecast."""
     current = data.get("current", {})
     hourly = data.get("hourly", {})
-    codes = [current.get("weather_code")] + list(hourly.get("weather_code", []))
+    forecast_codes = list(hourly.get("weather_code", []))
     cape_values = [x for x in hourly.get("cape", []) if isinstance(x, (int, float))]
     precip_prob = [x for x in hourly.get("precipitation_probability", []) if isinstance(x, (int, float))]
-    thunder = any(code in (95, 96, 99) for code in codes)
+    current_thunder = current.get("weather_code") in (95, 96, 99)
+    forecast_thunder = any(code in (95, 96, 99) for code in forecast_codes)
     max_cape = max(cape_values) if cape_values else None
     max_prob = max(precip_prob) if precip_prob else None
 
-    score = 0
-    reasons = []
-    if thunder:
-        score += 3
-        reasons.append("weather_code de tormenta 95/96/99")
-    if max_cape is not None and max_cape >= 1000:
-        score += 2
-        reasons.append(f"CAPE máximo {max_cape:.0f} J/kg")
-    elif max_cape is not None and max_cape >= 300:
-        score += 1
-        reasons.append(f"CAPE moderado {max_cape:.0f} J/kg")
-    if max_prob is not None and max_prob >= 70:
-        score += 1
-        reasons.append(f"probabilidad precipitación {max_prob:.0f}%")
+    current_score = 4 if current_thunder else 0
+    current_reasons = (
+        ["weather_code actual de tormenta 95/96/99"]
+        if current_thunder
+        else ["sin código actual de tormenta"]
+    )
 
-    level = "alto" if score >= 4 else "medio" if score >= 2 else "bajo"
+    forecast_score = 0
+    forecast_reasons = []
+    if forecast_thunder:
+        forecast_score += 3
+        forecast_reasons.append("tormenta prevista por weather_code 95/96/99")
+    if max_cape is not None and max_cape >= 1000:
+        forecast_score += 2
+        forecast_reasons.append(f"CAPE máximo previsto {max_cape:.0f} J/kg")
+    elif max_cape is not None and max_cape >= 300:
+        forecast_score += 1
+        forecast_reasons.append(f"CAPE moderado previsto {max_cape:.0f} J/kg")
+    if max_prob is not None and max_prob >= 70:
+        forecast_score += 1
+        forecast_reasons.append(f"probabilidad de precipitación prevista {max_prob:.0f}%")
+
     return {
-        "risk": level,
-        "score": score,
-        "thunderstorm_code_present": thunder,
-        "max_cape_j_kg_6h": max_cape,
-        "max_precipitation_probability_6h": max_prob,
-        "reasons": reasons,
-        "current": current,
+        # Legacy aliases now explicitly represent the present, not the worst
+        # condition predicted during the next six hours.
+        "risk": risk_level(current_score),
+        "score": current_score,
+        "current_risk": {
+            "risk": risk_level(current_score),
+            "score": current_score,
+            "thunderstorm_code_present": current_thunder,
+            "reasons": current_reasons,
+            "observation": current,
+        },
+        "forecast_6h": {
+            "risk": risk_level(forecast_score),
+            "score": forecast_score,
+            "thunderstorm_code_present": forecast_thunder,
+            "max_cape_j_kg": max_cape,
+            "max_precipitation_probability": max_prob,
+            "reasons": forecast_reasons,
+            "times": hourly.get("time", []),
+        },
     }
 
 def main() -> int:
@@ -83,10 +108,28 @@ def main() -> int:
         "source": "Open-Meteo model-based QRN risk",
         "generated_at": now_iso(),
         "status": "ok",
-        "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection.",
+        "classification": (
+            "Modelled thunderstorm/QRN risk, not direct lightning detection. "
+            "Current conditions and six-hour forecast are reported separately."
+        ),
+        "direct_lightning_detection_validated": False,
+        "limitations": [
+            "No direct lightning observations are used.",
+            "Forecast CAPE never changes the current-risk classification.",
+        ],
         "points": {},
     }
-    diagnostic = {"generated_at": now_iso(), "status": "ok", "errors": [], "points": {}}
+    diagnostic = {
+        "generated_at": now_iso(),
+        "status": "ok",
+        "errors": [],
+        "validation": {
+            "model_response_received": False,
+            "current_and_forecast_separated": True,
+            "direct_lightning_observations_obtained": False,
+        },
+        "points": {},
+    }
 
     for name, (lat, lon) in POINTS.items():
         try:
@@ -107,6 +150,7 @@ def main() -> int:
     if not result["points"]:
         result["status"] = "error"
         diagnostic["status"] = "error"
+    diagnostic["validation"]["model_response_received"] = bool(result["points"])
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.diagnostic.parent.mkdir(parents=True, exist_ok=True)
