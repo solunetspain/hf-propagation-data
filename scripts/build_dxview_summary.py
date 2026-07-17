@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -296,6 +296,13 @@ def assess_history_quality(history: list[dict[str, Any]]) -> dict[str, Any]:
         if len(valid_times) >= 2 else 0.0
     )
     valid_for_trend = len(valid_times) >= 4 and contiguous_tail >= 4 and coverage >= 45
+    required_samples = 4
+    ready_samples_needed = max(0, required_samples - contiguous_tail)
+    earliest_ready = (
+        valid_times[-1] + timedelta(minutes=15 * ready_samples_needed)
+        if valid_times and ready_samples_needed
+        else valid_times[-1] if valid_times else None
+    )
     return {
         "status": "valid" if valid_for_trend else "insufficient_data",
         "valid_for_trend": valid_for_trend,
@@ -303,7 +310,16 @@ def assess_history_quality(history: list[dict[str, Any]]) -> dict[str, Any]:
         "contiguous_tail_samples": contiguous_tail,
         "coverage_minutes": coverage,
         "slot_intervals_minutes": intervals,
-        "required_contiguous_samples": 4,
+        "required_contiguous_samples": required_samples,
+        "trend_ready_samples_needed": ready_samples_needed,
+        "earliest_trend_ready_utc": earliest_ready.isoformat() if earliest_ready else None,
+        "estimate_assumes_contiguous_future_slots": bool(ready_samples_needed),
+        "friendly_message": (
+            "Tendencia disponible"
+            if valid_for_trend
+            else f"Tendencia en preparación: {contiguous_tail}/{required_samples} "
+            f"muestras consecutivas; faltan {ready_samples_needed}."
+        ),
         "message": None if valid_for_trend else "No hay datos suficientes para calcular la tendencia",
     }
 
@@ -442,6 +458,20 @@ def main() -> int:
                     )
                 ),
                 "capture_time_used_as_reference": True,
+                "capture_timestamp_utc": first_present(
+                    endpoint if isinstance(endpoint, dict) else {},
+                    ["capture_timestamp_utc"],
+                    first_present(source, ["generated_at", "fetched_at_utc"]),
+                ),
+                "http_date_observed": (
+                    endpoint.get("http_date_observed")
+                    if isinstance(endpoint, dict) else None
+                ),
+                "cache_max_age_seconds": (
+                    endpoint.get("cache_max_age_seconds")
+                    if isinstance(endpoint, dict) else None
+                ),
+                "reference_time_quality": "capture_time_with_short_http_cache",
             },
             "bands": compact_bands,
             "history": history,
