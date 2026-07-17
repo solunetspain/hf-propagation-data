@@ -98,10 +98,30 @@ class PskReporterTests(unittest.TestCase):
         self.assertEqual(len(accepted), 1)
         self.assertEqual(accepted[0]["band"], "20m")
         self.assertEqual(accepted[0]["direction"], "received_in_IN91")
+        self.assertEqual(accepted[0]["local_scope"], "exact_IN91PO")
         self.assertEqual(grouped["20m"]["report_count"], 1)
+        self.assertEqual(grouped["20m"]["station_count"], 2)
+        self.assertEqual(grouped["20m"]["route_count"], 1)
         self.assertEqual(rejected["outside_IN91"], 1)
         self.assertEqual(rejected["outside_HF"], 1)
         self.assertEqual(rejected["outside_one_hour_window"], 1)
+
+    def test_four_character_grid_is_kept_as_regional_not_exact(self):
+        reports = [
+            {
+                "receiverLocator": "IN91",
+                "receiverCallsign": "EA2AAA",
+                "senderLocator": "JN18AA",
+                "senderCallsign": "F1AAA",
+                "frequency": "18100000",
+                "flowStartSeconds": "9700",
+                "mode": "FT8",
+            }
+        ]
+
+        accepted, _ = filter_reports(reports, now_seconds=10_000)
+
+        self.assertEqual(accepted[0]["local_scope"], "regional_IN91")
 
 
 class DxviewHistoryTests(unittest.TestCase):
