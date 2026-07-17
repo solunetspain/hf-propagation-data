@@ -1,0 +1,20 @@
+# Añade estos pasos al workflow que ya genera y publica los datos.
+# Deben ir DESPUÉS de collect_dxview.py y ANTES del commit/deploy de Pages.
+
+      - name: Build compact DXView summary
+        run: |
+          python scripts/build_dxview_summary.py
+
+      - name: Collect HamQSL XML
+        continue-on-error: true
+        run: |
+          python scripts/collect_hamqsl.py
+
+# Asegúrate de que el paso que hace git add/commit incluya:
+#   data/dxview-in91po-summary.json
+#   diagnostics/dxview-summary-diagnostic.json
+#   data/hamqsl-summary.json
+#   data/hamqsl-last-good.json
+#   diagnostics/hamqsl-diagnostic.json
+#
+# Si el workflow usa "git add data diagnostics", no hace falta cambiarlo.
