@@ -65,7 +65,10 @@
 </head>
 <body>
   <h1>HF Propagation Data — España e IN91PO</h1>
-  <p>Datos automáticos de KC2G, DXView y HamQSL validados antes de su publicación.</p>
+  <p>
+    Datos automáticos de KC2G, DXView, HamQSL, NOAA/SWPC, QRN,
+    GIRO y PSKReporter validados antes de su publicación.
+  </p>
 
   <div class="card">
     <h2>Estado KC2G</h2>
@@ -88,6 +91,16 @@
   </div>
 
   <div class="card">
+    <h2>Estado NOAA/SWPC</h2>
+    <div id="noaa-status">Cargando…</div>
+  </div>
+
+  <div class="card">
+    <h2>Estado QRN</h2>
+    <div id="qrn-status">Cargando…</div>
+  </div>
+
+  <div class="card">
     <h2>Archivos JSON</h2>
     <ul>
       <li><a href="data/kc2g-in91po.json">KC2G IN91PO</a></li>
@@ -103,6 +116,18 @@
 
       <li><a href="data/hamqsl-summary.json">HamQSL resumen</a></li>
       <li><a href="diagnostics/hamqsl-diagnostic.json">Diagnóstico HamQSL</a></li>
+
+      <li><a href="data/noaa-summary.json">NOAA/SWPC resumen compacto</a></li>
+      <li><a href="diagnostics/noaa-diagnostic.json">Diagnóstico NOAA/SWPC</a></li>
+
+      <li><a href="data/qrn-spain-summary.json">Riesgo QRN España</a></li>
+      <li><a href="diagnostics/qrn-diagnostic.json">Diagnóstico QRN</a></li>
+
+      <li><a href="data/giro-spain-summary.json">GIRO España</a></li>
+      <li><a href="diagnostics/giro-diagnostic.json">Diagnóstico GIRO</a></li>
+
+      <li><a href="data/pskreporter-hf-summary.json">PSKReporter HF</a></li>
+      <li><a href="diagnostics/pskreporter-diagnostic.json">Diagnóstico PSKReporter</a></li>
     </ul>
   </div>
 
@@ -113,6 +138,19 @@
       <li><a href="reader/dxview-diagnostic.txt">Diagnóstico DXView general en texto</a></li>
       <li><a href="reader/hamqsl-summary.txt">HamQSL resumen en texto</a></li>
       <li><a href="reader/hamqsl-diagnostic.txt">Diagnóstico HamQSL en texto</a></li>
+
+      <li><a href="reader/noaa-summary.txt">NOAA/SWPC resumen en texto</a></li>
+      <li><a href="reader/noaa-diagnostic.txt">Diagnóstico NOAA/SWPC en texto</a></li>
+
+      <li><a href="reader/qrn-spain-summary.txt">Riesgo QRN España en texto</a></li>
+      <li><a href="reader/qrn-diagnostic.txt">Diagnóstico QRN en texto</a></li>
+
+      <li><a href="reader/giro-spain-summary.txt">GIRO España en texto</a></li>
+      <li><a href="reader/giro-diagnostic.txt">Diagnóstico GIRO en texto</a></li>
+
+      <li><a href="reader/pskreporter-hf-summary.txt">PSKReporter HF en texto</a></li>
+      <li><a href="reader/pskreporter-diagnostic.txt">Diagnóstico PSKReporter en texto</a></li>
+
       <li><a href="reader/">Página de lectura alternativa</a></li>
     </ul>
   </div>
@@ -133,6 +171,7 @@
           if (!response.ok) {
             throw new Error(`HTTP ${response.status} ${response.statusText}`);
           }
+
           return response.json();
         })
         .then(data => {
@@ -160,24 +199,47 @@
     );
 
     render(
-      "data/dxview-in91po.json",
+      "diagnostics/dxview-diagnostic.json",
       "dxview-status",
-      data =>
-        data.validation &&
-        data.validation.response_received === true &&
-        data.validation.format_parsed === true
+      data => {
+        if (
+          data.status === "ok" &&
+          data.validation &&
+          data.validation.response_received === true &&
+          data.validation.format_parsed === true
+        ) {
+          return true;
+        }
+
+        if (data.status === "partial" || data.status === "stale") {
+          return "warning";
+        }
+
+        return false;
+      }
     );
 
     render(
       "diagnostics/dxview-summary-diagnostic.json",
       "dxview-summary-status",
-      data =>
-        data.status === "ok" &&
-        data.validation &&
-        data.validation.input_exists === true &&
-        data.validation.input_parsed === true &&
-        data.validation.bands_found === true &&
-        data.validation.summary_written === true
+      data => {
+        if (
+          data.status === "ok" &&
+          data.validation &&
+          data.validation.input_exists === true &&
+          data.validation.input_parsed === true &&
+          data.validation.bands_found === true &&
+          data.validation.summary_written === true
+        ) {
+          return true;
+        }
+
+        if (data.status === "partial" || data.status === "stale") {
+          return "warning";
+        }
+
+        return false;
+      }
     );
 
     render(
@@ -202,6 +264,38 @@
           data.limitation === "anti_bot_challenge" ||
           data.limitation === "html_instead_of_xml"
         ) {
+          return "warning";
+        }
+
+        return false;
+      }
+    );
+
+    render(
+      "diagnostics/noaa-diagnostic.json",
+      "noaa-status",
+      data => {
+        if (data.status === "ok") {
+          return true;
+        }
+
+        if (data.status === "partial" || data.status === "stale") {
+          return "warning";
+        }
+
+        return false;
+      }
+    );
+
+    render(
+      "diagnostics/qrn-diagnostic.json",
+      "qrn-status",
+      data => {
+        if (data.status === "ok") {
+          return true;
+        }
+
+        if (data.status === "partial" || data.status === "stale") {
           return "warning";
         }
 
