@@ -7,6 +7,7 @@ from typing import Any
 PUBLIC = Path("public")
 READER = PUBLIC / "reader"
 SOURCES = [
+    ("Canonical Spanish web report", PUBLIC/"data/web-report-es.json", READER/"web-report-es.txt"),
     ("DXView summary diagnostic", PUBLIC/"diagnostics/dxview-summary-diagnostic.json", READER/"dxview-summary-diagnostic.txt"),
     ("DXView general diagnostic", PUBLIC/"diagnostics/dxview-diagnostic.json", READER/"dxview-diagnostic.txt"),
     ("HamQSL summary", PUBLIC/"data/hamqsl-summary.json", READER/"hamqsl-summary.txt"),
