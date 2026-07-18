@@ -10,6 +10,8 @@ SOURCES = [
     ("Canonical Spanish web report", PUBLIC/"data/web-report-es.json", READER/"web-report-es.txt"),
     ("DXView summary diagnostic", PUBLIC/"diagnostics/dxview-summary-diagnostic.json", READER/"dxview-summary-diagnostic.txt"),
     ("DXView general diagnostic", PUBLIC/"diagnostics/dxview-diagnostic.json", READER/"dxview-diagnostic.txt"),
+    ("DXView regional summary", PUBLIC/"data/dxview-regions-summary.json", READER/"dxview-regions-summary.txt"),
+    ("DXView regional diagnostic", PUBLIC/"diagnostics/dxview-regions-diagnostic.json", READER/"dxview-regions-diagnostic.txt"),
     ("HamQSL summary", PUBLIC/"data/hamqsl-summary.json", READER/"hamqsl-summary.txt"),
     ("HamQSL diagnostic", PUBLIC/"diagnostics/hamqsl-diagnostic.json", READER/"hamqsl-diagnostic.txt"),
     ("NOAA summary", PUBLIC/"data/noaa-summary.json", READER/"noaa-summary.txt"),
@@ -20,6 +22,8 @@ SOURCES = [
     ("GIRO diagnostic", PUBLIC/"diagnostics/giro-diagnostic.json", READER/"giro-diagnostic.txt"),
     ("PSKReporter HF summary", PUBLIC/"data/pskreporter-hf-summary.json", READER/"pskreporter-hf-summary.txt"),
     ("PSKReporter diagnostic", PUBLIC/"diagnostics/pskreporter-diagnostic.json", READER/"pskreporter-diagnostic.txt"),
+    ("PSKReporter regional summary", PUBLIC/"data/pskreporter-hf-regions.json", READER/"pskreporter-hf-regions.txt"),
+    ("PSKReporter regional diagnostic", PUBLIC/"diagnostics/pskreporter-regions-diagnostic.json", READER/"pskreporter-regions-diagnostic.txt"),
 ]
 
 def load(path: Path) -> Any:

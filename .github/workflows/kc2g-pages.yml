@@ -84,6 +84,14 @@ jobs:
         continue-on-error: true
         run: python scripts/collect_pskreporter.py
 
+      - name: Collect regional PSKReporter HF observations
+        continue-on-error: true
+        run: python scripts/collect_pskreporter_regions.py
+
+      - name: Collect regional DXView perspectives
+        continue-on-error: true
+        run: python scripts/collect_dxview_regions.py
+
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
 
@@ -113,6 +121,14 @@ jobs:
             public/diagnostics/pskreporter-diagnostic.json
             public/reader/pskreporter-hf-summary.txt
             public/reader/pskreporter-diagnostic.txt
+            public/data/pskreporter-hf-regions.json
+            public/diagnostics/pskreporter-regions-diagnostic.json
+            public/reader/pskreporter-hf-regions.txt
+            public/reader/pskreporter-regions-diagnostic.txt
+            public/data/dxview-regions-summary.json
+            public/diagnostics/dxview-regions-diagnostic.json
+            public/reader/dxview-regions-summary.txt
+            public/reader/dxview-regions-diagnostic.txt
           )
           snapshot="$RUNNER_TEMP/generated-data"
           git fetch origin generated-data
