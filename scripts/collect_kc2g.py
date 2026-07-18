@@ -13,6 +13,8 @@ import hdf5plugin  # noqa: F401 - registra filtros HDF5/SZ
 import numpy as np
 import requests
 
+from scripts.regionalization import SPAIN_POINTS, build_region_summaries
+
 BASE = "https://prop.kc2g.com/api"
 PUBLIC = Path("public")
 DATA = PUBLIC / "data"
@@ -23,21 +25,6 @@ IN91PO = {
     "name": "IN91PO",
     "latitude": 41.6041667,
     "longitude": -0.7083333,
-}
-
-SPAIN_POINTS = {
-    "A_Coruna": (43.3623, -8.4115),
-    "Bilbao": (43.2630, -2.9350),
-    "IN91PO": (IN91PO["latitude"], IN91PO["longitude"]),
-    "Barcelona": (41.3874, 2.1686),
-    "Madrid": (40.4168, -3.7038),
-    "Valencia": (39.4699, -0.3763),
-    "Murcia": (37.9922, -1.1307),
-    "Sevilla": (37.3891, -5.9845),
-    "Malaga": (36.7213, -4.4214),
-    "Palma": (39.5696, 2.6502),
-    "Las_Palmas": (28.1235, -15.4363),
-    "Santa_Cruz_Tenerife": (28.4636, -16.2518),
 }
 
 SESSION = requests.Session()
@@ -347,32 +334,6 @@ def main() -> int:
                 }
             )
 
-        mainland_names = {
-            "A_Coruna", "Bilbao", "IN91PO", "Barcelona", "Madrid",
-            "Valencia", "Murcia", "Sevilla", "Malaga"
-        }
-        mainland = [p for p in points if p["name"] in mainland_names]
-        balearics = [p for p in points if p["name"] == "Palma"]
-        canaries = [
-            p for p in points
-            if p["name"] in {"Las_Palmas", "Santa_Cruz_Tenerife"}
-        ]
-
-        def summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
-            return {
-                "points": len(rows),
-                "fof2_mhz": {
-                    "median": round(float(np.median([p["fof2_mhz"] for p in rows])), 3),
-                    "min": round(float(np.min([p["fof2_mhz"] for p in rows])), 3),
-                    "max": round(float(np.max([p["fof2_mhz"] for p in rows])), 3),
-                },
-                "mufd_mhz": {
-                    "median": round(float(np.median([p["mufd_mhz"] for p in rows])), 3),
-                    "min": round(float(np.min([p["mufd_mhz"] for p in rows])), 3),
-                    "max": round(float(np.max([p["mufd_mhz"] for p in rows])), 3),
-                },
-            }
-
         spain_payload = {
             "source": "KC2G assimilated HDF5",
             "generated_at": now_utc().isoformat(),
@@ -383,11 +344,7 @@ def main() -> int:
                 "Resumen de puntos representativos; no es una integración "
                 "areal exacta de todo el territorio."
             ),
-            "regions": {
-                "mainland": {"summary": summary(mainland), "points": mainland},
-                "balearics": {"summary": summary(balearics), "points": balearics},
-                "canaries": {"summary": summary(canaries), "points": canaries},
-            },
+            "regions": build_region_summaries(points),
         }
         write_json(DATA / "kc2g-spain.json", spain_payload)
 

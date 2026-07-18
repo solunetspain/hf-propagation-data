@@ -9,6 +9,8 @@ on:
     paths:
       - ".github/workflows/kc2g-pages.yml"
       - "scripts/collect_kc2g.py"
+      - "scripts/regionalization.py"
+      - "tests/test_regionalization.py"
       - "scripts/collect_dxview.py"
       - "scripts/build_dxview_summary.py"
       - "scripts/collect_hamqsl.py"
@@ -45,6 +47,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
 
       - name: Collect and validate KC2G
         run: python scripts/collect_kc2g.py
