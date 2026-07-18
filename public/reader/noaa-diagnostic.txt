@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T22:37:01.239411+00:00",
+  "generated_at": "2026-07-18T22:37:35.725171+00:00",
   "status": "ok",
   "requests": [
     {
@@ -41,14 +41,7 @@
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163028,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 59066,
+      "bytes": 163025,
       "usable": true
     },
     {
@@ -80,7 +73,9 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "protons: Expecting value: line 1 column 59067 (char 59066)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
@@ -88,13 +83,13 @@
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
-    "protons": true,
+    "protons": false,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
