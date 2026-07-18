@@ -42,7 +42,7 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Collect and validate KC2G
-        run: python scripts/collect_kc2g.py
+        run: python -m scripts.collect_kc2g
 
       - name: Collect and validate DXView
         id: dxview
