@@ -86,11 +86,11 @@ jobs:
 
       - name: Collect regional PSKReporter HF observations
         continue-on-error: true
-        run: python scripts/collect_pskreporter_regions.py
+        run: python -m scripts.collect_pskreporter_regions
 
       - name: Collect regional DXView perspectives
         continue-on-error: true
-        run: python scripts/collect_dxview_regions.py
+        run: python -m scripts.collect_dxview_regions
 
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
