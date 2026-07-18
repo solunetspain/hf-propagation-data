@@ -80,9 +80,6 @@ jobs:
         continue-on-error: true
         run: python scripts/collect_pskreporter.py
 
-      - name: Build canonical Spanish web report
-        run: python scripts/build_web_report.py
-
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
 
@@ -95,6 +92,7 @@ jobs:
       - name: Prepare web files
         run: |
           cp site/index.html public/index.html
+          install -D -m 0644 site/api/v1/latest.json public/api/v1/latest.json
           touch public/.nojekyll
 
       - name: Configure Pages
