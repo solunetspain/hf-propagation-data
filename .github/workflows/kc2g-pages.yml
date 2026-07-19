@@ -92,6 +92,13 @@ jobs:
         continue-on-error: true
         run: python -m scripts.collect_dxview_regions
 
+      - name: Validate regional activity artifacts
+        run: |
+          test -s public/data/pskreporter-hf-regions.json
+          test -s public/diagnostics/pskreporter-regions-diagnostic.json
+          test -s public/data/dxview-regions-summary.json
+          test -s public/diagnostics/dxview-regions-diagnostic.json
+
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
 
