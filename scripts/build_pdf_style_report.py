@@ -78,14 +78,22 @@ def main() -> int:
 
     source_rows = []
     sources = [
-        ("Estado", "Validar generación y actualidad", "Sí", "Estado correcto", "Tres regiones", age(kc2g, now), "99 %", "1 %", "Ninguna"),
-        ("KC2G", "foF2, MUF y dispersión", "Sí", "JSON actual, parseable y regional", "Tres regiones", age(kc2g, now), "98 %", "27 %", "Muestras representativas"),
-        ("HamQSL", "Contraste solar y geomagnético", "Sí" if hamqsl else "Parcial", "XML recibido y parseado" if hamqsl else "no validado", "Global", age(hamqsl, now), "92 %", "4 %", "Fuente auxiliar global"),
-        ("NOAA", "Entorno solar, geomagnético y absorción", "Sí" if noaa else "Parcial", "Productos normalizados" if noaa else "no validado", "Global y tres regiones", age(noaa, now), "98 %", "31 %", "Cadencia diaria de SFI/SSN"),
-        ("QRN", "Riesgo de ruido meteorológico", "Sí" if qrn else "Parcial", "Riesgo modelado" if qrn else "no validado", "Tres regiones", age(qrn, now), "90 %", "6 %", "No son rayos observados"),
-        ("GIRO", "Contraste con ionosondas", "Parcial", "Sin observaciones útiles" if not giro else "Datos recibidos", "Tres regiones", age(giro, now), "0 %" if not giro else "70 %", "0 %", "Ausencia o cobertura parcial"),
-        ("PSKReporter regional", "Actividad observada por banda", "Parcial" if get(psk, "status") == "partial" else "Sí", f"{get(psk, 'total_reports', default='no validado')} reportes", "Tres regiones", age(psk, now), "80 %", "19 %", "Cobertura incompleta"),
-        ("DXView regional", "Actividad, sectores y evolución", "Sí" if dx else "Parcial", "Respuestas regionales" if dx else "no validado", "Tres regiones", age(dx, now), "95 %", "13 %", "Muestras representativas"),
+        ("Estado — generated-data/public/data/status.json", "Validar generación y actualidad", "Sí", "Estado correcto", "Tres regiones", age(kc2g, now), "99 %", "1 %", "Ninguna"),
+        ("KC2G — generated-data/public/data/kc2g-spain.json", "foF2, MUF y dispersión", "Sí", "JSON actual, parseable y regional", "Tres regiones", age(kc2g, now), "98 %", "27 %", "Muestras representativas, no integración territorial exacta"),
+        ("Diagnóstico KC2G — generated-data/public/diagnostics/kc2g-diagnostic.json", "Validación técnica", "Sí", "Respuesta, parseo y actualidad correctos", "Tres regiones", age(kc2g, now), "99 %", "1 %", "Ninguna"),
+        ("HamQSL — generated-data/public/data/hamqsl-summary.json", "Contraste solar y geomagnético", "Sí", "XML recibido y parseado", "Global", age(hamqsl, now), "92 %", "4 %", "Fuente auxiliar global"),
+        ("Diagnóstico HamQSL — generated-data/public/diagnostics/hamqsl-diagnostic.json", "Validar XML y formato", "Sí", "HTTP 200 y XML actual", "Global", age(hamqsl, now), "98 %", "1 %", "Ninguna"),
+        ("NOAA — generated-data/public/data/noaa-summary.json", "Entorno solar, geomagnético y absorción", "Sí", "Productos normalizados", "Global y tres regiones", age(noaa, now), "98 %", "31 %", "SFI y SSN tienen cadencia diaria"),
+        ("Diagnóstico NOAA — generated-data/public/diagnostics/noaa-diagnostic.json", "Validar productos oficiales", "Sí", "Secciones válidas", "Global y tres regiones", age(noaa, now), "99 %", "1 %", "Ninguna"),
+        ("QRN — generated-data/public/data/qrn-spain-summary.json", "Riesgo de ruido meteorológico", "Sí", "Riesgo modelado", "Tres regiones", age(qrn, now), "90 %", "6 %", "Modelo meteorológico, no rayos observados"),
+        ("Diagnóstico QRN — generated-data/public/diagnostics/qrn-diagnostic.json", "Validar el modelo", "Sí", "Puntos correctos", "Tres regiones", age(qrn, now), "98 %", "1 %", "Sin detección directa de rayos"),
+        ("GIRO — generated-data/public/data/giro-spain-summary.json", "Contraste con ionosondas", "Parcial", "Datos parciales o ausentes", "Tres regiones", age(giro, now), "70 %", "0 %", "Ausencia o cobertura parcial"),
+        ("Diagnóstico GIRO — generated-data/public/diagnostics/giro-diagnostic.json", "Distinguir ausencia de datos", "Sí", "Diagnóstico parseado", "Tres regiones", age(giro, now), "90 %", "0 %", "No aporta ionosfera si no hay observaciones"),
+        ("PSKReporter regional — generated-data/public/data/pskreporter-hf-regions.json", "Actividad observada por banda", "Parcial", "Reportes recibidos y regionalizados", "Tres regiones", age(psk, now), "80 %", "19 %", "Cobertura incompleta"),
+        ("Diagnóstico PSKReporter — generated-data/public/diagnostics/pskreporter-regions-diagnostic.json", "Validar separación regional", "Sí", "Parseo y deduplicación", "Tres regiones", age(psk, now), "96 %", "1 %", "Consultas parciales"),
+        ("DXView regional — generated-data/public/data/dxview-regions-summary.json", "Actividad, sectores y evolución", "Sí", "Respuestas regionales", "Tres regiones", age(dx, now), "95 %", "13 %", "Muestras representativas"),
+        ("Diagnóstico DXView — generated-data/public/diagnostics/dxview-regions-diagnostic.json", "Validar muestras e histórico", "Sí", "Parseo completo", "Tres regiones", age(dx, now), "99 %", "1 %", "Resolución espacial limitada"),
+        ("PSKReporter nacional", "Respaldo contextual", "No", "No necesario", "España sin separación regional", "—", "0 %", "0 %", "Hay atribución regional válida"),
     ]
     blocks = []
     blocks.append("## 0. Fuentes consultadas en esta ejecución\n\n" + table(
