@@ -64,18 +64,23 @@ def direction_text(value: dict[str, Any]) -> str:
 
 def sectors_text(value: dict[str, Any]) -> str:
     sectors = value.get("main_sectors", [])
+    compass = {
+        "000-029": "N", "030-059": "NE", "060-089": "E",
+        "090-119": "ESE", "120-149": "SE", "150-179": "S",
+        "180-209": "SSW", "210-239": "SW", "240-269": "W",
+        "270-299": "WNW", "300-329": "NW", "330-359": "NNW",
+    }
     names = []
     for sector in sectors:
-        if isinstance(sector, dict):
-            name = sector.get("sector") or sector.get("name") or sector.get("label")
-            if name:
-                names.append(str(name))
-        elif sector:
-            names.append(str(sector))
+        raw = sector.get("sector") if isinstance(sector, dict) else sector
+        if raw:
+            names.append(compass.get(str(raw), str(raw)))
     return ", ".join(names) or "Sin sector dominante"
 
 def modes_text(value: dict[str, Any]) -> str:
     modes = value.get("mode_view_counts") or value.get("modes", {})
+    if all(key in modes for key in ("cw", "digital", "ssb")):
+        return "CW/digital/SSB"
     return ", ".join(f"{k}={v}" for k, v in sorted(modes.items())) or "Sin modos"
 
 def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
