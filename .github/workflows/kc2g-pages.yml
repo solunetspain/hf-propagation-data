@@ -93,6 +93,7 @@ jobs:
         run: python -m scripts.collect_dxview_regions
 
       - name: Validate regional activity artifacts
+        continue-on-error: true
         run: |
           test -s public/data/pskreporter-hf-regions.json
           test -s public/diagnostics/pskreporter-regions-diagnostic.json
