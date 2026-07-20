@@ -201,7 +201,7 @@ def main() -> int:
         fof2 = float(get(s, "fof2_mhz", "median", default=0) or 0)
         d_bands = get(dx, "regions", key, "bands", default={})
         for band, ref in [("80 m", "0"), ("40 m", "7"), ("20 m", "14")]:
-            psk_count = get(psk, "regions", key, "bands", ref.replace(" ", ""), "report_count", default=0)
+            psk_count = get(psk, "regions", key, "bands", {"0": "80m", "7": "40m", "14": "20m"}[ref], "report_count", default=0)
             zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
             absorption = "Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja"
             state = "Viable, penalizada" if band == "80 m" else ("Marginal/viable" if fof2 >= 7 else "Marginal")
