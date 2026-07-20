@@ -202,7 +202,11 @@ Son índices documentales y predictivos, no probabilidades calibradas de QSO."""
 
 En **{label}**, empiece por la banda de referencia del bloque 1. El entorno solar está tranquilo; confirme siempre la señal en la estación real."""
     ]
-    blocks[0] += subdetail\n    blocks[6] += subdetail\n    blocks[8] += psk_detail + dx_detail\n    blocks[15] += "\n\n### Diagnóstico observacional\n\nPSKReporter: " + str(diagnostics.get("status", "no validado")) + ". Consultas con error: " + ", ".join(diagnostics.get("errors", []))\n    return {"label": label, "status": "ok", "report_markdown": "\n\n".join(blocks)}
+    blocks[0] += subdetail
+    blocks[6] += subdetail
+    blocks[8] += psk_detail + dx_detail
+    blocks[15] += "\n\n### Diagnóstico observacional\n\nPSKReporter: " + str(diagnostics.get("status", "no validado")) + ". Consultas con error: " + ", ".join(diagnostics.get("errors", []))
+    return {"label": label, "status": "ok", "report_markdown": "\n\n".join(blocks)}
 
 def main() -> int:
     now = datetime.now(timezone.utc)
