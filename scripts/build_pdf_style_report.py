@@ -209,7 +209,7 @@ def main() -> int:
     for key, label, _ in REGIONS:
         dx_bands = get(dx, "regions", key, "bands", default={})
         psk_bands = get(psk, "regions", key, "bands", default={})
-        for band in ["7", "14", "18", "21", "24", "28"]:
+        for band in ["0", "3", "7", "14", "18", "21", "24", "28"]:
             dvalue = dx_bands.get(band, {})
             pvalue = psk_bands.get(band_label(band).replace(" ", ""), {})
             zones = get(dvalue, "activity_zone_count", default={})
