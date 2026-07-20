@@ -71,6 +71,18 @@
   </p>
 
   <div class="card">
+    <h2>Informe HF más reciente</h2>
+    <div id="latest-report-status">Cargando…</div>
+    <pre id="latest-report"></pre>
+    <p>
+      <strong>Flags:</strong>
+      <code>publication.publish_web</code> controla la publicación web y
+      <code>publication.publish_chat</code> controla la publicación en el chat.
+      Pon cada valor en <code>true</code> para activar o en <code>false</code> para desactivar.
+    </p>
+  </div>
+
+  <div class="card">
     <h2>Estado KC2G</h2>
     <div id="kc2g-status">Cargando…</div>
   </div>
@@ -302,6 +314,32 @@
         return false;
       }
     );
+
+    fetch("api/v1/latest.json", { cache: "no-store" })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
+        return response.json();
+      })
+      .then(data => {
+        const publication = data.publication || {};
+        const status = document.getElementById("latest-report-status");
+        const report = document.getElementById("latest-report");
+        const webEnabled = publication.publish_web === true;
+        const chatEnabled = publication.publish_chat === true;
+        status.className = webEnabled ? "ok" : "warning";
+        status.textContent = webEnabled
+          ? `PUBLICADO EN WEB · Chat ${chatEnabled ? "ACTIVO" : "DESACTIVADO"}`
+          : `WEB DESACTIVADA · Chat ${chatEnabled ? "ACTIVO" : "DESACTIVADO"}`;
+        report.textContent = webEnabled
+          ? (data.report_markdown || "No hay informe disponible.")
+          : "La publicación web está desactivada por publication.publish_web=false.";
+      })
+      .catch(error => {
+        document.getElementById("latest-report-status").className = "error";
+        document.getElementById("latest-report-status").textContent = "No se pudo cargar el informe";
+        document.getElementById("latest-report").textContent = String(error);
+      });
+
   </script>
 </body>
 </html>
