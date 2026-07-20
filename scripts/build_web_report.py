@@ -278,7 +278,7 @@ def reliability(
 def sources_table(
     region: str, sources: dict[str, dict[str, Any] | None], now: datetime
 ) -> str:
-    regional_observation = region == "peninsula"
+    regional_observation = True
     rows = [
         (
             "KC2G",
@@ -355,8 +355,8 @@ def build_region(
     primary = supported_band(summary)
     qrn, qrn_valid = qrn_assessment(sources["qrn"], region)
     drap, drap_valid = drap_assessment(sources["noaa"], region)
-    dx_bands = observed_bands(sources["dxview"], "dxview") if region == "peninsula" else []
-    psk_bands = observed_bands(sources["psk"], "psk") if region == "peninsula" else []
+    dx_bands = observed_bands(sources["dxview"], "dxview")
+    psk_bands = observed_bands(sources["psk"], "psk")
     observed = bool(dx_bands or psk_bands)
     confidence = reliability(region, summary, sources["noaa"], qrn_valid, observed)
     confidence_label = "alta" if confidence >= 75 else "media" if confidence >= 50 else "baja"
@@ -374,8 +374,7 @@ def build_region(
     observation_text = (
         "DXView: " + (", ".join(dx_bands) if dx_bands else "sin actividad útil")
         + "; PSKReporter: " + (", ".join(psk_bands) if psk_bands else "sin informes útiles")
-        if region == "peninsula"
-        else "No se reutilizan DXView ni PSKReporter de IN91/IN91PO para esta región; su peso es cero."
+        + ". La atribución regional se conserva; las cubetas gruesas y el sesgo digital quedan declarados como limitaciones."
     )
     trend_text = (
         "La serie regional no contiene todavía histórico propio suficiente. "
@@ -399,8 +398,8 @@ def build_region(
         "No se mide el ruido local, la antena, la potencia ni la ocupación de banda.",
         "La geometría exacta del terminador no forma parte del conjunto validado actual.",
     ]
-    if region != "peninsula":
-        uncertainties.append("No hay confirmación observacional regional DXView/PSKReporter; su peso es cero.")
+    if not observed:
+        uncertainties.append("No hay confirmación observacional regional DXView/PSKReporter en esta ejecución.")
     if region == "peninsula" and len(subregion_bands) > 1:
         uncertainties.append("Las macrozonas peninsulares cambian la banda conservadora de referencia.")
 
