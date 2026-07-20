@@ -167,7 +167,7 @@ def main() -> int:
         [[row[0], row[2], "Completo", "Actual", row[4], row[6], row[7], row[8]] for row in sources]))
     blocks.append("## 6. Estado ionosférico KC2G\n\n" + table(
         ["Región", "foF2 mediana", "foF2 mín.-máx.", "Dispersión foF2", "MUF(3000) mediana", "MUF mín.-máx.", "Dispersión MUF", "FOT 85 %, cálculo"],
-        [[label, num(get(summaries[key], "fof2_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'fof2_mhz', 'min'))}-{num(get(summaries[key], 'fof2_mhz', 'max'))} MHz", num(get(summaries[key], "fof2_mhz", "std"), suffix=" MHz"), num(get(summaries[key], "mufd_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'mufd_mhz', 'min'))}-{num(get(summaries[key], 'mufd_mhz', 'max'))} MHz", num(get(summaries[key], "mufd_mhz", "std"), suffix=" MHz"), num(float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)*.85, suffix=" MHz")] for key, label, _ in REGIONS]))
+        [[label, num(get(summaries[key], "fof2_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'fof2_mhz', 'min'))}-{num(get(summaries[key], 'fof2_mhz', 'max'))} MHz", num(get(summaries[key], "fof2_mhz", "spread"), suffix=" MHz"), num(get(summaries[key], "mufd_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'mufd_mhz', 'min'))}-{num(get(summaries[key], 'mufd_mhz', 'max'))} MHz", num(get(summaries[key], "mufd_mhz", "spread"), suffix=" MHz"), num(float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)*.85, suffix=" MHz")] for key, label, _ in REGIONS]))
     history = get(dx, "history", default=[])
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
@@ -188,7 +188,7 @@ def main() -> int:
                 modes_text(dvalue),
                 ", ".join(get(dvalue, "main_sectors", default=[])) or "Sin sector dominante",
                 f"{get(pvalue, 'report_count', default=0)} / {get(pvalue, 'station_count', default=0)} / {get(pvalue, 'route_count', default=0)}",
-                num(get(pvalue, "distance_km", "median", default=None), suffix=" km"),
+                (num(get(pvalue, "distance_km", "median", default=None), suffix=" km") if get(pvalue, "report_count", default=0) else "Sin rutas observadas"),
                 trend_text(history, key, band),
             ])
     blocks.append("## 8. Actividad DXView observada\n\n" + table(
