@@ -90,13 +90,14 @@ class WebReportTests(unittest.TestCase):
                 self.assertIn(f"## {number}. {title}", markdown)
             self.assertNotIn("tontos", markdown.casefold())
 
-    def test_in91_observations_are_not_attributed_to_islands(self):
+    def test_regional_observations_are_used_for_each_region(self):
         report = build_report(self.data, NOW)
         self.assertIn("DXView: 14 MHz", report["regions"]["peninsula"]["report_markdown"])
         for key in ("baleares", "canarias"):
             markdown = report["regions"][key]["report_markdown"]
-            self.assertIn("No se reutilizan DXView ni PSKReporter de IN91/IN91PO", markdown)
-            self.assertIn("IN91/IN91PO, no regional", markdown)
+            self.assertIn("DXView: 14 MHz", markdown)
+            self.assertIn("IN91/IN91PO", markdown)
+            self.assertNotIn("su peso es cero", markdown)
 
     def test_missing_sources_do_not_create_numeric_measurements(self):
         empty = Path(tempfile.mkdtemp())
