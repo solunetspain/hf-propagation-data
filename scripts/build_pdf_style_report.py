@@ -62,6 +62,18 @@ def direction_text(value: dict[str, Any]) -> str:
     directions = value.get("directions", {})
     return ", ".join(f"{k.replace('_', ' ')}={v}" for k, v in directions.items()) or "Sin rutas clasificadas"
 
+def sectors_text(value: dict[str, Any]) -> str:
+    sectors = value.get("main_sectors", [])
+    names = []
+    for sector in sectors:
+        if isinstance(sector, dict):
+            name = sector.get("sector") or sector.get("name") or sector.get("label")
+            if name:
+                names.append(str(name))
+        elif sector:
+            names.append(str(sector))
+    return ", ".join(names) or "Sin sector dominante"
+
 def modes_text(value: dict[str, Any]) -> str:
     modes = value.get("modes", {})
     return ", ".join(f"{k}={v}" for k, v in sorted(modes.items())) or "Sin modos"
@@ -186,7 +198,7 @@ def main() -> int:
                 label, band_label(band),
                 f"{num(zones.get('minimum'))} / {num(zones.get('median'))} / {num(zones.get('maximum'))}",
                 modes_text(dvalue),
-                ", ".join(get(dvalue, "main_sectors", default=[])) or "Sin sector dominante",
+                sectors_text(dvalue),
                 f"{get(pvalue, 'report_count', default=0)} / {get(pvalue, 'station_count', default=0)} / {get(pvalue, 'route_count', default=0)}",
                 (num(get(pvalue, "distance_km", "median", default=None), suffix=" km") if get(pvalue, "report_count", default=0) else "Sin rutas observadas"),
                 trend_text(history, key, band),
