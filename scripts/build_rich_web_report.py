@@ -80,6 +80,30 @@ def build_region(region: str, label: str, kc2g: dict[str, Any], noaa: dict[str, 
 | PSKReporter regional | Actividad observada | {psk.get("status", "no validado")} | {age(psk, now)} | 19 % |
 | DXView regional | Actividad y sectores | {dx.get("status", "no validado")} | {age(dx, now)} | 13 % |
 | GIRO | Contraste ionosférico | Parcial | — | 0 % |"""
+    subdetail = ""
+    if region == "peninsula":
+        rows = []
+        for key, value in (kc2g.get("regions", {}).get("mainland", {}).get("subregions", {}) or {}).items():
+            sub = value.get("summary", {})
+            rows.append("| " + str(value.get("label", key)) + " | " + num(sub.get("fof2_mhz", {}).get("median")) + " MHz | " + num(sub.get("mufd_mhz", {}).get("median")) + " MHz |")
+        if rows:
+            subdetail = "\n\n### Macrozona peninsular\n\n| Macrozona | foF2 mediana | MUF(3000) mediana |\n|---|---:|---:|\n" + "\n".join(rows)
+    psk_rows = []
+    for band, value in sorted((regional_psk.get("bands", {}) or {}).items()):
+        dist = value.get("distance_km", {})
+        modes = ", ".join(sorted((value.get("modes", {}) or {}).keys())) or "no validado"
+        psk_rows.append("| " + str(band) + " | " + str(value.get("report_count", 0)) + " | " + str(value.get("station_count", 0)) + " | " + num(dist.get("median")) + " km | " + modes + " |")
+    psk_detail = ""
+    if psk_rows:
+        psk_detail = "\n\n### PSKReporter por banda\n\n| Banda | Reportes | Estaciones | Distancia mediana | Modos |\n|---|---:|---:|---:|---|\n" + "\n".join(psk_rows)
+    dx_rows = []
+    for band, value in sorted((dx.get("regions", {}).get(region, {}).get("bands", {}) or {}).items(), key=lambda item: int(item[0]) if str(item[0]).isdigit() else 999):
+        activity = value.get("activity_zone_count", {})
+        if isinstance(activity, dict):
+            dx_rows.append("| " + str(band) + " | " + num(activity.get("minimum"), 0) + "–" + num(activity.get("maximum"), 0) + " | " + num(activity.get("median"), 1) + " | " + str(value.get("classification", "observed_regional_sample")) + " |")
+    dx_detail = ""
+    if dx_rows:
+        dx_detail = "\n\n### DXView por banda\n\n| Banda | Zonas mín.–máx. | Mediana | Clasificación |\n|---|---:|---:|---|\n" + "\n".join(dx_rows)
     blocks = [
         f"""## 0. Fuentes consultadas en esta ejecución
 
@@ -178,7 +202,7 @@ Son índices documentales y predictivos, no probabilidades calibradas de QSO."""
 
 En **{label}**, empiece por la banda de referencia del bloque 1. El entorno solar está tranquilo; confirme siempre la señal en la estación real."""
     ]
-    return {"label": label, "status": "ok", "report_markdown": "\n\n".join(blocks)}
+    blocks[0] += subdetail\n    blocks[6] += subdetail\n    blocks[8] += psk_detail + dx_detail\n    blocks[15] += "\n\n### Diagnóstico observacional\n\nPSKReporter: " + str(diagnostics.get("status", "no validado")) + ". Consultas con error: " + ", ".join(diagnostics.get("errors", []))\n    return {"label": label, "status": "ok", "report_markdown": "\n\n".join(blocks)}
 
 def main() -> int:
     now = datetime.now(timezone.utc)
