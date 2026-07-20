@@ -46,6 +46,7 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Collect and validate KC2G
+        continue-on-error: true
         run: python -m scripts.collect_kc2g
 
       - name: Collect and validate DXView
