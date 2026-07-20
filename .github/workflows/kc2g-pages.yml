@@ -104,7 +104,7 @@ jobs:
           test -s public/diagnostics/dxview-regions-diagnostic.json
 
       - name: Build canonical Spanish web report
-        run: python scripts/build_rich_web_report.py
+        run: python scripts/build_pdf_style_report.py
 
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
