@@ -29,6 +29,7 @@ jobs:
       pages: write
       id-token: write
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -187,6 +188,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
     steps:
       - name: Deploy Pages
@@ -194,3 +196,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
 # Pages deployment verified for the current site publication.
+
+# Stable scheduled and manual execution: bounded build and deploy times.
