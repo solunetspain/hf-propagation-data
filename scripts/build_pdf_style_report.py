@@ -156,17 +156,31 @@ def main() -> int:
         f"- DXView regional: {age(dx, now)}",
         "- Estado del informe: **degradado si alguna fuente es parcial; las limitaciones se conservan**.",
     ]))
+    def source_stamp(source: dict[str, Any], field: str) -> str:
+        value = get(source, "timestamp_utc", default="")
+        return f"{field}, {value}" if value else field
+
+    proton = get(current, "protons", default={})
+    electron = get(current, "electrons", default={})
+    est_kp = get(current, "geomagnetic_estimated_1m", default={})
+    ham_current = get(hamqsl, "current", default={})
     blocks.append("## 3. Estado solar y geomagnético\n\n" + table(
         ["Parámetro", "Valor", "Fuente", "Fiabilidad"],
         [
             ["SFI/F10.7", num(get(solar, "observed_flux_sfu"), suffix=" sfu"), "NOAA; HamQSL", "96 %"],
-            ["Número de manchas solares (SSN)", num(get(current, "sunspots", "sunspot_number"), 0), "NOAA", "96 %"],
-            ["Kp oficial", num(get(geomag, "kp")), "NOAA", "95 %"],
-            ["A", num(get(geomag, "a_index")), "NOAA", "94 %"],
-            ["Viento solar", num(get(wind, "speed_km_s"), suffix=" km/s"), "NOAA", "97 %"],
-            ["Bz GSM", num(get(magnetic, "bz_gsm_nt"), suffix=" nT"), "NOAA", "97 %"],
-            ["Rayos X", text(get(xray, "class")), "NOAA/GOES", "98 %"],
-            ["Estado activo", f"R{get(scales, 'R', 'Scale')}/S{get(scales, 'S', 'Scale')}/G{get(scales, 'G', 'Scale')}", "NOAA", "99 %"],
+            ["Número de manchas solares (SSN)", num(get(current, "sunspots", "sunspot_number"), 0), source_stamp(get(current, "sunspots", default={}), "NOAA"), "96 %"],
+            ["SSN auxiliar", num(get(ham_current, "sunspots"), 0), "HamQSL", "85 %"],
+            ["Kp oficial", num(get(geomag, "kp")), source_stamp(geomag, "NOAA"), "95 %"],
+            ["Kp estimado reciente", f"{num(get(est_kp, 'estimated_kp'))}; código {text(get(est_kp, 'kp_code'), 'sin código')}", source_stamp(est_kp, "NOAA"), "95 %"],
+            ["A", num(get(geomag, "a_index"), 0), source_stamp(geomag, "NOAA"), "94 %"],
+            ["Viento solar", f"{num(get(wind, 'speed_km_s'))} km/s; {num(get(wind, 'density_p_cm3'))} p/cm³", source_stamp(wind, "NOAA"), "97 %"],
+            ["Bz GSM", num(get(magnetic, "bz_gsm_nt"), suffix=" nT"), source_stamp(magnetic, "NOAA"), "97 %"],
+            ["Bt", num(get(magnetic, "bt_nt"), suffix=" nT"), source_stamp(magnetic, "NOAA"), "97 %"],
+            ["Rayos X", text(get(xray, "class")), source_stamp(xray, "NOAA/GOES"), "98 %"],
+            ["Protones ≥10 MeV", num(get(proton, "flux"), 3), source_stamp(proton, "NOAA/GOES"), "97 %"],
+            ["Electrones ≥2 MeV", num(get(electron, "flux"), 3), source_stamp(electron, "NOAA/GOES"), "92 %"],
+            ["Estado activo", f"R{get(scales, 'R', 'Scale')}/S{get(scales, 'S', 'Scale')}/G{get(scales, 'G', 'Scale')}", source_stamp(scales, "NOAA"), "99 %"],
+            ["Alertas HF", "Ninguna escala R, S o G activa" if all(str(get(scales, key, "Scale", default="0")) == "0" for key in ["R", "S", "G"]) else "Escala activa; consultar NOAA", "NOAA", "99 %"],
         ]))
     drap_rows = []
     for key, label, _ in REGIONS:
