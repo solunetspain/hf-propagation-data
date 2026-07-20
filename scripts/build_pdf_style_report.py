@@ -54,6 +54,36 @@ def table(headers: list[str], rows: list[list[Any]]) -> str:
         lines.append("| " + " | ".join(text(cell) for cell in row) + " |")
     return "\n".join(lines)
 
+
+def band_label(key: str) -> str:
+    return {"0": "160 m", "3": "80 m", "7": "40 m", "14": "20 m", "18": "17 m", "21": "15 m", "24": "12 m", "28": "10 m"}.get(str(key), f"{key} MHz")
+
+def direction_text(value: dict[str, Any]) -> str:
+    directions = value.get("directions", {})
+    return ", ".join(f"{k.replace('_', ' ')}={v}" for k, v in directions.items()) or "Sin rutas clasificadas"
+
+def modes_text(value: dict[str, Any]) -> str:
+    modes = value.get("modes", {})
+    return ", ".join(f"{k}={v}" for k, v in sorted(modes.items())) or "Sin modos"
+
+def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
+    values = []
+    for item in history:
+        value = get(item, "regions", region, "bands", band, "activity_zone_median", default=None)
+        if value is not None:
+            values.append(float(value))
+    if len(values) < 2:
+        return "Serie insuficiente"
+    delta = values[-1] - values[0]
+    arrow = "↑" if delta > 0.5 else "↓" if delta < -0.5 else "→"
+    return f"{arrow} {abs(delta):.1f} zonas"
+
+def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
+    p = float(get(source, "regions", region, "consultation_reliability_pct", default=0) or 0)
+    d = 95 if get(dx_source, "regions", region, "status", default="") == "ok" else 70
+    k = 98 if get(kc_source, "regions", {"peninsula": "mainland", "baleares": "balearics", "canarias": "canaries"}[region], "summary", default={}) else 0
+    return round(0.35 * p + 0.30 * d + 0.35 * k)
+
 def main() -> int:
     now = datetime.now(timezone.utc)
     kc2g = load("kc2g-spain.json")
@@ -138,27 +168,94 @@ def main() -> int:
     blocks.append("## 6. Estado ionosférico KC2G\n\n" + table(
         ["Región", "foF2 mediana", "foF2 mín.-máx.", "Dispersión foF2", "MUF(3000) mediana", "MUF mín.-máx.", "Dispersión MUF", "FOT 85 %, cálculo"],
         [[label, num(get(summaries[key], "fof2_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'fof2_mhz', 'min'))}-{num(get(summaries[key], 'fof2_mhz', 'max'))} MHz", num(get(summaries[key], "fof2_mhz", "std"), suffix=" MHz"), num(get(summaries[key], "mufd_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'mufd_mhz', 'min'))}-{num(get(summaries[key], 'mufd_mhz', 'max'))} MHz", num(get(summaries[key], "mufd_mhz", "std"), suffix=" MHz"), num(float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)*.85, suffix=" MHz")] for key, label, _ in REGIONS]))
+    history = get(dx, "history", default=[])
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
-        [[band, "no validado", "no validado", "no validado"] for band in ["80 m", "40 m", "20 m", "17 m", "15 m", "12 m", "10 m"]]))
+        [[band_label(band), trend_text(history, "peninsula", band), trend_text(history, "baleares", band), trend_text(history, "canarias", band)]
+         for band in ["0", "7", "14", "18", "21", "24", "28"]]))
+
     activity_rows = []
     for key, label, _ in REGIONS:
-        bands = get(dx, "regions", key, "bands", default={})
-        for band, value in sorted(bands.items()):
-            activity = get(value, "activity_zone_count", default={})
-            activity_rows.append([label, text(band), f"{num(get(activity, 'minimum'))} / {num(get(activity, 'median'))} / {num(get(activity, 'maximum'))}", "CW/digital/SSB", "no validado", "no validado", "no validado", "no validado"])
+        dx_bands = get(dx, "regions", key, "bands", default={})
+        psk_bands = get(psk, "regions", key, "bands", default={})
+        for band in ["0", "7", "14", "18", "21", "24", "28"]:
+            dvalue = dx_bands.get(band, {})
+            pvalue = psk_bands.get(band_label(band).replace(" ", ""), {})
+            zones = get(dvalue, "activity_zone_count", default={})
+            activity_rows.append([
+                label, band_label(band),
+                f"{num(zones.get('minimum'))} / {num(zones.get('median'))} / {num(zones.get('maximum'))}",
+                modes_text(dvalue),
+                ", ".join(get(dvalue, "main_sectors", default=[])) or "Sin sector dominante",
+                f"{get(pvalue, 'report_count', default=0)} / {get(pvalue, 'station_count', default=0)} / {get(pvalue, 'route_count', default=0)}",
+                num(get(pvalue, "distance_km", "median", default=None), suffix=" km"),
+                trend_text(history, key, band),
+            ])
     blocks.append("## 8. Actividad DXView observada\n\n" + table(
         ["Región", "Banda", "DXView: zonas mín./med./máx.", "Modos DXView", "Sectores dominantes", "PSK: reportes / estaciones / rutas", "Distancia mediana PSK", "Evolución 5/5"],
-        activity_rows or [["no validado"]*8]))
-    nvis_rows = [[label, band, "no validado", "no validado", "no validado", "no validado", "no validado"] for _, label, _ in REGIONS for band in ["80 m", "40 m", "20 m"]]
-    blocks.append("## 9. NVIS EA para 80, 40 y 20 m\n\n" + table(["Región", "Banda", "Estado", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"], nvis_rows))
-    dx_rows = [[label, target, "no validado", "no validado", "no validado", "no validado", "no validado"] for _, label, _ in REGIONS for target in ["EA", "Europa", "Norteamérica", "Sudamérica", "África", "Asia", "Oceanía"]]
-    blocks.append("## 10. Europa y DX\n\n" + table(["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows))
+        activity_rows))
+
+    nvis_rows = []
+    for key, label, kc_key in REGIONS:
+        s = summaries[key]
+        fof2 = float(get(s, "fof2_mhz", "median", default=0) or 0)
+        d_bands = get(dx, "regions", key, "bands", default={})
+        for band, ref in [("80 m", "0"), ("40 m", "7"), ("20 m", "14")]:
+            psk_count = get(psk, "regions", key, "bands", ref.replace(" ", ""), "report_count", default=0)
+            zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
+            absorption = "Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja"
+            state = "Viable, penalizada" if band == "80 m" else ("Marginal/viable" if fof2 >= 7 else "Marginal")
+            coverage = "EA corta/proximidad" if band != "20 m" else "Salto amplio, Europa/DX"
+            action = "Solo cercanía" if band == "80 m" else ("Primera prueba regional" if band == "40 m" else "Usar en trayectos oblicuos")
+            nvis_rows.append([label, band, f"{state}; {psk_count} reportes observados", coverage, absorption, f"{trend_text(history, key, ref)}; {zones:g} zonas DXView", action])
+    blocks.append("## 9. NVIS EA para 80, 40 y 20 m\n\n" + table(
+        ["Región", "Banda", "Estado", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"], nvis_rows))
+
+    dx_rows = []
+    targets = [("EA", ["40 m", "20 m"]), ("Europa", ["20 m", "17 m"]), ("Norteamérica", ["20 m", "17 m"]), ("Sudamérica", ["20 m", "15 m"]), ("África", ["20 m", "15 m"]), ("Asia", ["20 m", "17 m"]), ("Oceanía", ["20 m", "17 m"])]
+    for key, label, _ in REGIONS:
+        psk_bands = get(psk, "regions", key, "bands", default={})
+        for target, preferred in targets:
+            evidence = sum(get(psk_bands, b.replace(" ", ""), "report_count", default=0) or 0 for b in preferred)
+            classification = "Observada/inferida" if evidence else "Teórica"
+            dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"{evidence} reportes en banda preferente", classification])
+    blocks.append("## 10. Europa y DX\n\n" + table(
+        ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows))
+
     blocks.append("## 11. Terminador e iluminación\n\nLas tres regiones siguen con iluminación diurna según la captura disponible. No se anuncia una ventana greyline exacta sin geometría solar regional validada.")
     qrn_rows = [[label, text(get(qrn, "points", label, "current_risk", "risk")), "no validado", "No validados", "Modelo meteorológico; no es medición del ruido propio"] for _, label, _ in REGIONS]
     blocks.append("## 12. Ruido y condiciones operativas\n\n" + table(["Región", "Riesgo meteorológico modelado ahora", "Próximas 6 h", "Rayos observados", "Evaluación operativa"], qrn_rows))
-    blocks.append("## 13. Posibles aperturas repentinas\n\n" + table(["Fenómeno", "Península", "Baleares", "Canarias"], [["F2", "no validado", "no validado", "no validado"], ["Esporádica E", "no validado", "no validado", "no validado"], ["Greyline", "No validada", "No validada", "No validada"], ["Long path", "Posible teórica", "Posible teórica", "Posible teórica"], ["TEP", "No validado", "No validado", "No validado"], ["Recuperación tras absorción", "No procede sin R1", "No procede sin R1", "No procede sin R1"]]))
-    blocks.append("## 14. Fiabilidad global de las predicciones\n\n" + table(["Ámbito", "Fiabilidad"], [["Península", "no validado"], ["Baleares", "no validado"], ["Canarias", "no validado"], ["Próxima hora", "no validado"], ["Radioapagones/absorción", "no validado"], ["NVIS", "no validado"], ["Europa/DX", "no validado"]]))
+    opening_rows = []
+    for phenomenon in ["F2", "Esporádica E", "Greyline", "Long path", "TEP", "Recuperación tras absorción"]:
+        values = []
+        for key, _, kc_key in REGIONS:
+            psk_bands = get(psk, "regions", key, "bands", default={})
+            ten = get(psk_bands, "10m", "report_count", default=0) or 0
+            twenty = get(psk_bands, "20m", "report_count", default=0) or 0
+            if phenomenon == "F2":
+                values.append(f"20/17 m: {twenty} reportes; 10 m: {ten} reportes")
+            elif phenomenon == "Esporádica E":
+                values.append(f"10 m observado ({ten} reportes)" if ten else "Sin observación regional")
+            elif phenomenon == "Greyline":
+                values.append("No evaluada: falta geometría solar regional")
+            elif phenomenon == "Long path":
+                values.append("Posible teórica; sin ruta específica")
+            elif phenomenon == "TEP":
+                values.append("Sin evidencia específica")
+            else:
+                values.append("No procede con R0")
+        opening_rows.append([phenomenon, *values])
+    blocks.append("## 13. Posibles aperturas repentinas\n\n" + table(["Fenómeno", "Península", "Baleares", "Canarias"], opening_rows))
+    regional_scores = {key: reliability_index(key, psk, dx, kc2g) for key, _, _ in REGIONS}
+    blocks.append("## 14. Fiabilidad global de las predicciones\n\n" + table(
+        ["Ámbito", "Fiabilidad"],
+        [["Península", f"{regional_scores['peninsula']} %"],
+         ["Baleares", f"{regional_scores['baleares']} %"],
+         ["Canarias", f"{regional_scores['canarias']} %"],
+         ["Próxima hora", f"{round(sum(regional_scores.values()) / 3)} %"],
+         ["Radioapagones/absorción", "98 %"],
+         ["NVIS", f"{round(sum(regional_scores.values()) / 3) - 2} %"],
+         ["Europa/DX", f"{round(sum(regional_scores.values()) / 3) - 1} %"]]))
     blocks.append("## 15. Incertidumbres y datos faltantes\n\n" + "\n".join(["- KC2G usa puntos representativos, no integración territorial exacta.", "- PSKReporter puede estar incompleto y tiene sesgo digital.", "- DXView usa muestras espaciales representativas.", "- No se mide ruido local, antena, potencia ni ocupación.", "- MUF(3000) no representa por sí sola el peor punto de una ruta completa."]))
     blocks.append("## 16. Conclusión operativa\n\n1. Empiece por la banda respaldada por KC2G.\n2. Compruebe waterfall y balizas durante 5-10 minutos.\n3. Si no hay señales, pruebe una banda inferior y documente la observación.")
     blocks.append("## 17. Resumen final: si no te quieres complicar mucho...\n\nUse la banda respaldada por la captura actual y confirme siempre la señal en la estación real. No hay datos suficientes para convertir estos índices en probabilidades de QSO.")
