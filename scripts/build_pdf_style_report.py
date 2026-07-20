@@ -75,7 +75,7 @@ def sectors_text(value: dict[str, Any]) -> str:
     return ", ".join(names) or "Sin sector dominante"
 
 def modes_text(value: dict[str, Any]) -> str:
-    modes = value.get("modes", {})
+    modes = value.get("mode_view_counts") or value.get("modes", {})
     return ", ".join(f"{k}={v}" for k, v in sorted(modes.items())) or "Sin modos"
 
 def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
@@ -204,7 +204,7 @@ def main() -> int:
     for key, label, _ in REGIONS:
         dx_bands = get(dx, "regions", key, "bands", default={})
         psk_bands = get(psk, "regions", key, "bands", default={})
-        for band in ["0", "7", "14", "18", "21", "24", "28"]:
+        for band in ["7", "14", "18", "21", "24", "28"]:
             dvalue = dx_bands.get(band, {})
             pvalue = psk_bands.get(band_label(band).replace(" ", ""), {})
             zones = get(dvalue, "activity_zone_count", default={})
