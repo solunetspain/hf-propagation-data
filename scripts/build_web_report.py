@@ -209,7 +209,12 @@ def observed_bands(source: dict[str, Any] | None, kind: str) -> list[str]:
         if not isinstance(value, dict):
             continue
         if kind == "dxview":
-            count = finite(value.get("activity_zone_count")) or 0
+            raw_count = value.get("activity_zone_count")
+            count = (
+                finite(raw_count.get("median"))
+                if isinstance(raw_count, dict)
+                else finite(raw_count)
+            ) or 0
             mhz = finite(value.get("band_mhz")) or finite(key)
             if count > 0 and mhz is not None:
                 result.append(f"{mhz:g} MHz")
