@@ -88,6 +88,7 @@ jobs:
 
       - name: Collect regional PSKReporter HF observations
         continue-on-error: true
+        timeout-minutes: 6
         run: python -m scripts.collect_pskreporter_regions
 
       - name: Collect regional DXView perspectives
