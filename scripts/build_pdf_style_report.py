@@ -260,7 +260,7 @@ def main() -> int:
         ("PSKReporter nacional", "Respaldo contextual", "No", "No necesario", "España sin separación regional", "—", "0 %", "0 %", "Hay atribución regional válida"),
     ]
     blocks = []
-    blocks.append("## 0. Fuentes consultadas en esta ejecución\n\n" + table(
+    blocks.append("## Fuentes consultadas en esta ejecución\n\n" + table(
         ["Fuente", "Finalidad", "Consultada sí/no/parcial", "Resultado", "Región aplicable", "Antigüedad", "Fiabilidad de esta consulta (%)", "Peso", "Razón del fallo o limitación"],
         sources))
     executive = []
