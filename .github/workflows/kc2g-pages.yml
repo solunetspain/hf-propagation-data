@@ -47,8 +47,18 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Collect and validate KC2G
+        id: kc2g
         continue-on-error: true
         run: python -m scripts.collect_kc2g
+
+      - name: Restore last valid KC2G regional data
+        if: steps.kc2g.outcome != 'success'
+        run: |
+          git fetch origin generated-data
+          mkdir -p public/data public/diagnostics
+          git show origin/generated-data:public/data/kc2g-spain.json > public/data/kc2g-spain.json
+          git show origin/generated-data:public/diagnostics/kc2g-diagnostic.json > public/diagnostics/kc2g-diagnostic.json
+          echo "::warning::KC2G consulta fallida; se usa el último dato regional válido y se conserva su antigüedad."
 
       - name: Collect and validate DXView
         id: dxview
