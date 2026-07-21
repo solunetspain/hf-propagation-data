@@ -245,7 +245,7 @@ Si sabes poco de propagación, empieza aquí:
 
 ### Lectura visual
 
-✅ favorable o primera opción.<br>⚠️ alternativa o condición variable.<br>🔴 no empezar por esa banda con F2 normal.<br>🔎 actividad observada.<br>🧩 posibilidad inferida.<br>📐 posibilidad teórica.
+🔎 actividad observada.<br>🧩 posibilidad inferida.<br>📐 posibilidad teórica.
 
 **Importante:** una MUF alta no garantiza un contacto. También influyen la ruta completa, la absorción, el ruido, la antena, la potencia y la estación corresponsal.
 
@@ -359,7 +359,7 @@ Si sabes poco de propagación, empieza aquí:
         psk_bands = get(psk, "regions", key, "bands", default={})
         for target, preferred in targets:
             evidence = sum(get(psk_bands, b.replace(" ", ""), "report_count", default=0) or 0 for b in preferred)
-            classification = "🔎 Observada<br>🧩 Inferida" if evidence else "📐 Teórica"
+            classification = "Inferida" if evidence else "Teórica"
             dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"🔎 {evidence} reportes observados en banda preferente; destino inferido" if evidence else "Sin observación directa; posibilidad física", classification])
     blocks.append("## 10. Europa y DX\n\n" + table(
         ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows) + "\n\n**Leyenda:**<br>🔎 actividad observada: existe actividad registrada directamente por una fuente.<br>🧩 posibilidad inferida: se deduce de varios indicios, pero no está observada de forma directa.<br>📐 posibilidad teórica: es físicamente posible, pero no hay confirmación observacional específica.")
