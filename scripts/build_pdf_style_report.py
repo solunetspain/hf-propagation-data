@@ -112,7 +112,7 @@ def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, 
     dx_coverage = min(dx_samples / 6.0, 1.0)
     coverage = 0.50 * kc_coverage + 0.30 * psk_coverage + 0.20 * dx_coverage
 
-    return round(0.70 * quality + 0.30 * coverage * 100)
+    return round(0.80 * quality + 0.20 * coverage * 100)
 
 
 NOTES = {
