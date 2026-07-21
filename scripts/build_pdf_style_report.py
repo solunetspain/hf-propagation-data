@@ -243,11 +243,6 @@ Si sabes poco de propagación, empieza aquí:
 4. Si no encuentras señales, prueba la alternativa.
 5. Si una banda aparece en «evitar», no significa que sea imposible: significa que no conviene empezar por ella con F2 normal.
 
-### Lectura visual
-
-🔎 actividad observada.<br>🧩 posibilidad inferida.<br>📐 posibilidad teórica.
-
-**Importante:** una MUF alta no garantiza un contacto. También influyen la ruta completa, la absorción, el ruido, la antena, la potencia y la estación corresponsal.
 
 ### Glosario mínimo
 
