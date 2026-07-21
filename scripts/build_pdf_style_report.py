@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -98,8 +99,21 @@ def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
 def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
     p = float(get(source, "regions", region, "consultation_reliability_pct", default=0) or 0)
     d = 95 if get(dx_source, "regions", region, "status", default="") == "ok" else 70
-    k = 98 if get(kc_source, "regions", {"peninsula": "mainland", "baleares": "balearics", "canarias": "canaries"}[region], "summary", default={}) else 0
-    return round(0.35 * p + 0.30 * d + 0.35 * k)
+    kc_key = {"peninsula": "mainland", "baleares": "balearics", "canarias": "canaries"}[region]
+    k = 98 if get(kc_source, "regions", kc_key, "summary", default={}) else 0
+
+    quality = 0.35 * p + 0.30 * d + 0.35 * k
+    kc_points = float(get(kc_source, "regions", kc_key, "summary", "points", default=0) or 0)
+    psk_reports = float(get(source, "regions", region, "report_count", default=0) or 0)
+    dx_samples = float(get(dx_source, "regions", region, "available_sample_count", default=0) or 0)
+
+    kc_coverage = min(kc_points / 10.0, 1.0)
+    psk_coverage = min(math.log1p(psk_reports) / math.log1p(3000), 1.0) if psk_reports else 0.0
+    dx_coverage = min(dx_samples / 6.0, 1.0)
+    coverage = 0.50 * kc_coverage + 0.30 * psk_coverage + 0.20 * dx_coverage
+
+    return round(0.70 * quality + 0.30 * coverage * 100)
+
 
 NOTES = {
     "0. Fuentes consultadas en esta ejecución": "Esta tabla es el inventario de trazabilidad del informe. «Consultada» indica si la fuente respondió; «antigüedad» expresa cuánto tiempo tenía el dato al generar el informe; «fiabilidad» valora esta consulta concreta, no la probabilidad de un contacto; y «peso» indica cuánto influye esa fuente en la interpretación. Una fuente parcial puede seguir aportando observaciones válidas, pero su limitación se conserva explícitamente.",
