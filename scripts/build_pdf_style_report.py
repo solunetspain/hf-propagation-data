@@ -182,7 +182,31 @@ def main() -> int:
     for key, label, _ in REGIONS:
         s = summaries[key]
         executive.append(f"**{label}** mantiene foF2 mediana de **{num(get(s, 'fof2_mhz', 'median'), suffix=' MHz')}** y MUF(3000) mediana de **{num(get(s, 'mufd_mhz', 'median'), suffix=' MHz')}**. La actividad observada se conserva como contraste, no como garantía de contacto.")
-    blocks.append("## 1. Resumen ejecutivo\n\n" + "\n\n".join(executive))
+    quick_guide = """### Guía rápida para usar este informe
+
+Si sabes poco de propagación, empieza aquí:
+
+1. Busca tu región: **Península**, **Baleares** o **Canarias**.
+2. Empieza por la primera banda recomendada en la conclusión operativa.
+3. Escucha durante 3–5 minutos y comprueba waterfall, balizas o actividad real.
+4. Si no encuentras señales, prueba la segunda opción.
+5. Interpreta «observada» como evidencia real, «inferida» como una deducción razonable y «teórica» como una posibilidad sin confirmación.
+
+**Importante:** una MUF alta no garantiza un contacto. También influyen la ruta completa, la absorción, el ruido, la antena, la potencia y la estación corresponsal.
+
+### Glosario mínimo
+
+- **foF2:** frecuencia crítica estimada de la capa F2.
+- **MUF(3000):** frecuencia máxima utilizable estimada para una ruta de unos 3.000 km.
+- **NVIS:** propagación de incidencia casi vertical para distancias cortas.
+- **DXView:** muestra regional de actividad ionosférica.
+- **PSKReporter:** reportes reales enviados por estaciones.
+- **Fiabilidad:** calidad y cobertura documental; no probabilidad de contacto.
+
+### Resumen ejecutivo
+
+"""
+    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + "\n\n".join(executive))
     blocks.append("## 2. Cabecera\n\n" + "\n".join([
         f"- Hora de generación UTC: **{now.isoformat()}**",
         f"- KC2G regional: {age(kc2g, now)}",
