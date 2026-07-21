@@ -231,7 +231,7 @@ def main() -> int:
         first, second = recommendations[key]
         avoid = [band for band, frequency in band_frequency_mhz.items() if frequency > muf]
         avoid_text = f"🔴 {', '.join(avoid)} — no empezar con F2 normal" if avoid else "—"
-        quick_rows.append([label, f"✅ {first}", f"✅ {second}", avoid_text])
+        quick_rows.append([label, first, second, avoid_text])
     quick_table = table(["Región", "Primera opción", "Alternativa", "Evitar como primera prueba"], quick_rows)
     quick_guide = """### Guía rápida para usar este informe
 
@@ -245,7 +245,7 @@ Si sabes poco de propagación, empieza aquí:
 
 ### Lectura visual
 
-✅ favorable o primera opción · ⚠️ limitada o variable · 🔴 no usar como primera prueba con F2 normal · 🔎 actividad observada · 📐 posibilidad teórica.
+Los iconos aparecen en las tablas donde describen el dato: 🔎 observación, 📐 posibilidad teórica y 🔴 banda que no conviene usar como primera prueba con F2 normal.
 
 **Importante:** una MUF alta no garantiza un contacto. También influyen la ruta completa, la absorción, el ruido, la antena, la potencia y la estación corresponsal.
 
@@ -359,8 +359,8 @@ Si sabes poco de propagación, empieza aquí:
         psk_bands = get(psk, "regions", key, "bands", default={})
         for target, preferred in targets:
             evidence = sum(get(psk_bands, b.replace(" ", ""), "report_count", default=0) or 0 for b in preferred)
-            classification = "Inferida" if evidence else "Teórica"
-            dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"{evidence} reportes observados en banda preferente; destino inferido", classification])
+            classification = "🔎 Observada/inferida" if evidence else "📐 Teórica"
+            dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"🔎 {evidence} reportes observados en banda preferente; destino inferido" if evidence else "Sin observación directa; posibilidad física", classification])
     blocks.append("## 10. Europa y DX\n\n" + table(
         ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows))
 
@@ -395,11 +395,11 @@ Si sabes poco de propagación, empieza aquí:
             if phenomenon == "F2":
                 values.append(f"20/17 m: {twenty} reportes; 10 m: {ten} reportes")
             elif phenomenon == "Esporádica E":
-                values.append(f"10 m observado ({ten} reportes)" if ten else "Sin observación regional")
+                values.append(f"🔎 10 m observado ({ten} reportes)" if ten else "Sin observación regional")
             elif phenomenon == "Greyline":
                 values.append("No evaluada: falta geometría solar regional")
             elif phenomenon == "Long path":
-                values.append("Posible teórica; sin ruta específica")
+                values.append("📐 Posible; sin ruta específica")
             elif phenomenon == "TEP":
                 values.append("Sin evidencia específica")
             else:
