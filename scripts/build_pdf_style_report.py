@@ -231,7 +231,7 @@ def main() -> int:
         first, second = recommendations[key]
         avoid = [band for band, frequency in band_frequency_mhz.items() if frequency > muf]
         avoid_text = f"🔴 {', '.join(avoid)} — no empezar con F2 normal" if avoid else "—"
-        quick_rows.append([label, first, second, avoid_text])
+        quick_rows.append([label, f"✅ {first}", f"⚠️ {second}", avoid_text])
     quick_table = table(["Región", "Primera opción", "Alternativa", "Evitar como primera prueba"], quick_rows)
     quick_guide = """### Guía rápida para usar este informe
 
@@ -245,7 +245,7 @@ Si sabes poco de propagación, empieza aquí:
 
 ### Lectura visual
 
-
+✅ favorable o primera opción · ⚠️ alternativa o condición variable · 🔴 no empezar por esa banda con F2 normal · 🔎 actividad observada · 🧩 posibilidad inferida · 📐 posibilidad teórica.
 
 **Importante:** una MUF alta no garantiza un contacto. También influyen la ruta completa, la absorción, el ruido, la antena, la potencia y la estación corresponsal.
 
