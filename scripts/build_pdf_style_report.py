@@ -134,6 +134,27 @@ NOTES = {
     "17. Resumen final: si no te quieres complicar mucho...": "Este resumen conserva la decisión práctica esencial: empezar por la banda mejor respaldada, probar la siguiente opción y confirmar siempre la señal en la estación real. Las condiciones HF cambian por ruta, hora, absorción, ruido y antena; por eso ninguna tabla debe interpretarse como una promesa de contacto."
 }
 
+EXTENDED_NOTES = {
+    "0. Fuentes consultadas en esta ejecución": "La tabla permite reconstruir la cadena de confianza: una fuente meteorológica no puede sustituir a una medición ionosférica, y una observación de PSKReporter no puede sustituir a un índice solar. «Parcial» describe una consulta incompleta, no necesariamente un dato incorrecto. Cuando existe un error HTTP, el motivo debe leerse junto al número de consultas válidas.",
+    "1. Resumen ejecutivo": "Este bloque no pretende resumirlo todo, sino orientar la primera decisión. La recomendación debe contrastarse con la hora, la iluminación y la ruta. Una banda puede ser la primera opción para Europa y no serlo para proximidad; por eso las conclusiones se separan por región y objetivo.",
+    "2. Cabecera": "La hora de generación es la referencia temporal del documento. «Antigüedad» no es lo mismo que «caducidad»: una fuente puede ser diaria y seguir siendo válida, mientras que una observación rápida pierde valor antes. El estado degradado invita a leer las limitaciones antes de tomar una decisión.",
+    "3. Estado solar y geomagnético": "SFI y SSN cambian lentamente y sirven como contexto de fondo. Kp y A describen perturbación reciente, pero no describen por sí solos la calidad de una banda concreta. Bz y Bt ayudan a entender la interacción del viento solar con la magnetosfera. Las partículas y los rayos X se incluyen porque pueden aumentar la absorción o activar escalas de alerta.",
+    "4. Radioapagones y absorción": "La ausencia de R, S o G activo no elimina la absorción normal de la capa D. En operación, esto explica por qué una banda baja puede tener respaldo ionosférico y aun así rendir peor durante el día. El valor regional de D-RAP debe leerse como una indicación de afectación, no como una frontera rígida.",
+    "5. Validación y fiabilidad de cada fuente": "La validación técnica y la fiabilidad interpretativa son conceptos distintos. Un archivo puede estar perfectamente leído y tener poca cobertura espacial; también puede ser muy representativo y llegar con retraso. El informe conserva ambas dimensiones para que el lector no confunda formato correcto con cobertura completa.",
+    "6. Estado ionosférico KC2G": "La tabla no describe una única antena ni una única ruta. Resume varios puntos de una región y los convierte en un intervalo de trabajo. La dispersión es especialmente importante: dos regiones con la misma mediana pueden tener comportamientos muy distintos si una es homogénea y la otra presenta grandes diferencias entre puntos.",
+    "7. Tendencias": "Una flecha es una comparación de muestras, no una predicción meteorológica ni una medición de intensidad. Una tendencia ascendente con pocas vistas tiene menos fuerza que una tendencia ascendente repetida con cobertura amplia. Debe combinarse con la hora y con los reportes de estaciones.",
+    "8. Actividad DXView observada": "Los sectores dominantes muestran hacia dónde se concentran las zonas de la muestra. Los reportes, estaciones y rutas de PSKReporter no son equivalentes: muchos reportes pueden proceder de pocas estaciones, y una ruta puede repetirse. La tabla muestra actividad y distribución, no calidad de audio ni señal recibida.",
+    "9. NVIS EA para 80, 40 y 20 m": "La selección NVIS debe adaptarse a la distancia real. Una antena baja puede favorecer ciertos ángulos, pero la tabla no conoce la instalación concreta. La absorción, la frecuencia crítica y la actividad observada se presentan juntas para evitar decidir solo por una cifra.",
+    "10. Europa y DX": "La tabla ordena opciones, no promete destinos. Cuando aparece «Inferida», hay actividad en la banda pero no una identificación directa de la ruta hacia ese objetivo. Cuando aparece «Teórica», la recomendación procede de la física y del contexto general, sin observación suficiente para ese destino.",
+    "11. Terminador e iluminación": "La transición solar cambia gradualmente y no ocurre igual para todos los trayectos. En una ruta larga, un extremo puede estar iluminado mientras el otro se acerca a la noche. Por eso una hora fija de greyline sin geometría de ambos extremos sería una falsa precisión.",
+    "12. Ruido y condiciones operativas": "El riesgo meteorológico puede ayudar a anticipar un aumento de ruido atmosférico, pero no detecta interferencias domésticas, fuentes industriales, ruido impulsivo local ni ocupación de canal. La mejor confirmación sigue siendo el nivel de ruido observado en el receptor.",
+    "13. Posibles aperturas repentinas": "La tabla separa mecanismos porque cada uno tiene señales y geometrías diferentes. Un reporte en 10 m puede ser una pista de Es, pero también puede corresponder a una ruta corta, una estación excepcional u otro mecanismo. La redacción prudente evita convertir una coincidencia en diagnóstico.",
+    "14. Fiabilidad global de las predicciones": "El índice regional combina calidad de fuentes y cobertura efectiva. La cobertura importa porque una región con pocos puntos o pocas estaciones deja más partes sin observar. El resultado permite comparar la confianza documental entre regiones, pero nunca debe presentarse como porcentaje de éxito de una comunicación.",
+    "15. Incertidumbres y datos faltantes": "Este bloque debe consultarse antes de interpretar una conclusión como firme. Las fuentes miden cosas diferentes, tienen sesgos diferentes y observan áreas distintas. La incertidumbre no es un defecto oculto: es parte explícita del resultado científico.",
+    "16. Conclusión operativa": "La secuencia recomendada es deliberadamente reversible: escuchar, comprobar y cambiar de banda. No exige creer ciegamente en una predicción. El operador puede confirmar, matizar o rechazar la recomendación con su propia observación, que es la evidencia más cercana a su ruta.",
+    "17. Resumen final: si no te quieres complicar mucho...": "Este cierre está pensado para una consulta rápida desde el puesto de radio. Resume la estrategia, pero no borra las advertencias: si la primera banda no responde, se prueba la alternativa y se vuelve a observar. La propagación real siempre tiene la última palabra."
+}
+
 def annotate_blocks(markdown: str) -> str:
     sections = markdown.split("\n\n## ")
     annotated = []
@@ -141,7 +162,9 @@ def annotate_blocks(markdown: str) -> str:
         full = section if index == 0 else "## " + section
         heading = full.split("\n", 1)[0].removeprefix("## ")
         note = NOTES.get(heading)
-        annotated.append(full + ("\n\n" + note if note else ""))
+        extended = EXTENDED_NOTES.get(heading)
+        notes = "\n\n".join(value for value in (note, extended) if value)
+        annotated.append(full + ("\n\n" + notes if notes else ""))
     return "\n\n".join(annotated)
 
 def main() -> int:
