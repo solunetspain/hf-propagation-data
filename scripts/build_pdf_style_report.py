@@ -357,7 +357,7 @@ Si sabes poco de propagación, empieza aquí:
             classification = "🧩 Inferida" if evidence else "📐 Teórica"
             dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"🔎 {evidence} reportes observados en banda preferente; destino inferido" if evidence else "Sin observación directa; posibilidad física", classification])
     blocks.append("## 10. Europa y DX\n\n" + table(
-        ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows))
+        ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows) + "\n\n**Leyenda:**<br>🔎 actividad observada: existe actividad registrada directamente por una fuente.<br>🧩 posibilidad inferida: se deduce de varios indicios, pero no está observada de forma directa.<br>📐 posibilidad teórica: es físicamente posible, pero no hay confirmación observacional específica.")
 
     blocks.append("## 11. Terminador e iluminación\n\nLas tres regiones siguen con iluminación diurna según la captura disponible. No se anuncia una ventana greyline exacta sin geometría solar regional validada.")
     qrn_region_points = {
