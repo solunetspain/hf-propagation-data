@@ -152,6 +152,8 @@ def main() -> int:
     for key, label, kc_key in REGIONS:
         region_data = kc2g.get("regions", {}).get(kc_key, {}) if isinstance(kc2g.get("regions", {}), dict) else {}
         summaries[key] = region_data.get("summary", {}) if isinstance(region_data, dict) else {}
+    if any(not get(summaries[key], "fof2_mhz", "median", default=None) or not get(summaries[key], "mufd_mhz", "median", default=None) for key, _, _ in REGIONS):
+        raise ValueError("KC2G regional summaries missing; refusing to publish no validado values")
 
     source_rows = []
     sources = [
