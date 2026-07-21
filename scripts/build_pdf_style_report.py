@@ -47,6 +47,54 @@ def age(source: dict[str, Any], now: datetime) -> str:
     except (ValueError, TypeError):
         return "no verificable"
 
+SOLAR_COORDS = {
+    "peninsula": (40.0, -3.7),
+    "baleares": (39.5, 2.8),
+    "canarias": (28.3, -15.5),
+}
+
+
+def solar_altitude(now: datetime, latitude: float, longitude: float) -> float:
+    """Approximate solar elevation in degrees for a representative region point."""
+    day = now.timetuple().tm_yday
+    hour = now.hour + now.minute / 60 + now.second / 3600
+    gamma = 2 * math.pi / 365 * (day - 1 + (hour - 12) / 24)
+    declination = (
+        0.006918
+        - 0.399912 * math.cos(gamma)
+        + 0.070257 * math.sin(gamma)
+        - 0.006758 * math.cos(2 * gamma)
+        + 0.000907 * math.sin(2 * gamma)
+        - 0.002697 * math.cos(3 * gamma)
+        + 0.00148 * math.sin(3 * gamma)
+    )
+    equation_time = 229.18 * (
+        0.000075
+        + 0.001868 * math.cos(gamma)
+        - 0.032077 * math.sin(gamma)
+        - 0.014615 * math.cos(2 * gamma)
+        - 0.040849 * math.sin(2 * gamma)
+    )
+    true_solar_minutes = (hour * 60 + equation_time + 4 * longitude) % 1440
+    hour_angle = math.radians(true_solar_minutes / 4 - 180)
+    latitude_rad = math.radians(latitude)
+    cosine_zenith = (
+        math.sin(latitude_rad) * math.sin(declination)
+        + math.cos(latitude_rad) * math.cos(declination) * math.cos(hour_angle)
+    )
+    return 90 - math.degrees(math.acos(max(-1, min(1, cosine_zenith))))
+
+
+def greyline_status(now: datetime, region: str) -> str:
+    latitude, longitude = SOLAR_COORDS[region]
+    elevation = solar_altitude(now, latitude, longitude)
+    if -6 <= elevation <= 6:
+        return f"🌗 Greyline activa o próxima (elevación solar aproximada {elevation:+.1f}°)"
+    if elevation > 6:
+        return f"☀️ Luz diurna regional (elevación solar aproximada {elevation:+.1f}°)"
+    return f"🌙 Noche regional (elevación solar aproximada {elevation:+.1f}°)"
+
+
 def table(headers: list[str], rows: list[list[Any]]) -> str:
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join("---" for _ in headers) + "|"]
     for row in rows:
@@ -393,7 +441,7 @@ Si sabes poco de propagación, empieza aquí:
             elif phenomenon == "Esporádica E":
                 values.append(f"🔎 10 m observado ({ten} reportes)" if ten else "Sin observación regional")
             elif phenomenon == "Greyline":
-                values.append("No evaluada: falta geometría solar regional")
+                values.append(greyline_status(now, key))
             elif phenomenon == "Long path":
                 values.append("📐 Posible; sin ruta específica")
             elif phenomenon == "TEP":
