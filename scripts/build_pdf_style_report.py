@@ -304,8 +304,8 @@ Si sabes poco de propagación, empieza aquí:
         psk_bands = get(psk, "regions", key, "bands", default={})
         for target, preferred in targets:
             evidence = sum(get(psk_bands, b.replace(" ", ""), "report_count", default=0) or 0 for b in preferred)
-            classification = "Observada/inferida" if evidence else "Teórica"
-            dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"{evidence} reportes en banda preferente", classification])
+            classification = "Inferida" if evidence else "Teórica"
+            dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"{evidence} reportes observados en banda preferente; destino inferido", classification])
     blocks.append("## 10. Europa y DX\n\n" + table(
         ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows))
 
