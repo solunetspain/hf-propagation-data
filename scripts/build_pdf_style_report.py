@@ -203,7 +203,7 @@ Si sabes poco de propagación, empieza aquí:
 - **PSKReporter:** reportes reales enviados por estaciones.
 - **Fiabilidad:** calidad y cobertura documental; no probabilidad de contacto.
 
-### Resumen ejecutivo
+### Lectura rápida del informe
 
 """
     blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + "\n\n".join(executive))
