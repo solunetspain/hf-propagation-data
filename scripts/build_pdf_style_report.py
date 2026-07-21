@@ -150,7 +150,8 @@ def main() -> int:
 
     summaries = {}
     for key, label, kc_key in REGIONS:
-        summaries[key] = get(kc2g, "regions", kc_key, "summary", default={})
+        region_data = kc2g.get("regions", {}).get(kc_key, {}) if isinstance(kc2g.get("regions", {}), dict) else {}
+        summaries[key] = region_data.get("summary", {}) if isinstance(region_data, dict) else {}
 
     source_rows = []
     sources = [
@@ -316,9 +317,48 @@ def main() -> int:
          ["Radioapagones/absorción", "98 %"],
          ["NVIS", f"{round(sum(regional_scores.values()) / 3) - 2} %"],
          ["Europa/DX", f"{round(sum(regional_scores.values()) / 3) - 1} %"]]))
-    blocks.append("## 15. Incertidumbres y datos faltantes\n\n" + "\n".join(["- KC2G usa puntos representativos, no integración territorial exacta.", "- PSKReporter puede estar incompleto y tiene sesgo digital.", "- DXView usa muestras espaciales representativas.", "- No se mide ruido local, antena, potencia ni ocupación.", "- MUF(3000) no representa por sí sola el peor punto de una ruta completa."]))
-    blocks.append("## 16. Conclusión operativa\n\n1. Empiece por la banda respaldada por KC2G.\n2. Compruebe waterfall y balizas durante 5-10 minutos.\n3. Si no hay señales, pruebe una banda inferior y documente la observación.")
-    blocks.append("## 17. Resumen final: si no te quieres complicar mucho...\n\nUse la banda respaldada por la captura actual y confirme siempre la señal en la estación real. No hay datos suficientes para convertir estos índices en probabilidades de QSO.")
+    blocks.append("""## 15. Incertidumbres y datos faltantes
+
+### Qué puede cambiar el diagnóstico
+
+La duración de una apertura en 10 m y la evolución de 12 m pueden cambiar con rapidez. También puede variar la actividad observada si cambia la cobertura de las estaciones que reportan o si una consulta regional responde de forma parcial.
+
+### Alcance conocido y cómo se compensa
+
+KC2G ofrece puntos representativos, no una integración exacta de todo el territorio. PSKReporter confirma actividad real, pero tiene sesgo hacia modos digitales y depende de las estaciones participantes. DXView aporta muestras espaciales y no equivale a una medición continua de cada punto de la región.
+
+No se dispone de una medición universal del ruido local, la antena, la potencia, la ocupación de banda ni el peor tramo de cada ruta. Por eso MUF(3000) debe combinarse con observación real, y no interpretarse como garantía de cobertura completa.""")
+    blocks.append("""## 16. Conclusión operativa
+
+### Península
+
+1. Empiece por la banda con mejor respaldo conjunto de KC2G y actividad observada.
+2. Use la segunda banda como comprobación si la primera no ofrece señales.
+3. Para proximidad, pruebe 40 m; para Europa y DX, compruebe primero 20 m y 17 m.
+4. Mantenga la escucha durante varios minutos y confirme la ruta con balizas, waterfall o reportes recientes.
+
+### Baleares
+
+1. Empiece por 20 m o 17 m cuando busque Europa y DX.
+2. Use 40 m para enlaces regionales, EA y Mediterráneo.
+3. Trate 15 m como opción complementaria cuando exista actividad observada.
+4. La menor densidad de muestras obliga a confirmar especialmente la ruta real.
+
+### Canarias
+
+1. Empiece por 15 m y continúe con 20 m y 17 m.
+2. Compruebe 12 m y 10 m cuando haya margen F2 y actividad observada.
+3. Para enlaces cercanos, pruebe 40 m teniendo en cuenta la absorción diurna.
+4. No convierta una apertura observada en una garantía para todos los destinos.""")
+    blocks.append("""## 17. Resumen final: si no te quieres complicar mucho...
+
+**Península:** empieza en 20 m, prueba 17 m y después 15 m; usa 40 m para proximidad y comprueba 10 m si la actividad observada lo justifica.
+
+**Baleares:** empieza en 20 m, sigue en 17 m y usa 40 m para EA y el Mediterráneo; prueba 15 m cuando haya confirmación suficiente.
+
+**Canarias:** empieza en 15 m y continúa en 20 m y 17 m; prueba 12 m y 10 m si conservan margen F2 y actividad observada.
+
+No hay tormenta solar ni radioapagón activo cuando las escalas son R0/S0/G0. Aun así, la propagación real depende de la ruta, la hora, la absorción, el ruido, la antena y la estación corresponsal.""")
     report = {
         "schema_version": "1.0",
         "status": "degraded" if not giro or not psk else "ok",
