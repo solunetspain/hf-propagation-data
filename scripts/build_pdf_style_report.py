@@ -342,7 +342,25 @@ Si sabes poco de propagación, empieza aquí:
         ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows))
 
     blocks.append("## 11. Terminador e iluminación\n\nLas tres regiones siguen con iluminación diurna según la captura disponible. No se anuncia una ventana greyline exacta sin geometría solar regional validada.")
-    qrn_rows = [[label, text(get(qrn, "points", label, "current_risk", "risk")), "no validado", "No validados", "Modelo meteorológico; no es medición del ruido propio"] for _, label, _ in REGIONS]
+    qrn_region_points = {
+        "peninsula": ["IN91PO", "Galicia", "Cantabrico", "Centro", "Mediterraneo", "Andalucia"],
+        "baleares": ["Baleares"],
+        "canarias": ["Canarias"],
+    }
+    qrn_rows = []
+    qrn_points = get(qrn, "points", default={})
+    for key, label, _ in REGIONS:
+        regional_points = [qrn_points[name] for name in qrn_region_points[key] if isinstance(qrn_points.get(name), dict)]
+        current_items = [get(point, "current_risk", default={}) for point in regional_points]
+        forecast_items = [get(point, "forecast_6h", default={}) for point in regional_points]
+        current_best = max(current_items, key=lambda item: float(get(item, "score", default=0) or 0), default={})
+        forecast_best = max(forecast_items, key=lambda item: float(get(item, "score", default=0) or 0), default={})
+        cape = get(forecast_best, "max_cape_j_kg", default=0)
+        probability = get(forecast_best, "max_precipitation_probability", default=0)
+        forecast_text = f"{text(get(forecast_best, 'risk'), 'sin pronóstico')}; CAPE máximo {cape:g} J/kg; precipitación máxima {probability:g} %"
+        lightning = "Sin validación directa de rayos" if not qrn.get("direct_lightning_detection_validated") else "Detección directa validada"
+        reasons = ", ".join(str(reason) for reason in get(forecast_best, "reasons", default=[])) or "sin señales de tormenta modeladas"
+        qrn_rows.append([label, text(get(current_best, "risk"), "sin dato"), forecast_text, lightning, f"Modelo meteorológico: {reasons}; no mide el ruido propio de la antena"])
     blocks.append("## 12. Ruido y condiciones operativas\n\n" + table(["Región", "Riesgo meteorológico modelado ahora", "Próximas 6 h", "Rayos observados", "Evaluación operativa"], qrn_rows))
     opening_rows = []
     for phenomenon in ["F2", "Esporádica E", "Greyline", "Long path", "TEP", "Recuperación tras absorción"]:
