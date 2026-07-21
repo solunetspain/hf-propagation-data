@@ -196,15 +196,33 @@ def main() -> int:
     for key, label, _ in REGIONS:
         s = summaries[key]
         executive.append(f"**{label}** mantiene foF2 mediana de **{num(get(s, 'fof2_mhz', 'median'), suffix=' MHz')}** y MUF(3000) mediana de **{num(get(s, 'mufd_mhz', 'median'), suffix=' MHz')}**. La actividad observada se conserva como contraste, no como garantía de contacto.")
+    band_frequency_mhz = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1, "17 m": 18.1, "15 m": 21.2, "12 m": 24.9, "10 m": 28.5}
+    recommendations = {
+        "peninsula": ("20 m", "17 m"),
+        "baleares": ("20 m", "17 m"),
+        "canarias": ("15 m", "20 m"),
+    }
+    quick_rows = []
+    for key, label, _ in REGIONS:
+        muf = float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)
+        first, second = recommendations[key]
+        avoid = [band for band, frequency in band_frequency_mhz.items() if frequency > muf]
+        avoid_text = f"🔴 {', '.join(avoid)} — no empezar con F2 normal" if avoid else "—"
+        quick_rows.append([label, f"✅ {first}", f"✅ {second}", avoid_text])
+    quick_table = table(["Región", "Primera opción", "Alternativa", "Evitar como primera prueba"], quick_rows)
     quick_guide = """### Guía rápida para usar este informe
 
 Si sabes poco de propagación, empieza aquí:
 
-1. Busca tu región: **Península**, **Baleares** o **Canarias**.
-2. Empieza por la primera banda recomendada en la conclusión operativa.
+1. Busca tu región.
+2. Empieza por la primera banda recomendada.
 3. Escucha durante 3–5 minutos y comprueba waterfall, balizas o actividad real.
-4. Si no encuentras señales, prueba la segunda opción.
-5. Interpreta «observada» como evidencia real, «inferida» como una deducción razonable y «teórica» como una posibilidad sin confirmación.
+4. Si no encuentras señales, prueba la alternativa.
+5. Si una banda aparece en «evitar», no significa que sea imposible: significa que no conviene empezar por ella con F2 normal.
+
+### Lectura visual
+
+✅ favorable o primera opción · ⚠️ limitada o variable · 🔴 no usar como primera prueba con F2 normal · 🔎 actividad observada · 📐 posibilidad teórica.
 
 **Importante:** una MUF alta no garantiza un contacto. También influyen la ruta completa, la absorción, el ruido, la antena, la potencia y la estación corresponsal.
 
@@ -217,10 +235,10 @@ Si sabes poco de propagación, empieza aquí:
 - **PSKReporter:** reportes reales enviados por estaciones.
 - **Fiabilidad:** calidad y cobertura documental; no probabilidad de contacto.
 
-### Lectura rápida del informe
+### Resumen operativo por región
 
 """
-    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + "\n\n".join(executive))
+    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + quick_table + "\n\n" + "\n\n".join(executive))
     blocks.append("## 2. Cabecera\n\n" + "\n".join([
         f"- Hora de generación UTC: **{now.isoformat()}**",
         f"- KC2G regional: {age(kc2g, now)}",
