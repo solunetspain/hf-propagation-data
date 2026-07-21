@@ -79,9 +79,9 @@ def sectors_text(value: dict[str, Any]) -> str:
 
 def modes_text(value: dict[str, Any]) -> str:
     modes = value.get("mode_view_counts") or value.get("modes", {})
-    if all(key in modes for key in ("cw", "digital", "ssb")):
-        return "CW/digital/SSB"
-    return ", ".join(f"{k}={v}" for k, v in sorted(modes.items())) or "Sin modos"
+    labels = {"cw": "CW", "digital": "digital", "ssb": "SSB"}
+    parts = [f"{labels.get(key, key)} ({count} vista)" for key, count in sorted(modes.items()) if count]
+    return " y ".join(parts) if parts else "Sin modos observados"
 
 def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
     values = []
