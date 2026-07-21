@@ -307,7 +307,7 @@ Si sabes poco de propagación, empieza aquí:
 """
     blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + quick_table + "\n\n" + quick_legend + "\n\n" + "\n\n".join(executive))
     blocks.append("## 2. Cabecera\n\n" + "\n".join([
-        f"- Hora de generación UTC: **{now.strftime("%Y-%m-%d  %H:%M:%S.%f%z")}**",
+        f"- Hora de generación UTC: **{now.strftime("%Y-%m-%d  %H:%M:%S")}**",
         f"- KC2G regional: {age(kc2g, now)}",
         f"- NOAA normalizado: {age(noaa, now)}",
         f"- HamQSL: {age(hamqsl, now)}",
