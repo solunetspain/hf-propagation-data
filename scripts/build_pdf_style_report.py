@@ -163,7 +163,7 @@ def annotate_blocks(markdown: str) -> str:
         heading = full.split("\n", 1)[0].removeprefix("## ")
         note = NOTES.get(heading)
         extended = EXTENDED_NOTES.get(heading)
-        notes = "\n\n".join(value for value in (note, extended) if value)
+        notes = note or ""
         annotated.append(full + ("\n\n" + notes if notes else ""))
     return "\n\n".join(annotated)
 
