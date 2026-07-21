@@ -101,6 +101,35 @@ def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, 
     k = 98 if get(kc_source, "regions", {"peninsula": "mainland", "baleares": "balearics", "canarias": "canaries"}[region], "summary", default={}) else 0
     return round(0.35 * p + 0.30 * d + 0.35 * k)
 
+NOTES = {
+    "0. Fuentes consultadas en esta ejecución": "Esta tabla es el inventario de trazabilidad del informe. «Consultada» indica si la fuente respondió; «antigüedad» expresa cuánto tiempo tenía el dato al generar el informe; «fiabilidad» valora esta consulta concreta, no la probabilidad de un contacto; y «peso» indica cuánto influye esa fuente en la interpretación. Una fuente parcial puede seguir aportando observaciones válidas, pero su limitación se conserva explícitamente.",
+    "3. Estado solar y geomagnético": "Esta tabla separa el estado solar observado de sus fuentes y horas de actualización. SFI y SSN describen la actividad solar; Kp y A describen la perturbación geomagnética; el viento solar y Bz/Bt ayudan a valorar la capacidad de cambio; rayos X, protones y electrones permiten detectar riesgos de absorción o apagón. R0/S0/G0 significa que no hay escala activa de radioapagón, tormenta de radiación o tormenta geomagnética. Las cifras son indicadores del entorno, no una predicción directa de contactos.",
+    "4. Radioapagones y absorción": "R, S y G son escalas de alerta, no niveles de señal recibida. El D-RAP estima la frecuencia más alta afectada por al menos 1 dB de absorción en la capa D: cuanto mayor sea ese valor, más probable es que las bandas bajas sufran durante el día. La absorción ordinaria puede perjudicar 80 m y parte de 40 m aunque no exista un radioapagón solar.",
+    "5. Validación y fiabilidad de cada fuente": "Aquí se resume la calidad técnica de cada entrada: respuesta recibida, parseo, actualidad, alcance, fiabilidad y motivo de cualquier reducción. La fiabilidad no es una probabilidad de QSO; expresa cuánto se puede confiar en ese dato para el uso descrito. Una respuesta parcial no invalida automáticamente lo recibido, pero impide tratarla como cobertura completa.",
+    "6. Estado ionosférico KC2G": "foF2 es la frecuencia crítica de la capa F2; MUF(3000) es la frecuencia máxima utilizable estimada para un trayecto de unos 3.000 km. La mediana resume los puntos regionales y el intervalo muestra su dispersión. FOT 85 % se calcula como el 85 % de la MUF mediana y sirve como referencia prudente, no como techo universal. Un margen positivo de una banda significa que queda por debajo de la MUF estimada; no garantiza que exista un contacto.",
+    "7. Tendencias": "Las flechas representan la evolución de las zonas activas observadas por DXView entre capturas, no intensidad de señal ni probabilidad de contacto. «↑» indica más zonas, «↓» menos y «→» estabilidad aproximada. La tendencia puede cambiar por la cadencia, cobertura y geometría de las muestras; por eso debe leerse junto con KC2G y la actividad real.",
+    "8. Actividad DXView observada": "DXView aporta una muestra regional de zonas activas, sectores y modos disponibles; PSKReporter aporta reportes, estaciones, rutas y distancia mediana observada. Son evidencias complementarias: DXView describe la actividad espacial de la muestra y PSKReporter confirma tráfico real, con sesgo hacia modos digitales y estaciones que reportan. Los recuentos no son puntos S ni garantizan que una ruta concreta esté abierta.",
+    "9. NVIS EA para 80, 40 y 20 m": "NVIS favorece trayectos cortos y de incidencia casi vertical; no debe confundirse con propagación regional garantizada. 80 m suele ofrecer cobertura cercana pero sufre más absorción diurna; 40 m puede ser una transición útil entre proximidad y trayectos medios; 20 m favorece saltos más amplios y Europa/DX, pero normalmente no es la primera opción NVIS. La acción práctica combina foF2, absorción, tendencia y observaciones PSKReporter.",
+    "10. Europa y DX": "La mejor banda es la primera que conviene probar para ese objetivo según MUF, actividad observada y hora; la segunda opción sirve como respaldo. «Observada» significa que existe evidencia regional compatible; «observada/inferida» combina observación con una interpretación de banda y sector; «teórica» solo expresa una posibilidad física sin confirmación específica de ruta. La tabla no sustituye la comprobación de balizas, waterfall y señales reales.",
+    "11. Terminador e iluminación": "La iluminación solar modifica la capa D, la absorción y la transición entre propagación diurna y nocturna. La greyline no debe anunciarse por una hora fija sin geometría solar regional validada: la ventana depende de ambos extremos del trayecto, no solo de la hora local del observador.",
+    "12. Ruido y condiciones operativas": "El riesgo meteorológico es un modelo de condiciones atmosféricas favorables a ruido, no una medición del ruido de la antena. «Rayos observados» solo puede afirmarse cuando existe una fuente observacional directa; la ausencia de validación no significa ausencia de ruido. El operador debe contrastar el modelo con el nivel local, la ocupación y la dirección de llegada.",
+    "13. Posibles aperturas repentinas": "F2, Es, greyline, long path y TEP son mecanismos distintos. Un número de reportes en 10 m puede indicar actividad compatible con una apertura especial, pero no demuestra por sí solo Es ni identifica el mecanismo. Las etiquetas «posible», «teórica» o «sin evidencia» son deliberadas: separan lo observado de lo inferido y evitan presentar una hipótesis como hecho.",
+    "14. Fiabilidad global de las predicciones": "Estos porcentajes son índices de cobertura documental y consistencia de las fuentes para cada ámbito; no son probabilidades de contacto. Un valor regional alto indica que hay varias entradas actuales y coherentes, no que todas las rutas funcionen. La cifra baja cuando falta cobertura, hay consultas parciales o la conclusión depende de una sola muestra.",
+    "15. Incertidumbres y datos faltantes": "Este apartado reúne las condiciones que pueden cambiar el diagnóstico: representatividad espacial de KC2G, cobertura y sesgo de PSKReporter, muestreo de DXView, falta de medición del ruido local, antena, potencia y ocupación, y el hecho de que MUF(3000) no describe el peor punto de una ruta completa.",
+    "16. Conclusión operativa": "La conclusión traduce los datos a una secuencia de operación: empezar por la banda con respaldo ionosférico y observacional, escuchar y comprobar durante varios minutos, y cambiar de banda si la evidencia real no acompaña. Es una recomendación de prueba, no una garantía de QSO.",
+    "17. Resumen final: si no te quieres complicar mucho...": "Este resumen conserva la decisión práctica esencial: empezar por la banda mejor respaldada, probar la siguiente opción y confirmar siempre la señal en la estación real. Las condiciones HF cambian por ruta, hora, absorción, ruido y antena; por eso ninguna tabla debe interpretarse como una promesa de contacto."
+}
+
+def annotate_blocks(markdown: str) -> str:
+    sections = markdown.split("\n\n## ")
+    annotated = []
+    for index, section in enumerate(sections):
+        full = section if index == 0 else "## " + section
+        heading = full.split("\n", 1)[0].removeprefix("## ")
+        note = NOTES.get(heading)
+        annotated.append(full + ("\n\n" + note if note else ""))
+    return "\n\n".join(annotated)
+
 def main() -> int:
     now = datetime.now(timezone.utc)
     kc2g = load("kc2g-spain.json")
@@ -297,7 +326,7 @@ def main() -> int:
         "valid_until_utc": (now + timedelta(minutes=90)).isoformat(),
         "regions": ["peninsula", "baleares", "canarias"],
         "publication": {"publisher": "hf-data-generator", "source_automation": "HF data cycle", "content_mode": "verbatim", "publish_web": True, "publish_chat": False, "flags": {"web": "publication.publish_web", "chat": "publication.publish_chat"}},
-        "report_markdown": "\n\n".join(blocks),
+        "report_markdown": annotate_blocks("\n\n".join(blocks)),
     }
     output = DATA / "web-report-es.json"
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
