@@ -126,6 +126,9 @@ jobs:
       - name: Update prediction history
         run: python scripts/validate_prediction_history.py
 
+      - name: Rebuild canonical report with updated history
+        run: python scripts/build_pdf_style_report.py
+
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
 
