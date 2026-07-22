@@ -243,11 +243,11 @@ def main() -> int:
     source_rows = []
     sources = [
         ("Estado", "Validar generación y actualidad", "Sí", "Estado correcto", "Tres regiones", age(kc2g, now), "99 %", "1 %", "Ninguna"),
-        ("KC2G", "foF2, MUF y dispersión", "Sí", "JSON actual, parseable y regional", "Tres regiones", age(kc2g, now), "98 %", "27 %", "Muestras representativas, no integración territorial exacta"),
+        ("KC2G", "foF2, MUF y dispersión", "Sí", "JSON actual, parseable y regional", "Tres regiones", age(kc2g, now), "98 %", "25 %", "Muestras representativas, no integración territorial exacta"),
         ("Diagnóstico KC2G", "Validación técnica", "Sí", "Respuesta, parseo y actualidad correctos", "Tres regiones", age(kc2g, now), "99 %", "1 %", "Ninguna"),
         ("HamQSL", "Contraste solar y geomagnético", "Sí", "XML recibido y parseado", "Global", age(hamqsl, now), "92 %", "4 %", "Fuente auxiliar global"),
         ("Diagnóstico HamQSL", "Validar XML y formato", "Sí", "HTTP 200 y XML actual", "Global", age(hamqsl, now), "98 %", "1 %", "Ninguna"),
-        ("NOAA", "Entorno solar, geomagnético y absorción", "Sí", "Productos normalizados", "Global y tres regiones", age(noaa, now), "98 %", "31 %", "SFI y SSN tienen cadencia diaria"),
+        ("NOAA", "Entorno solar, geomagnético y absorción", "Sí", "Productos normalizados", "Global y tres regiones", age(noaa, now), "98 %", "28 %", "SFI y SSN tienen cadencia diaria"),
         ("Diagnóstico NOAA", "Validar productos oficiales", "Sí", "Secciones válidas", "Global y tres regiones", age(noaa, now), "99 %", "1 %", "Ninguna"),
         ("QRN", "Riesgo de ruido meteorológico", "Sí", "Riesgo modelado", "Tres regiones", age(qrn, now), "90 %", "6 %", "Modelo meteorológico, no rayos observados"),
         ("Diagnóstico QRN", "Validar el modelo", "Sí", "Puntos correctos", "Tres regiones", age(qrn, now), "98 %", "1 %", "Sin detección directa de rayos"),
@@ -305,7 +305,7 @@ Si sabes poco de propagación, empieza aquí:
 ### Resumen operativo por región
 
 """
-    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + quick_table + "\n\n" + quick_legend + "\n\n\n" + "\n\n".join(executive))
+    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + quick_table + "\n\n" + quick_legend + "\n\n\n")
     blocks.append("## 2. Cabecera\n\n" + "\n".join([
         f"- Hora de generación UTC: **{now.strftime("%Y-%m-%d  %H:%M:%S")}**",
         f"- KC2G regional: {age(kc2g, now)}",
@@ -354,6 +354,7 @@ Si sabes poco de propagación, empieza aquí:
     blocks.append("## 6. Estado ionosférico KC2G\n\n" + table(
         ["Región", "foF2 mediana", "foF2 mín.-máx.", "Dispersión foF2", "MUF(3000) mediana", "MUF mín.-máx.", "Dispersión MUF", "FOT 85 %, cálculo"],
         [[label, num(get(summaries[key], "fof2_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'fof2_mhz', 'min'))}-{num(get(summaries[key], 'fof2_mhz', 'max'))} MHz", num(get(summaries[key], "fof2_mhz", "spread"), suffix=" MHz"), num(get(summaries[key], "mufd_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'mufd_mhz', 'min'))}-{num(get(summaries[key], 'mufd_mhz', 'max'))} MHz", num(get(summaries[key], "mufd_mhz", "spread"), suffix=" MHz"), num(float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)*.85, suffix=" MHz")] for key, label, _ in REGIONS]))
+    blocks.append("\n\n".join(executive))
     history = get(dx, "history", default=[])
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
