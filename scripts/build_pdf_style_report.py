@@ -331,7 +331,7 @@ Si sabes poco de propagación, empieza aquí:
             ["Número de manchas solares (SSN)", num(get(current, "sunspots", "sunspot_number"), 0), source_stamp(get(current, "sunspots", default={}), "NOAA"), "96 %"],
             ["SSN auxiliar", num(get(ham_current, "sunspots"), 0), "HamQSL", "85 %"],
             ["Kp oficial", num(get(geomag, "kp")), source_stamp(geomag, "NOAA"), "95 %"],
-            ["Kp estimado reciente", f"{num(get(est_kp, 'estimated_kp'))}; código {text(get(est_kp, 'kp_code'), 'sin código')}", source_stamp(est_kp, "NOAA"), "95 %"],
+            ["Kp estimado reciente", num(get(est_kp, "estimated_kp")), source_stamp(est_kp, "NOAA"), "95 %"],
             ["A", num(get(geomag, "a_index"), 0), source_stamp(geomag, "NOAA"), "94 %"],
             ["Viento solar", f"{num(get(wind, 'speed_km_s'))} km/s; {num(get(wind, 'density_p_cm3'))} p/cm³", source_stamp(wind, "NOAA"), "97 %"],
             ["Bz GSM", num(get(magnetic, "bz_gsm_nt"), suffix=" nT"), source_stamp(magnetic, "NOAA"), "97 %"],
