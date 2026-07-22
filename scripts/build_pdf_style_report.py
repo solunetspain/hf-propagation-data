@@ -466,17 +466,18 @@ Si sabes poco de propagación, empieza aquí:
     for key, label, _ in REGIONS:
         for band in ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m"):
             item = get(hsummary, key, band, default={})
-            historical_rows.append([label, band, text(get(item, "reliability_pct", default=None), "Pendiente"),
-                                    get(item, "observations_processed", default=0), get(item, "hits", default=0),
-                                    get(item, "partial", default=0), get(item, "failures", default=0)])
-        total = get(history, "regional_totals", key, default={})
-        historical_rows.append([label, "Todas", text(get(total, "reliability_pct", default=None), "Pendiente"),
-                                get(total, "observations_processed", default=0), get(total, "hits", default=0),
-                                get(total, "partial", default=0), get(total, "failures", default=0)])
-    total = get(history, "total", default={})
-    historical_rows.append(["Total general", "Todas", text(get(total, "reliability_pct", default=None), "Pendiente"),
-                            get(total, "observations_processed", default=0), get(total, "hits", default=0),
-                            get(total, "partial", default=0), get(total, "failures", default=0)])
+            evaluations = int(get(item, "observations_processed", default=0) or 0)
+            if evaluations <= 0:
+                continue
+            reliability = get(item, "reliability_pct", default=None)
+            reliability_text = text(reliability, "Pendiente")
+            if evaluations < 5:
+                reliability_text += " · muestra limitada"
+            historical_rows.append([
+                label, band, evaluations, get(item, "hits", default=0),
+                get(item, "partial", default=0), get(item, "failures", default=0),
+                reliability_text
+            ])
     regional_history_rows = []
     for key, label, _ in REGIONS:
         item = get(history, "regional_totals", key, default={})
@@ -493,8 +494,8 @@ Si sabes poco de propagación, empieza aquí:
     ))
 
     blocks.append("### Fiabilidad histórica por región y banda\n\n" + table(
-        ["Región", "Banda", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"], historical_rows
-    ) + "\n\n" + "El histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 10.000 ciclos. Solo se evalúan la primera recomendación y la alternativa tras 90 minutos: la primera cuenta como acierto, la alternativa como parcial y las demás bandas no se puntúan. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
+        ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "Fiabilidad histórica"], historical_rows
+    ) + "\n\n" + "Esta tabla solo muestra combinaciones región+banda que ya han sido recomendadas y evaluadas. Una banda nueva aparece automáticamente desde su primera evaluación y se marca como «muestra limitada» mientras tenga menos de cinco casos. Las bandas que no aparecen todavía no tienen evaluaciones; su ausencia no significa que no hayan tenido actividad. La primera recomendación cuenta como acierto, la alternativa como parcial y una primera recomendación sin evidencia suficiente como fallo. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
 
