@@ -21,6 +21,51 @@ POINTS = {
     "Canarias": (28.10, -15.42),
 }
 
+
+AEMET_RAYOS_URL = "https://opendata.aemet.es/opendata/api/red/rayos/mapa"
+REGION_BOXES = {
+    "Península": (35.5, 44.2, -9.5, 4.5),
+    "Baleares": (38.5, 40.2, 1.0, 4.5),
+    "Canarias": (27.2, 29.5, -18.5, -13.0),
+}
+
+
+def _event_coords(event: Any) -> tuple[float, float] | None:
+    if not isinstance(event, dict):
+        return None
+    lat = event.get("latitud", event.get("latitude", event.get("lat")))
+    lon = event.get("longitud", event.get("longitude", event.get("lon")))
+    try:
+        return float(lat), float(lon)
+    except (TypeError, ValueError):
+        return None
+
+
+def fetch_aemet_lightning(api_key: str) -> dict[str, Any]:
+    req = urllib.request.Request(
+        AEMET_RAYOS_URL + "?api_key=" + urllib.parse.quote(api_key),
+        headers={"User-Agent": "SOLUNET-HF-AEMET/1.0", "Accept": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=30) as response:
+        wrapper = json.loads(response.read().decode("utf-8"))
+    data_url = wrapper.get("datos") if isinstance(wrapper, dict) else None
+    if not data_url:
+        raise ValueError("AEMET no devolvió la URL de datos de rayos")
+    data_req = urllib.request.Request(data_url, headers={"User-Agent": "SOLUNET-HF-AEMET/1.0"})
+    with urllib.request.urlopen(data_req, timeout=30) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    events = payload if isinstance(payload, list) else payload.get("datos", []) if isinstance(payload, dict) else []
+    counts = {name: 0 for name in REGION_BOXES}
+    for event in events:
+        coords = _event_coords(event)
+        if not coords:
+            continue
+        lat, lon = coords
+        for name, (south, north, west, east) in REGION_BOXES.items():
+            if south <= lat <= north and west <= lon <= east:
+                counts[name] += 1
+    return {"status": "parsed", "event_count": len(events), "regional_event_counts": counts, "source": AEMET_RAYOS_URL}
+
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -100,12 +145,13 @@ def risk_for(data: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--aemet-api-key", default=None)
     parser.add_argument("--output", type=Path, default=Path("public/data/qrn-spain-summary.json"))
     parser.add_argument("--diagnostic", type=Path, default=Path("public/diagnostics/qrn-diagnostic.json"))
     args = parser.parse_args()
 
     result = {
-        "source": "Open-Meteo model-based QRN risk",
+        "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
         "generated_at": now_iso(),
         "status": "ok",
         "classification": (
@@ -118,6 +164,7 @@ def main() -> int:
             "Forecast CAPE never changes the current-risk classification.",
         ],
         "points": {},
+        "aemet_lightning": {"status": "not_configured"},
     }
     diagnostic = {
         "generated_at": now_iso(),
@@ -129,7 +176,20 @@ def main() -> int:
             "direct_lightning_observations_obtained": False,
         },
         "points": {},
+        "aemet_lightning": {"status": "not_configured"},
     }
+
+    if args.aemet_api_key:
+        try:
+            result["aemet_lightning"] = fetch_aemet_lightning(args.aemet_api_key)
+            diagnostic["aemet_lightning"] = result["aemet_lightning"]
+            diagnostic["validation"]["direct_lightning_observations_obtained"] = result["aemet_lightning"]["event_count"] >= 0
+            result["direct_lightning_detection_validated"] = True
+            result["limitations"][0] = "AEMET observations cover only events returned by the API and the defined regional boxes."
+        except Exception as exc:
+            result["aemet_lightning"] = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
+            diagnostic["aemet_lightning"] = result["aemet_lightning"]
+            diagnostic["errors"].append(f"AEMET rayos: {exc}")
 
     for name, (lat, lon) in POINTS.items():
         try:
