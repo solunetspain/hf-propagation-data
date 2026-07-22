@@ -482,12 +482,16 @@ Si sabes poco de propagación, empieza aquí:
     regional_history_rows = []
     for key, label, _ in REGIONS:
         item = get(history, "regional_totals", key, default={})
-        regional_history_rows.append([label, text(get(item, "reliability_pct", default=None), "Pendiente"),
+        reliability = get(item, "reliability_pct", default=None)
+        reliability_text = f"{reliability} %" if reliability is not None else "Pendiente"
+        regional_history_rows.append([label, reliability_text,
                                       get(item, "observations_processed", default=0), get(item, "hits", default=0),
                                       get(item, "partial", default=0), get(item, "failures", default=0),
                                       get(item, "unconfirmed", default=0)])
     total = get(history, "total", default={})
-    regional_history_rows.append(["Total general", text(get(total, "reliability_pct", default=None), "Pendiente"),
+    total_reliability = get(total, "reliability_pct", default=None)
+    total_reliability_text = f"{total_reliability} %" if total_reliability is not None else "Pendiente"
+    regional_history_rows.append(["**Total general**", f"**{total_reliability_text}**",
                                   get(total, "observations_processed", default=0), get(total, "hits", default=0),
                                   get(total, "partial", default=0), get(total, "failures", default=0),
                                   get(total, "unconfirmed", default=0)])
