@@ -487,7 +487,7 @@ Si sabes poco de propagación, empieza aquí:
     regional_history_rows.append(["Total general", text(get(total, "reliability_pct", default=None), "Pendiente"),
                                   get(total, "observations_processed", default=0), get(total, "hits", default=0),
                                   get(total, "partial", default=0), get(total, "failures", default=0)])
-    blocks.append("### Fiabilidad histórica por región\\n\\n" + table(
+    blocks.append("### Fiabilidad histórica por región\n\n" + table(
         ["Región", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"],
         regional_history_rows
     ))
