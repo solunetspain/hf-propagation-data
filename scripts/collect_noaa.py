@@ -172,27 +172,15 @@ def rtsw_summary(data: Any, field_map: dict[str, str]) -> dict[str, Any] | None:
     return result
 
 def parse_planetary_a_index(text: str) -> float | None:
-    """Read estimated planetary A from NOAA's geomagnetic indices block."""
-    lines = text.splitlines()
-    section = next(
-        (i for i, line in enumerate(lines) if ":Geomagnetic_Values:" in line),
-        None,
-    )
-    if section is None:
+    """Read estimated planetary A from NOAA current indices text."""
+    section_match = re.search(r":Geomagnetic_Values:.*?(?=\n\s*:|\Z)", text, flags=re.IGNORECASE | re.DOTALL)
+    section = section_match.group(0) if section_match else text
+    running = re.search(r"Running\s+A\b", section, flags=re.IGNORECASE)
+    if not running:
         return None
-    running = next(
-        (
-            i
-            for i in range(section, min(section + 20, len(lines)))
-            if "Running A" in lines[i]
-        ),
-        None,
-    )
-    if running is None:
-        return None
-
+    tail = section[running.end():]
     numeric_rows: list[list[float]] = []
-    for line in lines[running + 1 : running + 5]:
+    for line in tail.splitlines():
         fields = line.replace("#", " ").split()
         if len(fields) < 7:
             continue
@@ -201,10 +189,11 @@ def parse_planetary_a_index(text: str) -> float | None:
         except ValueError:
             continue
         numeric_rows.append(values)
-
-    # NOAA prints Boulder first and estimated planetary second.
-    return numeric_rows[1][0] if len(numeric_rows) >= 2 else None
-
+        if len(numeric_rows) == 2:
+            return numeric_rows[1][0]
+    values = re.findall(r"[-+]?\d+(?:\.\d+)?", tail)
+    numbers = [float(value) for value in values]
+    return numbers[9] if len(numbers) >= 18 else None
 
 def parse_daily_solar_indices(text: str) -> dict[str, Any] | None:
     """Parse the latest complete NOAA daily solar row (F10.7 and SESC SSN)."""
