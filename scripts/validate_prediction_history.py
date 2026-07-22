@@ -10,6 +10,8 @@ BANDS = ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m")
 BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12m":"24","10m":"28"}
 WINDOW_MINUTES = 90
 MAX_CYCLES = 10000
+MIN_CONFIRMING_OBSERVATIONS = 3
+METHOD_VERSION = "2.0-minimum-three-observations"
 
 def load(path: Path, default):
     try:
@@ -45,9 +47,14 @@ def normalize_band(value):
     return str(value).replace(" ", "").lower()
 
 def classify(predicted, alternative, observed):
-    if predicted and observed > 0:
+    """Classify only when the regional evidence reaches the minimum threshold."""
+    try:
+        confirmed = int(observed) >= MIN_CONFIRMING_OBSERVATIONS
+    except (TypeError, ValueError):
+        confirmed = False
+    if predicted and confirmed:
         return "hit"
-    if alternative and observed > 0:
+    if alternative and confirmed:
         return "partial"
     if predicted:
         return "failure"
@@ -67,6 +74,11 @@ def main():
     entries = history.get("entries", [])
     if not isinstance(entries, list):
         entries = []
+    # Re-evaluate old entries when the scoring method changes.
+    if history.get("method_version") != METHOD_VERSION:
+        for entry in entries:
+            if isinstance(entry, dict):
+                entry["evaluation"] = None
 
     recommendations = nested(report, "prediction_model", "recommendations", default={})
     current = {
@@ -143,12 +155,14 @@ def main():
         "schema_version": "1.0",
         "window_minutes": WINDOW_MINUTES,
         "max_cycles": MAX_CYCLES,
+        "method_version": METHOD_VERSION,
+        "minimum_confirming_observations": MIN_CONFIRMING_OBSERVATIONS,
         "generated_at_utc": now.isoformat(),
         "entries": entries,
         "summary": summary,
         "regional_totals": totals,
         "total": total,
-        "method": "first recommendation=hit, alternative=partial, observed after 90 minutes=positive evidence; other bands are not evaluated",
+        "method": "first recommendation=hit and alternative=partial only with at least three regional observations after 90 minutes; otherwise the first recommendation is a failure; other bands are not evaluated",
         "sources": ["PSKReporter", "DXView"],
     })
     history_path.parent.mkdir(parents=True, exist_ok=True)
