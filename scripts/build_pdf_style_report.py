@@ -466,9 +466,9 @@ Si sabes poco de propagación, empieza aquí:
     for key, label, _ in REGIONS:
         for band in ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m"):
             item = get(hsummary, key, band, default={})
-            historical_rows.append([label, band, "Pendiente de observaciones comparables", text(get(item, "observations_processed", default=0)), "—", "—", "—"])
+            processed = int(get(item, "observations_processed", default=0) or 0)\n            hits = int(get(item, "hits", default=0) or 0)\n            partial = int(get(item, "partial", default=0) or 0)\n            failures = int(get(item, "failures", default=0) or 0)\n            reliability = f"{round((hits + 0.5 * partial) / processed * 100)} %" if processed else "Pendiente"\n            historical_rows.append([label, band, reliability, processed, hits, partial, failures])
     blocks.append("## 14 bis. Fiabilidad histórica por región y banda\\n\\n" + table(
-        ["Región", "Banda", "Estado", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"], historical_rows
+        ["Región", "Banda", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"], historical_rows
     ) + "\\n\\nEl histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 365 ciclos por combinación región-banda. PSKReporter y DXView se utilizan como observaciones; RBN queda fuera de esta primera fase.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
