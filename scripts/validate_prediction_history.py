@@ -39,6 +39,11 @@ def iso_datetime(value, fallback):
     except (TypeError, ValueError):
         return fallback
 
+def normalize_band(value):
+    if value is None:
+        return None
+    return str(value).replace(" ", "").lower()
+
 def classify(predicted, alternative, observed):
     if predicted and observed > 0:
         return "hit"
@@ -93,7 +98,7 @@ def main():
             evaluation[region] = {}
             for band in BANDS:
                 observed = count_observations(psk, dx, region, band)
-                result = classify(band == first, band == alternative, observed)
+                result = classify(normalize_band(band) == normalize_band(first), normalize_band(band) == normalize_band(alternative), observed)
                 evaluation[region][band] = {"result": result, "observations": observed, "evaluated_at_utc": now.isoformat()}
         entry["evaluation"] = evaluation
 
