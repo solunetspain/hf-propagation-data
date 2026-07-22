@@ -118,6 +118,9 @@ jobs:
       - name: Build canonical Spanish web report
         run: python scripts/build_pdf_style_report.py
 
+      - name: Update prediction history
+        run: python scripts/validate_prediction_history.py
+
       - name: Build reader-friendly exports
         run: python scripts/build_reader_exports.py
 
@@ -126,6 +129,7 @@ jobs:
           files=(
             public/data/status.json
             public/data/web-report-es.json
+            public/data/prediction-history.json
             public/data/kc2g-spain.json
             public/diagnostics/kc2g-diagnostic.json
             public/data/hamqsl-summary.json
