@@ -495,7 +495,7 @@ Si sabes poco de propagación, empieza aquí:
         regional_history_rows
     ))
 
-    blocks.append("### Fiabilidad histórica por región y banda\n\n" + table(
+    blocks.append("### Fiabilidad histórica por región y banda recomendada\n\n" + table(
         ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas", "Fiabilidad histórica"], historical_rows
     ) + "\n\n" + "Esta tabla solo muestra combinaciones región+banda que ya han sido recomendadas y evaluadas. Una banda nueva aparece automáticamente desde su primera evaluación y se marca como «muestra limitada» mientras tenga menos de cinco casos. Las bandas que no aparecen todavía no tienen evaluaciones; su ausencia no significa que no hayan tenido actividad. La primera recomendación cuenta como acierto, la alternativa como parcial y una primera recomendación sin evidencia suficiente como fallo. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
 
