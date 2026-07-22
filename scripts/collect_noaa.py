@@ -174,7 +174,7 @@ def rtsw_summary(data: Any, field_map: dict[str, str]) -> dict[str, Any] | None:
 def parse_planetary_a_index(text: str) -> float | None:
     """Read the estimated planetary A from NOAA's current indices text product."""
     lines = text.splitlines()
-    header = next((i for i, line in enumerate(lines) if "Estimated" in line and "Planetary" in line), None)
+    header = next((i for i, line in enumerate(lines) if "Planetary" in line), None)
     if header is None:
         return None
     numeric_rows = []
