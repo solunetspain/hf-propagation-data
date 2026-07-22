@@ -25,6 +25,7 @@ URLS = {
     "solar_flux": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
     "solar_indices": "https://services.swpc.noaa.gov/text/daily-solar-indices.txt",
     "geomagnetic_indices": "https://services.swpc.noaa.gov/text/current-space-weather-indices.txt",
+    "daily_geomagnetic_indices": "https://services.swpc.noaa.gov/text/daily-geomagnetic-indices.txt",
     "drap": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
 }
 
@@ -194,6 +195,22 @@ def parse_planetary_a_index(text: str) -> float | None:
     values = re.findall(r"[-+]?\d+(?:\.\d+)?", tail)
     numbers = [float(value) for value in values]
     return numbers[9] if len(numbers) >= 18 else None
+
+def parse_daily_planetary_a(text: str) -> dict[str, Any] | None:
+    """Parse NOAA daily geomagnetic data and return the planetary A value."""
+    rows = []
+    for line in text.splitlines():
+        fields = line.split()
+        if len(fields) < 22 or not re.match(r"^\d{4}$", fields[0]):
+            continue
+        try:
+            date = datetime(int(fields[0]), int(fields[1]), int(fields[2]), tzinfo=timezone.utc)
+            planetary_a = finite(fields[21])
+        except (ValueError, IndexError):
+            continue
+        if planetary_a is not None:
+            rows.append({"date": date.date().isoformat(), "timestamp_utc": date.isoformat(), "a_index": planetary_a})
+    return rows[-1] if rows else None
 
 def parse_daily_solar_indices(text: str) -> dict[str, Any] | None:
     """Parse the latest complete NOAA daily solar row (F10.7 and SESC SSN)."""
@@ -375,17 +392,19 @@ def main() -> int:
         row = latest_dict(data)
         if row:
             planetary_a = None
+            planetary_a_timestamp = None
             try:
-                geomag_text, geomag_meta = fetch(URLS["geomagnetic_indices"])
-                geomag_text_decoded = geomag_text.decode("utf-8", errors="replace")
-                planetary_a = parse_planetary_a_index(geomag_text_decoded)
-                diagnostic["requests"].append({**geomag_meta, "usable": planetary_a is not None, "planetary_a_index": planetary_a})
+                daily_text, daily_meta = fetch(URLS["daily_geomagnetic_indices"])
+                daily_row = parse_daily_planetary_a(daily_text.decode("utf-8", errors="replace"))
+                planetary_a = daily_row.get("a_index") if daily_row else None
+                planetary_a_timestamp = daily_row.get("timestamp_utc") if daily_row else None
+                diagnostic["requests"].append({**daily_meta, "usable": planetary_a is not None, "planetary_a_index": planetary_a, "product": "daily planetary A"})
                 if planetary_a is None:
-                    raise ValueError("NOAA planetary A could not be identified in current-space-weather-indices.txt")
+                    raise ValueError("NOAA daily planetary A could not be identified")
             except Exception as exc:
-                diagnostic["errors"].append(f"geomagnetic_indices: {exc}")
+                diagnostic["errors"].append(f"daily_geomagnetic_indices: {exc}")
             summary["current"]["geomagnetic"] = {
-                "timestamp_utc": parse_dt(row.get("time_tag")),
+                "timestamp_utc": planetary_a_timestamp or parse_dt(row.get("time_tag")),
                 "kp": finite(row.get("Kp")),
                 "a_index": planetary_a,
                 "a_index_source": "NOAA estimated planetary A",
