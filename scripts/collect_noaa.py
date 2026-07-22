@@ -377,8 +377,11 @@ def main() -> int:
             planetary_a = None
             try:
                 geomag_text, geomag_meta = fetch(URLS["geomagnetic_indices"])
-                planetary_a = parse_planetary_a_index(geomag_text.decode("utf-8", errors="replace"))
-                diagnostic["requests"].append({**geomag_meta, "usable": planetary_a is not None})
+                geomag_text_decoded = geomag_text.decode("utf-8", errors="replace")
+                planetary_a = parse_planetary_a_index(geomag_text_decoded)
+                diagnostic["requests"].append({**geomag_meta, "usable": planetary_a is not None, "planetary_a_index": planetary_a})
+                if planetary_a is None:
+                    raise ValueError("NOAA planetary A could not be identified in current-space-weather-indices.txt")
             except Exception as exc:
                 diagnostic["errors"].append(f"geomagnetic_indices: {exc}")
             summary["current"]["geomagnetic"] = {
