@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-22T13:46:19.192654+00:00",
+  "generated_at": "2026-07-22T15:22:23.534925+00:00",
   "status": "ok",
   "requests": [
     {
@@ -13,7 +13,7 @@
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 4636,
+      "bytes": 4714,
       "usable": true
     },
     {
@@ -29,42 +29,35 @@
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 28003,
+      "bytes": 27925,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2699724,
+      "bytes": 2703834,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1527711,
+      "bytes": 1525252,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 164006,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 59979,
+      "bytes": 163870,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7325,
+      "bytes": 7326,
       "usable": true
     },
     {
@@ -85,11 +78,13 @@
       "url": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
       "http_status": 200,
       "content_type": "text/plain",
-      "bytes": 42499,
+      "bytes": 42469,
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "protons: Expecting value: line 1 column 59121 (char 59120)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
@@ -97,13 +92,13 @@
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
-    "protons": true,
+    "protons": false,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
