@@ -477,6 +477,21 @@ Si sabes poco de propagación, empieza aquí:
     historical_rows.append(["Total general", "Todas", text(get(total, "reliability_pct", default=None), "Pendiente"),
                             get(total, "observations_processed", default=0), get(total, "hits", default=0),
                             get(total, "partial", default=0), get(total, "failures", default=0)])
+    regional_history_rows = []
+    for key, label, _ in REGIONS:
+        item = get(history, "regional_totals", key, default={})
+        regional_history_rows.append([label, text(get(item, "reliability_pct", default=None), "Pendiente"),
+                                      get(item, "observations_processed", default=0), get(item, "hits", default=0),
+                                      get(item, "partial", default=0), get(item, "failures", default=0)])
+    total = get(history, "total", default={})
+    regional_history_rows.append(["Total general", text(get(total, "reliability_pct", default=None), "Pendiente"),
+                                  get(total, "observations_processed", default=0), get(total, "hits", default=0),
+                                  get(total, "partial", default=0), get(total, "failures", default=0)])
+    blocks.append("### Fiabilidad histórica por región\\n\\n" + table(
+        ["Región", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"],
+        regional_history_rows
+    ))
+
     blocks.append("### Fiabilidad histórica por región y banda\n\n" + table(
         ["Región", "Banda", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"], historical_rows
     ) + "\n\n" + "El histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 10.000 ciclos. Solo se evalúan la primera recomendación y la alternativa tras 90 minutos: la primera cuenta como acierto, la alternativa como parcial y las demás bandas no se puntúan. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
