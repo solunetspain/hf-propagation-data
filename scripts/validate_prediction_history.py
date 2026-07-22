@@ -8,7 +8,7 @@ from pathlib import Path
 REGIONS = ("peninsula", "baleares", "canarias")
 BANDS = ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m")
 BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12m":"24","10m":"28"}
-MAX_OBSERVATIONS = 365
+MAX_OBSERVATIONS = 10000
 WINDOW_MINUTES = 90
 
 def load(path: Path, default):
