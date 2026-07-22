@@ -36,7 +36,7 @@ def main():
     history = load(history_path, {"schema_version":"1.0","window_minutes":WINDOW_MINUTES,"max_observations":MAX_OBSERVATIONS,"entries":[]})
     now = datetime.now(timezone.utc)
     entries = history.get("entries", [])
-    prediction = {"generated_at_utc": report.get("generated_at_utc", now.isoformat()), "regions": {}}
+    prediction = {"generated_at_utc": report.get("generated_at_utc", now.isoformat()), "recommendations": report.get("prediction_model", {}).get("recommendations", {}), "regions": {}}
     for region in REGIONS:
         prediction["regions"][region] = {}
         for band in BANDS:
@@ -48,7 +48,7 @@ def main():
         summary[region] = {}
         for band in BANDS:
             values = [e["regions"][region][band]["observations"] for e in entries if region in e.get("regions", {}) and band in e["regions"][region]]
-            summary[region][band] = {"observations_processed": min(len(values), MAX_OBSERVATIONS), "observations_total": sum(values)}
+            mature = [e for e in entries if (now - datetime.fromisoformat(e.get("generated_at_utc", now.isoformat()).replace("Z","+00:00"))).total_seconds() >= WINDOW_MINUTES*60]\n            first = nested(mature[-1] if mature else {}, "recommendations", region, default=[])\n            expected = band in first if isinstance(first, list) else False\n            observed = sum(1 for e in mature if e["regions"][region][band]["observations"] > 0)\n            processed = min(len(mature), MAX_OBSERVATIONS)\n            summary[region][band] = {"observations_processed": processed, "observations_total": sum(values), "hits": observed if expected else 0, "partial": 0, "failures": max(0, processed-observed) if expected else 0}
     history.update({"generated_at_utc": now.isoformat(), "entries": entries, "summary": summary})
     history_path.parent.mkdir(parents=True, exist_ok=True)
     history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
