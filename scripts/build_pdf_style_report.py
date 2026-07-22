@@ -466,15 +466,20 @@ Si sabes poco de propagación, empieza aquí:
     for key, label, _ in REGIONS:
         for band in ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m"):
             item = get(hsummary, key, band, default={})
-            processed = int(get(item, "observations_processed", default=0) or 0)
-            hits = int(get(item, "hits", default=0) or 0)
-            partial = int(get(item, "partial", default=0) or 0)
-            failures = int(get(item, "failures", default=0) or 0)
-            reliability = f"{round((hits + 0.5 * partial) / processed * 100)} %" if processed else "Pendiente"
-            historical_rows.append([label, band, reliability, processed, hits, partial, failures])
-    blocks.append("### Fiabilidad histórica por región y banda\n\n" + table(
+            historical_rows.append([label, band, text(get(item, "reliability_pct", default=None), "Pendiente"),
+                                    get(item, "observations_processed", default=0), get(item, "hits", default=0),
+                                    get(item, "partial", default=0), get(item, "failures", default=0)])
+        total = get(history, "regional_totals", key, default={})
+        historical_rows.append([label, "Todas", text(get(total, "reliability_pct", default=None), "Pendiente"),
+                                get(total, "observations_processed", default=0), get(total, "hits", default=0),
+                                get(total, "partial", default=0), get(total, "failures", default=0)])
+    total = get(history, "total", default={})
+    historical_rows.append(["Total general", "Todas", text(get(total, "reliability_pct", default=None), "Pendiente"),
+                            get(total, "observations_processed", default=0), get(total, "hits", default=0),
+                            get(total, "partial", default=0), get(total, "failures", default=0)])
+    blocks.append("### Fiabilidad histórica por región y banda\\n\\n" + table(
         ["Región", "Banda", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"], historical_rows
-    ) + "\\n\\nEl histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 10.000 ciclos por combinación región-banda. PSKReporter y DXView se utilizan como observaciones; RBN queda fuera de esta primera fase.")
+    ) + "\\n\\nEl histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 10.000 ciclos. Solo se evalúan la primera recomendación y la alternativa tras 90 minutos: la primera cuenta como acierto, la alternativa como parcial y las demás bandas no se puntúan. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
 
