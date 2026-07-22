@@ -476,25 +476,27 @@ Si sabes poco de propagación, empieza aquí:
             historical_rows.append([
                 label, band, evaluations, get(item, "hits", default=0),
                 get(item, "partial", default=0), get(item, "failures", default=0),
-                reliability_text
+                get(item, "unconfirmed", default=0), reliability_text
             ])
     regional_history_rows = []
     for key, label, _ in REGIONS:
         item = get(history, "regional_totals", key, default={})
         regional_history_rows.append([label, text(get(item, "reliability_pct", default=None), "Pendiente"),
                                       get(item, "observations_processed", default=0), get(item, "hits", default=0),
-                                      get(item, "partial", default=0), get(item, "failures", default=0)])
+                                      get(item, "partial", default=0), get(item, "failures", default=0),
+                                      get(item, "unconfirmed", default=0)])
     total = get(history, "total", default={})
     regional_history_rows.append(["Total general", text(get(total, "reliability_pct", default=None), "Pendiente"),
                                   get(total, "observations_processed", default=0), get(total, "hits", default=0),
-                                  get(total, "partial", default=0), get(total, "failures", default=0)])
+                                  get(total, "partial", default=0), get(total, "failures", default=0),
+                                  get(total, "unconfirmed", default=0)])
     blocks.append("### Fiabilidad histórica por región\n\n" + table(
-        ["Región", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"],
+        ["Región", "Fiabilidad histórica", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas"],
         regional_history_rows
     ))
 
     blocks.append("### Fiabilidad histórica por región y banda\n\n" + table(
-        ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "Fiabilidad histórica"], historical_rows
+        ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas", "Fiabilidad histórica"], historical_rows
     ) + "\n\n" + "Esta tabla solo muestra combinaciones región+banda que ya han sido recomendadas y evaluadas. Una banda nueva aparece automáticamente desde su primera evaluación y se marca como «muestra limitada» mientras tenga menos de cinco casos. Las bandas que no aparecen todavía no tienen evaluaciones; su ausencia no significa que no hayan tenido actividad. La primera recomendación cuenta como acierto, la alternativa como parcial y una primera recomendación sin evidencia suficiente como fallo. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
