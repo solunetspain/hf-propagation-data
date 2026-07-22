@@ -269,18 +269,18 @@ def main() -> int:
         executive.append(f"**{label}** mantiene foF2 mediana de **{num(get(s, 'fof2_mhz', 'median'), suffix=' MHz')}** y MUF(3000) mediana de **{num(get(s, 'mufd_mhz', 'median'), suffix=' MHz')}**. La actividad observada se conserva como contraste, no como garantía de contacto.")
     band_frequency_mhz = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1, "17 m": 18.1, "15 m": 21.2, "12 m": 24.9, "10 m": 28.5}
     recommendations = {
-        "peninsula": ("20 m", "17 m"),
-        "baleares": ("20 m", "17 m"),
-        "canarias": ("15 m", "20 m"),
+        "peninsula": ("20 m", "17 m", "15 m", "10 m"),
+        "baleares": ("20 m", "17 m", "40 m", "15 m"),
+        "canarias": ("15 m", "20 m", "17 m", "12 m"),
     }
     quick_rows = []
     for key, label, _ in REGIONS:
         muf = float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)
-        first, second = recommendations[key]
+        first, alternative, backup, special = recommendations[key]
         avoid = [band for band, frequency in band_frequency_mhz.items() if frequency > muf]
         avoid_text = f"🔴 {', '.join(avoid)} — no empezar con F2 normal" if avoid else "—"
-        quick_rows.append([label, f"✅ {first}", f"⚠️ {second}", avoid_text])
-    quick_table = table(["Región", "Primera opción", "Alternativa", "Evitar como primera prueba"], quick_rows)
+        quick_rows.append([label, f"✅ {first}", f"⚠️ {alternative}", f"↩️ {backup}", f"🧪 {special}", avoid_text])
+    quick_table = table(["Región", "Primera opción", "Alternativa", "Respaldo", "Prueba especial", "Evitar como primera prueba"], quick_rows)
     quick_legend = "**Leyenda:**<br>✅ primera opción favorable.<br>⚠️ alternativa o condición variable.<br>🔴 no empezar por esa banda con F2 normal."
     quick_guide = """### Guía rápida para usar este informe
 
@@ -398,15 +398,15 @@ Si sabes poco de propagación, empieza aquí:
         ["Región", "Banda", "Estado", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"], nvis_rows))
 
     dx_rows = []
-    targets = [("EA", ["40 m", "20 m"]), ("Europa", ["20 m", "17 m"]), ("Norteamérica", ["20 m", "17 m"]), ("Sudamérica", ["20 m", "15 m"]), ("África", ["20 m", "15 m"]), ("Asia", ["20 m", "17 m"]), ("Oceanía", ["20 m", "17 m"])]
+    targets = [("EA", ["40 m", "20 m", "17 m", "15 m"]), ("Europa", ["20 m", "17 m", "15 m", "12 m"]), ("Norteamérica", ["20 m", "17 m", "15 m", "12 m"]), ("Sudamérica", ["20 m", "15 m", "17 m", "12 m"]), ("África", ["20 m", "15 m", "17 m", "12 m"]), ("Asia", ["20 m", "17 m", "15 m", "12 m"]), ("Oceanía", ["20 m", "17 m", "15 m", "12 m"]) ]
     for key, label, _ in REGIONS:
         psk_bands = get(psk, "regions", key, "bands", default={})
         for target, preferred in targets:
             evidence = sum(get(psk_bands, b.replace(" ", ""), "report_count", default=0) or 0 for b in preferred)
             classification = "🧩 Inferida" if evidence else "📐 Teórica"
-            dx_rows.append([label, target, preferred[0], preferred[1], "FT8/CW/SSB", f"🔎 {evidence} reportes observados en banda preferente; destino inferido" if evidence else "Sin observación directa; posibilidad física", classification])
+            dx_rows.append([label, target, preferred[0], preferred[1], preferred[2], preferred[3], "FT8/CW/SSB", f"🔎 {evidence} reportes observados en bandas preferentes; destino inferido" if evidence else "Sin observación directa; posibilidad física", classification])
     blocks.append("## 10. Europa y DX\n\n" + table(
-        ["Región", "Objetivo", "Mejor banda", "Segunda opción", "Modo", "Ventana/sector", "Clasificación"], dx_rows) + "\n\n**Leyenda:**<br>🔎 actividad observada: existe actividad registrada directamente por una fuente.<br>🧩 posibilidad inferida: se deduce de varios indicios, pero no está observada de forma directa.<br>📐 posibilidad teórica: es físicamente posible, pero no hay confirmación observacional específica.")
+        ["Región", "Objetivo", "Primera opción", "Alternativa", "Respaldo", "Prueba especial", "Modo", "Ventana/sector", "Clasificación"], dx_rows) + "\n\n**Leyenda:**<br>🔎 actividad observada: existe actividad registrada directamente por una fuente.<br>🧩 posibilidad inferida: se deduce de varios indicios, pero no está observada de forma directa.<br>📐 posibilidad teórica: es físicamente posible, pero no hay confirmación observacional específica.")
 
     blocks.append("## 11. Terminador e iluminación\n\nLas tres regiones siguen con iluminación diurna según la captura disponible. No se anuncia una ventana greyline exacta sin geometría solar regional validada.")
     qrn_region_points = {
