@@ -477,13 +477,9 @@ Si sabes poco de propagación, empieza aquí:
     historical_rows.append(["Total general", "Todas", text(get(total, "reliability_pct", default=None), "Pendiente"),
                             get(total, "observations_processed", default=0), get(total, "hits", default=0),
                             get(total, "partial", default=0), get(total, "failures", default=0)])
-    blocks.append("### Fiabilidad histórica por región y banda\
-\
-" + table(
+    blocks.append("### Fiabilidad histórica por región y banda\n\n" + table(
         ["Región", "Banda", "Fiabilidad histórica", "Observaciones procesadas", "Aciertos", "Parciales", "Fallos"], historical_rows
-    ) + "\
-\
-El histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 10.000 ciclos. Solo se evalúan la primera recomendación y la alternativa tras 90 minutos: la primera cuenta como acierto, la alternativa como parcial y las demás bandas no se puntúan. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
+    ) + "\n\n" + "El histórico comienza vacío y se completa con nuevas ejecuciones. Se conservan como máximo 10.000 ciclos. Solo se evalúan la primera recomendación y la alternativa tras 90 minutos: la primera cuenta como acierto, la alternativa como parcial y las demás bandas no se puntúan. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
 
