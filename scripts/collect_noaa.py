@@ -172,24 +172,36 @@ def rtsw_summary(data: Any, field_map: dict[str, str]) -> dict[str, Any] | None:
     return result
 
 def parse_planetary_a_index(text: str) -> float | None:
-    """Read the estimated planetary A from NOAA's current indices text product."""
+    """Read estimated planetary A from NOAA's geomagnetic indices block."""
     lines = text.splitlines()
-    header = next((i for i, line in enumerate(lines) if "Planetary" in line), None)
-    if header is None:
+    section = next(
+        (i for i, line in enumerate(lines) if ":Geomagnetic_Values:" in line),
+        None,
+    )
+    if section is None:
         return None
-    numeric_rows = []
-    for line in lines[header + 1:]:
-        fields = line.split()
-        if not fields or len(fields) < 2:
+    running = next(
+        (
+            i
+            for i in range(section, min(section + 20, len(lines)))
+            if "Running A" in lines[i]
+        ),
+        None,
+    )
+    if running is None:
+        return None
+
+    numeric_rows: list[list[float]] = []
+    for line in lines[running + 1 : running + 5]:
+        fields = line.replace("#", " ").split()
+        if len(fields) < 7:
             continue
         try:
             values = [float(field) for field in fields]
         except ValueError:
             continue
-        if len(values) >= 7:
-            numeric_rows.append(values)
-        if len(numeric_rows) >= 2:
-            break
+        numeric_rows.append(values)
+
     # NOAA prints Boulder first and estimated planetary second.
     return numeric_rows[1][0] if len(numeric_rows) >= 2 else None
 
