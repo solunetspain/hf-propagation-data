@@ -279,7 +279,7 @@ def main() -> int:
         first, alternative, backup, special = recommendations[key]
         avoid = [band for band, frequency in band_frequency_mhz.items() if frequency > muf]
         avoid_text = f"🔴 {', '.join(avoid)} — no empezar con F2 normal" if avoid else "—"
-        quick_rows.append([label, first, alternative, backup, special, avoid_text])
+        quick_rows.append([label, f"✅ {first}", f"⚠️ {alternative}", f"↩️ {backup}", f"🧪 {special}", avoid_text])
     quick_table = table(["Región", "Primera opción", "Alternativa", "Respaldo", "Prueba especial", "Evitar como primera prueba"], quick_rows)
     quick_legend = "**Leyenda:**\n\n✅ Primera opción: banda con el mejor respaldo conjunto.\n\n⚠️ Alternativa: opción razonable si la primera no responde.\n\n↩️ Respaldo: banda utilizable si cambian las condiciones.\n\n🧪 Prueba especial: indicios o mecanismo posible, pero con menor confirmación.\n\n🔴 No empezar por esa banda con F2 normal; no significa que sea imposible."
     quick_guide = """### Guía rápida para usar este informe
@@ -305,7 +305,7 @@ Si sabes poco de propagación, empieza aquí:
 ### Resumen operativo por región
 
 """
-    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + quick_table + "\n\n" + quick_legend + "\n\n" + "\n\n".join(executive))
+    blocks.append("## 1. Resumen ejecutivo\n\n" + quick_guide + quick_table + "\n\n" + quick_legend + "\n\n\n" + "\n\n".join(executive))
     blocks.append("## 2. Cabecera\n\n" + "\n".join([
         f"- Hora de generación UTC: **{now.strftime("%Y-%m-%d  %H:%M:%S")}**",
         f"- KC2G regional: {age(kc2g, now)}",
