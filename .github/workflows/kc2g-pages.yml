@@ -118,6 +118,11 @@ jobs:
       - name: Build canonical Spanish web report
         run: python scripts/build_pdf_style_report.py
 
+      - name: Restore prediction history
+        run: |
+          git fetch origin generated-data
+          git show origin/generated-data:public/data/prediction-history.json > public/data/prediction-history.json 2>/dev/null || true
+
       - name: Update prediction history
         run: python scripts/validate_prediction_history.py
 
