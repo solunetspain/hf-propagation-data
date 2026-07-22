@@ -24,6 +24,7 @@ URLS = {
     "electrons": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
     "solar_flux": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
     "solar_indices": "https://services.swpc.noaa.gov/text/daily-solar-indices.txt",
+    "geomagnetic_indices": "https://services.swpc.noaa.gov/text/current-space-weather-indices.txt",
     "drap": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
 }
 
@@ -169,6 +170,29 @@ def rtsw_summary(data: Any, field_map: dict[str, str]) -> dict[str, Any] | None:
         usable = [value for value in values if value is not None]
         result[output_field] = round(statistics.median(usable), 3) if usable else None
     return result
+
+def parse_planetary_a_index(text: str) -> float | None:
+    """Read the estimated planetary A from NOAA's current indices text product."""
+    lines = text.splitlines()
+    header = next((i for i, line in enumerate(lines) if "Estimated" in line and "Planetary" in line), None)
+    if header is None:
+        return None
+    numeric_rows = []
+    for line in lines[header + 1:]:
+        fields = line.split()
+        if not fields or len(fields) < 2:
+            continue
+        try:
+            values = [float(field) for field in fields]
+        except ValueError:
+            continue
+        if len(values) >= 7:
+            numeric_rows.append(values)
+        if len(numeric_rows) >= 2:
+            break
+    # NOAA prints Boulder first and estimated planetary second.
+    return numeric_rows[1][0] if len(numeric_rows) >= 2 else None
+
 
 def parse_daily_solar_indices(text: str) -> dict[str, Any] | None:
     """Parse the latest complete NOAA daily solar row (F10.7 and SESC SSN)."""
@@ -349,12 +373,20 @@ def main() -> int:
         data = fetch_json(URLS["kp"], diagnostic)
         row = latest_dict(data)
         if row:
+            planetary_a = None
+            try:
+                geomag_text, geomag_meta = fetch(URLS["geomagnetic_indices"])
+                planetary_a = parse_planetary_a_index(geomag_text.decode("utf-8", errors="replace"))
+                diagnostic["requests"].append({**geomag_meta, "usable": planetary_a is not None})
+            except Exception as exc:
+                diagnostic["errors"].append(f"geomagnetic_indices: {exc}")
             summary["current"]["geomagnetic"] = {
                 "timestamp_utc": parse_dt(row.get("time_tag")),
                 "kp": finite(row.get("Kp")),
-                "a_index": finite(row.get("a_running")),
+                "a_index": planetary_a,
+                "a_index_source": "NOAA estimated planetary A",
                 "station_count": row.get("station_count"),
-                "classification": "official 3-hour planetary Kp",
+                "classification": "official 3-hour planetary Kp; estimated planetary A",
             }
         diagnostic["validation"]["kp"] = row is not None
     except Exception as exc:
