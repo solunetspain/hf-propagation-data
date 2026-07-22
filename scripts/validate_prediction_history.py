@@ -46,7 +46,7 @@ def normalize_band(value):
         return None
     return str(value).replace(" ", "").lower()
 
-def classify(predicted, alternative, observed):
+def classify(predicted, alternative, observed, source_valid):
     """Classify only when the regional evidence reaches the minimum threshold."""
     try:
         confirmed = int(observed) >= MIN_CONFIRMING_OBSERVATIONS
@@ -56,12 +56,15 @@ def classify(predicted, alternative, observed):
         return "hit"
     if alternative and confirmed:
         return "partial"
-    if predicted:
+    if predicted and source_valid:
         return "failure"
+    if predicted:
+        return "unconfirmed"
     return "not_evaluated"
 
 def empty_item():
-    return {"observations_processed": 0, "observations_total": 0, "hits": 0, "partial": 0, "failures": 0, "reliability_pct": None}
+    return {"observations_processed": 0, "observations_total": 0, "hits": 0, "partial": 0,
+            "failures": 0, "unconfirmed": 0, "reliability_pct": None}
 
 def main():
     data = Path("public/data")
@@ -108,10 +111,20 @@ def main():
                 first = bands[0] if bands else None
                 alternative = bands[1] if len(bands) > 1 else None
             evaluation[region] = {}
+            region_source_valid = nested(psk, "regions", region, "status", default="") == "ok"
             for band in BANDS:
                 observed = count_observations(psk, dx, region, band)
-                result = classify(normalize_band(band) == normalize_band(first), normalize_band(band) == normalize_band(alternative), observed)
-                evaluation[region][band] = {"result": result, "observations": observed, "evaluated_at_utc": now.isoformat()}
+                result = classify(
+                    normalize_band(band) == normalize_band(first),
+                    normalize_band(band) == normalize_band(alternative),
+                    observed,
+                    region_source_valid,
+                )
+                evaluation[region][band] = {
+                    "result": result,
+                    "observations": observed,
+                    "evaluated_at_utc": now.isoformat(),
+                }
         entry["evaluation"] = evaluation
 
     entries.append(current)
@@ -131,6 +144,7 @@ def main():
                 item["hits"] += result == "hit"
                 item["partial"] += result == "partial"
                 item["failures"] += result == "failure"
+                item["unconfirmed"] += result == "unconfirmed"
             if item["observations_processed"]:
                 item["reliability_pct"] = round((item["hits"] + 0.5 * item["partial"]) / item["observations_processed"] * 100)
             summary[region][band] = item
@@ -140,7 +154,7 @@ def main():
         totals[region] = empty_item()
         for band in BANDS:
             item = summary[region][band]
-            for key in ("observations_processed", "observations_total", "hits", "partial", "failures"):
+            for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
                 totals[region][key] += item[key]
         if totals[region]["observations_processed"]:
             totals[region]["reliability_pct"] = round((totals[region]["hits"] + 0.5 * totals[region]["partial"]) / totals[region]["observations_processed"] * 100)
@@ -162,7 +176,7 @@ def main():
         "summary": summary,
         "regional_totals": totals,
         "total": total,
-        "method": "first recommendation=hit and alternative=partial only with at least three regional observations after 90 minutes; otherwise the first recommendation is a failure; other bands are not evaluated",
+        "method": "first recommendation=hit and alternative=partial only with at least three observations; no observation is a failure only when the regional source is valid, otherwise it is unconfirmed; other bands are not evaluated",
         "sources": ["PSKReporter", "DXView"],
     })
     history_path.parent.mkdir(parents=True, exist_ok=True)
