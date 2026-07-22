@@ -1,7 +1,9 @@
 {
-  "generated_at": "2026-07-22T09:07:02.586318+00:00",
+  "generated_at": "2026-07-22T09:17:06.327837+00:00",
   "status": "ok",
-  "errors": [],
+  "errors": [
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+  ],
   "validation": {
     "model_response_received": true,
     "current_and_forecast_separated": true,
@@ -32,5 +34,9 @@
     "Canarias": {
       "status": "ok"
     }
+  },
+  "aemet_lightning": {
+    "status": "error",
+    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
   }
 }
