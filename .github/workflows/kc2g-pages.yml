@@ -86,7 +86,9 @@ jobs:
 
       - name: Collect modelled QRN risk
         continue-on-error: true
-        run: python scripts/collect_weather_qrn.py
+        env:
+          AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+        run: python scripts/collect_weather_qrn.py --aemet-api-key "$AEMET_API_KEY"
 
       - name: Collect GIRO cross-check
         continue-on-error: true
