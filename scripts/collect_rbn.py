@@ -16,7 +16,7 @@ BANDS = {
     "20m": (14.0, 14.35), "17m": (18.068, 18.168),
     "15m": (21.0, 21.45), "12m": (24.89, 24.99), "10m": (28.0, 29.7),
 }
-FREQUENCY_TOKEN_RE = re.compile(r"^(\\d+(?:\\.\\d+)?)$")
+FREQUENCY_TOKEN_RE = re.compile(r"^(\d+(?:\.\d+)?)$")
 
 
 def band_for(freq_mhz: float) -> str | None:
