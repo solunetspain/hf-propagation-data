@@ -141,7 +141,7 @@ def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
     if len(values) < 2:
         return "Serie insuficiente"
     delta = values[-1] - values[0]
-    arrow = "↑" if delta > 0.5 else "↓" if delta < -0.5 else "→"
+    arrow = "⬆" if delta > 0.5 else "⬇" if delta < -0.5 else "➡"
     color = "#2e8b57" if delta > 0.5 else "#c94c4c" if delta < -0.5 else "#607d9b"
     return f'<strong style="color:{color};font-size:1.15em">{arrow}</strong> {abs(delta):.1f} zonas'
 
@@ -360,7 +360,7 @@ Si sabes poco de propagación, empieza aquí:
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
         [[band_label(band), trend_text(history, "peninsula", band), trend_text(history, "baleares", band), trend_text(history, "canarias", band)]
-         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]]) + "\n\n**Leyenda:** <strong style=\"color:#2e8b57\">↑</strong> ascendente · <strong style=\"color:#607d9b\">→</strong> estable · <strong style=\"color:#c94c4c\">↓</strong> descendente.")
+         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]]) + "\n\n**Leyenda:** <strong style=\"color:#2e8b57\">⬆</strong> ascendente · <strong style=\"color:#607d9b\">➡</strong> estable · <strong style=\"color:#c94c4c\">⬇</strong> descendente.")
 
     activity_rows = []
     for key, label, _ in REGIONS:
