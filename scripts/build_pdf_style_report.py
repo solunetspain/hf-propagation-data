@@ -472,8 +472,8 @@ Si sabes poco de propagación, empieza aquí:
                 continue
             reliability = get(item, "reliability_pct", default=None)
             reliability_text = text(reliability, "Pendiente")
-            if evaluations < 5:
-                reliability_text += " · muestra limitada"
+            if evaluations < 100:
+                reliability_text += " · muestra inicial"
             historical_rows.append([
                 label, band, evaluations, get(item, "hits", default=0),
                 get(item, "partial", default=0), get(item, "failures", default=0),
@@ -483,9 +483,12 @@ Si sabes poco de propagación, empieza aquí:
     for key, label, _ in REGIONS:
         item = get(history, "regional_totals", key, default={})
         reliability = get(item, "reliability_pct", default=None)
+        observations = int(get(item, "observations_processed", default=0) or 0)
         reliability_text = f"{reliability} %" if reliability is not None else "Pendiente"
+        if observations < 100:
+            reliability_text += " · muestra inicial"
         regional_history_rows.append([label, reliability_text,
-                                      get(item, "observations_processed", default=0), get(item, "hits", default=0),
+                                      observations, get(item, "hits", default=0),
                                       get(item, "partial", default=0), get(item, "failures", default=0),
                                       get(item, "unconfirmed", default=0)])
     total = get(history, "total", default={})
