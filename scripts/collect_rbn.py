@@ -73,6 +73,7 @@ def main() -> int:
     generated = now_iso()
     host = os.getenv("RBN_TELNET_HOST", "").strip()
     port = int(os.getenv("RBN_TELNET_PORT", "0") or 0)
+    callsign = os.getenv("RBN_TELNET_CALLSIGN", "").strip()
     timeout = float(os.getenv("RBN_TELNET_TIMEOUT", "8") or 8)
     result = {
         "schema_version": "1.1",
@@ -108,7 +109,7 @@ def main() -> int:
                 # RBN Telnet servers may emit a login/prompt. A blank line is
                 # harmless and helps servers begin streaming to an anonymous client.
                 try:
-                    conn.sendall(b"\n")
+                    conn.sendall((callsign + "\n").encode("ascii", "ignore") if callsign else b"\n")
                 except OSError:
                     pass
                 data = read_stream(conn, timeout)
