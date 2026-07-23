@@ -17,6 +17,8 @@ BANDS = {
     "15m": (21.0, 21.45), "12m": (24.89, 24.99), "10m": (28.0, 29.7),
 }
 FREQUENCY_TOKEN_RE = re.compile(r"^(\d+(?:\.\d+)?)$")
+CALLSIGN_RE = re.compile(r"^[A-Z0-9]{2,}(?:/[A-Z0-9]+)*$")
+SPANISH_PREFIX_RE = re.compile(r"^(?:EA|EB|EC|ED|EE|EF|AM|AN|AO)([0-9])")
 
 
 def band_for(freq_mhz: float) -> str | None:
@@ -43,21 +45,51 @@ def parse_frequency_token(token: str) -> float | None:
     return frequency_mhz if band_for(frequency_mhz) else None
 
 
+def region_from_receiver(receiver: str) -> str | None:
+    """Use only explicit Spanish callsign area digits; never infer from a spot target."""
+    base = receiver.upper().strip().rstrip(":").split("/")[0].replace("-#", "")
+    match = SPANISH_PREFIX_RE.match(base)
+    if not match:
+        return None
+    area = match.group(1)
+    if area == "6":
+        return "Baleares"
+    if area == "8":
+        return "Canarias"
+    if area in {"1", "2", "3", "4", "5", "7"}:
+        return "Península"
+    return None
+
+
+def looks_like_callsign(token: str) -> bool:
+    token = token.strip(" ,;:()[]")
+    return bool(CALLSIGN_RE.fullmatch(token)) and any(c.isdigit() for c in token) and any(c.isalpha() for c in token)
+
+
 def parse_spot(line: str) -> dict[str, object] | None:
-    """Parse only the frequency field from a DX cluster/RBN spot line."""
+    """Parse receiver, heard station, frequency and band from an RBN DX spot."""
     if not line.lstrip().upper().startswith("DX DE "):
         return None
     fields = line.split()
-    for token in fields[3:]:
+    receiver = fields[2].rstrip(":") if len(fields) > 2 else ""
+    frequency_mhz = None
+    freq_index = None
+    for index, token in enumerate(fields[3:], start=3):
         frequency_mhz = parse_frequency_token(token)
-        if frequency_mhz is None:
-            continue
-        return {
-            "raw": line[:500],
-            "frequency_mhz": frequency_mhz,
-            "band": band_for(frequency_mhz),
-        }
-    return None
+        if frequency_mhz is not None:
+            freq_index = index
+            break
+    if frequency_mhz is None:
+        return None
+    heard = next((t.strip(" ,;:()[]") for t in fields[freq_index + 1:] if looks_like_callsign(t)), None)
+    return {
+        "raw": line[:500],
+        "receiver_callsign": receiver or None,
+        "heard_callsign": heard,
+        "receiver_region": region_from_receiver(receiver),
+        "frequency_mhz": frequency_mhz,
+        "band": band_for(frequency_mhz),
+    }
 
 
 def read_stream(conn: socket.socket, seconds: float) -> str:
@@ -88,7 +120,7 @@ def main() -> int:
     callsign = os.getenv("RBN_TELNET_CALLSIGN", "").strip()
     timeout = float(os.getenv("RBN_TELNET_TIMEOUT", "8") or 8)
     result = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "source": "Reverse Beacon Network",
         "generated_at": generated,
         "status": "disabled",
@@ -96,6 +128,10 @@ def main() -> int:
         "scope": "live spots only",
         "bands": {},
         "spots": [],
+        "regions": {},
+        "regional_attribution": "Spanish receiver callsign area only; unassigned spots remain global",
+        "global_unassigned_spots": 0,
+        "quality_gate": {"minimum_spots": 5, "minimum_distinct_receivers": 3, "eligible_for_auxiliary_weight": False},
         "limitation": "RBN live endpoint is not configured; no RBN evidence is counted.",
     }
     diagnostic = {
@@ -127,20 +163,33 @@ def main() -> int:
                 data = read_stream(conn, timeout)
             diagnostic["validation"]["stream_read"] = True
             spots: list[dict[str, object]] = []
-            seen: set[tuple[object, object]] = set()
+            seen: set[tuple[object, object, object]] = set()
             for line in data.splitlines():
                 spot = parse_spot(line)
                 if not spot:
                     continue
-                key = (spot["frequency_mhz"], spot["raw"])
+                key = (spot["receiver_callsign"], spot["frequency_mhz"], spot["heard_callsign"])
                 if key in seen:
                     continue
                 seen.add(key)
                 spots.append(spot)
+            regional = {}
+            for region in ("Península", "Baleares", "Canarias"):
+                selected = [s for s in spots if s.get("receiver_region") == region]
+                regional[region] = {
+                    "report_count": len(selected),
+                    "distinct_receivers": len({s.get("receiver_callsign") for s in selected if s.get("receiver_callsign")}),
+                    "bands": dict(Counter(str(s["band"]) for s in selected)),
+                }
+            unassigned = sum(1 for s in spots if not s.get("receiver_region"))
+            eligible = any(v["report_count"] >= 5 and v["distinct_receivers"] >= 3 for v in regional.values())
             result.update({
                 "status": "ok" if spots else "partial",
                 "spots": spots[:500],
                 "bands": dict(Counter(str(s["band"]) for s in spots)),
+                "regions": regional,
+                "global_unassigned_spots": unassigned,
+                "quality_gate": {"minimum_spots": 5, "minimum_distinct_receivers": 3, "eligible_for_auxiliary_weight": eligible},
                 "limitation": None if spots else (
                     "Endpoint responded but no parseable HF spots were found in the "
                     "bounded Telnet window."
@@ -148,6 +197,8 @@ def main() -> int:
             })
             diagnostic["status"] = result["status"]
             diagnostic["validation"]["spots_parsed"] = len(spots)
+            diagnostic["validation"]["regional_spots_attributed"] = sum(v["report_count"] for v in regional.values())
+            diagnostic["validation"]["distinct_receivers"] = len({s.get("receiver_callsign") for s in spots if s.get("receiver_callsign")})
         except Exception as exc:
             diagnostic["status"] = "error"
             diagnostic["errors"].append(f"{type(exc).__name__}: {exc}")
