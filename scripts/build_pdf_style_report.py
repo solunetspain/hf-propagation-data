@@ -225,6 +225,7 @@ def main() -> int:
     giro = load("giro-spain-summary.json")
     psk = load("pskreporter-hf-regions.json")
     rbn = load("rbn-spots.json")
+    rbn_regions = get(rbn, "regions", default={})
     dx = load("dxview-regions-summary.json")
     psk_diag = load("pskreporter-regions-diagnostic.json", DIAG)
     current = get(noaa, "current", default={})
@@ -256,7 +257,7 @@ def main() -> int:
         ("GIRO", "Contraste con ionosondas", "Parcial", "Datos parciales o ausentes", "Tres regiones", age(giro, now), "70 %", "0 %", "Ausencia o cobertura parcial"),
         ("Diagnóstico GIRO", "Distinguir ausencia de datos", "Sí", "Diagnóstico parseado", "Tres regiones", age(giro, now), "90 %", "0 %", "No aporta ionosfera si no hay observaciones"),
         ("PSKReporter regional", "Actividad observada por banda", "Parcial", "Reportes recibidos y regionalizados", "Tres regiones", age(psk, now), "80 %", "19 %", "Cobertura incompleta"),
-        ("RBN", "Spots de receptores automáticos", "Parcial" if rbn.get("status") == "ok" else "No", "Spots HF parseados" if rbn.get("status") == "ok" else "No contado", "Global; sin asignación regional automática", age(rbn, now), "70 %" if rbn.get("status") == "ok" else "0 %", "0 %", rbn.get("limitation") or "Sesgo de skimmers; no demuestra QSO ni ruta"),
+        ("RBN", "Spots de receptores automáticos", "Parcial" if rbn.get("status") == "ok" else "No", "Spots HF parseados con receptor y frecuencia" if rbn.get("status") == "ok" else "No contado", "Global; región solo por área explícita del receptor", age(rbn, now), "70 %" if rbn.get("status") == "ok" else "0 %", "0 %", rbn.get("limitation") or "Corroboración auxiliar; no demuestra QSO ni ruta"),
         ("Diagnóstico PSKReporter", "Validar separación regional", "Sí", "Parseo y deduplicación", "Tres regiones", age(psk, now), "96 %", "1 %", "Consultas parciales"),
         ("DXView regional", "Actividad, sectores y evolución", "Sí", "Respuestas regionales", "Tres regiones", age(dx, now), "95 %", "13 %", "Muestras representativas"),
         ("Diagnóstico DXView", "Validar muestras e histórico", "Sí", "Parseo completo", "Tres regiones", age(dx, now), "99 %", "1 %", "Resolución espacial limitada"),
@@ -384,8 +385,8 @@ Si sabes poco de propagación, empieza aquí:
             ])
     rbn_bands = get(rbn, "bands", default={})
     blocks.append("## 8. Actividad DXView observada\n\n" + table(
-        ["Región", "Banda", "DXView: zonas mín./med./máx.", "Modos DXView", "Sectores dominantes", "PSK: reportes / estaciones / rutas", "Distancia mediana PSK", "RBN: spots globales", "Evolución 5/5"],
-        [row[:7] + [f"{get(rbn_bands, row[1].replace(' ', ''), default=0)} spots" if rbn.get("status") == "ok" else "No validado", row[7]] for row in activity_rows]))
+        ["Región", "Banda", "DXView: zonas mín./med./máx.", "Modos DXView", "Sectores dominantes", "PSK: reportes / estaciones / rutas", "Distancia mediana PSK", "RBN: spots regionales", "Evolución 5/5"],
+        [row[:7] + [f"{get(rbn_regions, row[0], default={}).get('bands', {}).get(row[1].replace(' ', ''), 0)} spots regionales" if rbn.get("status") == "ok" else "No validado", row[7]] for row in activity_rows]))
 
     nvis_rows = []
     for key, label, kc_key in REGIONS:
