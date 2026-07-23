@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import socket
 import math
 import statistics
 import time
 import urllib.parse
 import urllib.request
+from urllib.error import HTTPError, URLError
 import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -205,6 +207,30 @@ def aggregate_reports(reports: list[dict[str, Any]]) -> dict[str, Any]:
     return dict(sorted(result.items(), key=lambda item: HF_BANDS.index(next(row for row in HF_BANDS if row[2] == item[0]))))
 
 
+
+RETRYABLE_HTTP_CODES = {429, 500, 502, 503, 504}
+
+
+def fetch_with_retries(url: str, user_agent: str, attempts: int = 3) -> tuple[bytes, str, int]:
+    last_error: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": user_agent})
+            with urllib.request.urlopen(request, timeout=45) as response:
+                return response.read(), response.headers.get("Content-Type", ""), attempt
+        except HTTPError as exc:
+            last_error = exc
+            if exc.code not in RETRYABLE_HTTP_CODES or attempt == attempts:
+                raise
+        except (URLError, TimeoutError, socket.timeout) as exc:
+            last_error = exc
+            if attempt == attempts:
+                raise
+        time.sleep(min(8, 2 ** (attempt - 1)))
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError("PSKReporter request failed without a captured error")
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=Path("public/data/pskreporter-hf-summary.json"))
@@ -239,10 +265,9 @@ def main() -> int:
         },
     }
     try:
-        request = urllib.request.Request(url, headers={"User-Agent": "SOLUNET-HF-PSKReporter/2.0"})
-        with urllib.request.urlopen(request, timeout=45) as response:
-            body = response.read()
-            content_type = response.headers.get("Content-Type", "")
+        body, content_type, attempts = fetch_with_retries(
+            url, "SOLUNET-HF-PSKReporter/2.0"
+        )
         diagnostic["validation"]["response_received"] = True
         root = ET.fromstring(body)
         diagnostic["validation"]["format_parsed"] = True
@@ -271,6 +296,7 @@ def main() -> int:
         output.update(
             {
                 "content_type": content_type,
+                "http_attempts": attempts,
                 "upstream_report_count": len(raw_reports),
                 "accepted_report_count": len(reports),
                 "scope_summary": {
