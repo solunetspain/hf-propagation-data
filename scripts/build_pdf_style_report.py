@@ -382,9 +382,10 @@ Si sabes poco de propagación, empieza aquí:
                 (num(get(pvalue, "distance_km", "median", default=None), suffix=" km") if get(pvalue, "report_count", default=0) else "Sin rutas observadas"),
                 trend_text(history, key, band),
             ])
+    rbn_bands = get(rbn, "bands", default={})
     blocks.append("## 8. Actividad DXView observada\n\n" + table(
-        ["Región", "Banda", "DXView: zonas mín./med./máx.", "Modos DXView", "Sectores dominantes", "PSK: reportes / estaciones / rutas", "Distancia mediana PSK", "Evolución 5/5"],
-        activity_rows))
+        ["Región", "Banda", "DXView: zonas mín./med./máx.", "Modos DXView", "Sectores dominantes", "PSK: reportes / estaciones / rutas", "Distancia mediana PSK", "RBN: spots globales", "Evolución 5/5"],
+        [row[:7] + [f"{get(rbn_bands, row[1].replace(' ', ''), default=0)} spots" if rbn.get("status") == "ok" else "No validado", row[7]] for row in activity_rows]))
 
     nvis_rows = []
     for key, label, kc_key in REGIONS:
@@ -509,7 +510,7 @@ Si sabes poco de propagación, empieza aquí:
 
     blocks.append("### Fiabilidad histórica por región y banda recomendada\n\n" + table(
         ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas", "Fiabilidad histórica"], historical_rows
-    ) + "\n\n" + "Esta tabla solo muestra combinaciones región+banda que ya han sido recomendadas y evaluadas. Una banda nueva aparece automáticamente desde su primera evaluación y se marca como «muestra limitada» mientras tenga menos de cinco casos. Las bandas que no aparecen todavía no tienen evaluaciones; su ausencia no significa que no hayan tenido actividad. La primera recomendación cuenta como acierto, la alternativa como parcial y una primera recomendación sin evidencia suficiente como fallo. PSKReporter y DXView aportan la evidencia; RBN queda fuera por ahora.")
+    ) + "\n\n" + "Esta tabla solo muestra combinaciones región+banda que ya han sido recomendadas y evaluadas. Una banda nueva aparece automáticamente desde su primera evaluación y se marca como «muestra limitada» mientras tenga menos de cinco casos. Las bandas que no aparecen todavía no tienen evaluaciones; su ausencia no significa que no hayan tenido actividad. La primera recomendación cuenta como acierto, la alternativa como parcial y una primera recomendación sin evidencia suficiente como fallo. PSKReporter y DXView aportan la evidencia regional. RBN se integra como corroboración global de actividad detectada por receptores automáticos: se muestra por banda, pero no se asigna artificialmente a una región ni cuenta como acierto histórico por sí solo.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
 
