@@ -360,7 +360,7 @@ Si sabes poco de propagación, empieza aquí:
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
         [[band_label(band), trend_text(history, "peninsula", band), trend_text(history, "baleares", band), trend_text(history, "canarias", band)]
-         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]])) + "\n\n**Leyenda:** <strong style=\"color:#2e8b57\">↑</strong> ascendente · <strong style=\"color:#607d9b\">→</strong> estable · <strong style=\"color:#c94c4c\">↓</strong> descendente."
+         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]]) + "\n\n**Leyenda:** <strong style=\"color:#2e8b57\">↑</strong> ascendente · <strong style=\"color:#607d9b\">→</strong> estable · <strong style=\"color:#c94c4c\">↓</strong> descendente.")
 
     activity_rows = []
     for key, label, _ in REGIONS:
