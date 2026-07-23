@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import socket
 import re
 import statistics
 import time
 import urllib.parse
 import urllib.request
+from urllib.error import HTTPError, URLError
 import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -174,6 +176,30 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return result
 
 
+
+RETRYABLE_HTTP_CODES = {429, 500, 502, 503, 504}
+
+
+def fetch_with_retries(url: str, user_agent: str, attempts: int = 3) -> tuple[bytes, str, int]:
+    last_error: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": user_agent})
+            with urllib.request.urlopen(request, timeout=45) as response:
+                return response.read(), response.headers.get("Content-Type", ""), attempt
+        except HTTPError as exc:
+            last_error = exc
+            if exc.code not in RETRYABLE_HTTP_CODES or attempt == attempts:
+                raise
+        except (URLError, TimeoutError, socket.timeout) as exc:
+            last_error = exc
+            if attempt == attempts:
+                raise
+        time.sleep(min(8, 2 ** (attempt - 1)))
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError("PSKReporter request failed without a captured error")
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -195,14 +221,11 @@ def main() -> int:
 
     for field in QUERY_FIELDS:
         url = query_url(field)
+        attempts = 0
         try:
-            request = urllib.request.Request(
-                url,
-                headers={"User-Agent": "SOLUNET-HF-PSKReporter-Regions/1.0"},
+            body, content_type, attempts = fetch_with_retries(
+                url, "SOLUNET-HF-PSKReporter-Regions/1.0"
             )
-            with urllib.request.urlopen(request, timeout=45) as response:
-                body = response.read()
-                content_type = response.headers.get("Content-Type", "")
             root = ET.fromstring(body)
             rows = [
                 dict(element.attrib)
@@ -215,11 +238,12 @@ def main() -> int:
                 "status": "ok",
                 "report_count": len(rows),
                 "content_type": content_type,
+                "attempts": attempts,
             }
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{field}: {type(exc).__name__}: {exc}")
-            query_results[field] = {"status": "error", "report_count": 0}
-        time.sleep(0.25)
+            query_results[field] = {"status": "error", "report_count": 0, "attempts": attempts}
+        time.sleep(1.0)
 
     now_seconds = time.time()
     accepted = [
