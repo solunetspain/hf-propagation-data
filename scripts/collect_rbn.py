@@ -16,7 +16,7 @@ BANDS = {
     "20m": (14.0, 14.35), "17m": (18.068, 18.168),
     "15m": (21.0, 21.45), "12m": (24.89, 24.99), "10m": (28.0, 29.7),
 }
-FLOAT_RE = re.compile(r"(?<![0-9.])([0-9]{1,2}(?:\.[0-9]{1,6})?)(?![0-9.])")
+FREQUENCY_TOKEN_RE = re.compile(r"^(\\d+(?:\\.\\d+)?)$")
 
 
 def band_for(freq_mhz: float) -> str | None:
@@ -30,20 +30,33 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def parse_frequency_token(token: str) -> float | None:
+    """Convert common RBN/cluster frequency tokens to MHz."""
+    token = token.strip()
+    if not FREQUENCY_TOKEN_RE.fullmatch(token):
+        return None
+    try:
+        value = float(token)
+    except ValueError:
+        return None
+    frequency_mhz = value / 1000.0 if value >= 1000 else value
+    return frequency_mhz if band_for(frequency_mhz) else None
+
+
 def parse_spot(line: str) -> dict[str, object] | None:
-    """Parse a conservative HF frequency from a cluster/RBN line."""
-    for match in FLOAT_RE.finditer(line):
-        try:
-            frequency = float(match.group(1))
-        except ValueError:
+    """Parse only the frequency field from a DX cluster/RBN spot line."""
+    if not line.lstrip().upper().startswith("DX DE "):
+        return None
+    fields = line.split()
+    for token in fields[3:]:
+        frequency_mhz = parse_frequency_token(token)
+        if frequency_mhz is None:
             continue
-        band = band_for(frequency)
-        if band:
-            return {
-                "raw": line[:500],
-                "frequency_mhz": frequency,
-                "band": band,
-            }
+        return {
+            "raw": line[:500],
+            "frequency_mhz": frequency_mhz,
+            "band": band_for(frequency_mhz),
+        }
     return None
 
 
@@ -65,7 +78,6 @@ def read_stream(conn: socket.socket, seconds: float) -> str:
             break
         chunks.append(chunk)
     return b"".join(chunks).decode("utf-8", "replace")
-
 
 def main() -> int:
     out = Path(os.getenv("RBN_OUTPUT", "public/data/rbn-spots.json"))
