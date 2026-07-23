@@ -1,6 +1,6 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-07-23T17:09:38.651251+00:00",
+  "generated_at": "2026-07-23T17:12:32.311282+00:00",
   "status": "ok",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
@@ -17,41 +17,83 @@
   "classification": "Observed reports after strict local post-filtering",
   "bands": {
     "40m": {
-      "report_count": 4,
-      "station_count": 5,
-      "route_count": 4,
+      "report_count": 3,
+      "station_count": 4,
+      "route_count": 3,
       "modes": {
-        "FT4": 4
+        "FT4": 3
       },
       "directions": {
-        "received_in_IN91": 4
+        "received_in_IN91": 3
       },
       "distance_km": {
-        "minimum": 241.8,
-        "median": 1097.2,
+        "minimum": 995.1,
+        "median": 1199.2,
         "maximum": 1601.1
       },
       "latest_observation_utc": "2026-07-23T17:04:43+00:00"
     },
     "20m": {
-      "report_count": 2,
-      "station_count": 3,
-      "route_count": 2,
+      "report_count": 5,
+      "station_count": 6,
+      "route_count": 5,
       "modes": {
-        "CW": 2
+        "CW": 5
       },
       "directions": {
-        "transmitted_from_IN91": 2
+        "transmitted_from_IN91": 5
       },
       "distance_km": {
-        "minimum": 1679.9,
-        "median": 1803.2,
+        "minimum": 1113.3,
+        "median": 1351.3,
         "maximum": 1926.6
       },
-      "latest_observation_utc": "2026-07-23T17:05:47+00:00"
+      "latest_observation_utc": "2026-07-23T17:11:11+00:00"
     }
   },
   "examples": [
+    {
+      "timestamp_utc": "2026-07-23T17:11:11+00:00",
+      "frequency_hz": 14026100.0,
+      "band": "20m",
+      "mode": "CW",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2AJB",
+      "sender_locator": "IN91WB",
+      "receiver_callsign": "EI4HQ",
+      "receiver_locator": "IO51UU",
+      "snr_db": "26",
+      "distance_km": 1351.3
+    },
+    {
+      "timestamp_utc": "2026-07-23T17:11:09+00:00",
+      "frequency_hz": 14026100.0,
+      "band": "20m",
+      "mode": "CW",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2AJB",
+      "sender_locator": "IN91WB",
+      "receiver_callsign": "G4KCM",
+      "receiver_locator": "IO91EA",
+      "snr_db": "16",
+      "distance_km": 1113.3
+    },
+    {
+      "timestamp_utc": "2026-07-23T17:06:10+00:00",
+      "frequency_hz": 14024000.0,
+      "band": "20m",
+      "mode": "CW",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2AJB",
+      "sender_locator": "IN91WB",
+      "receiver_callsign": "G0KTN",
+      "receiver_locator": "IO81TI",
+      "snr_db": "8",
+      "distance_km": 1157.3
+    },
     {
       "timestamp_utc": "2026-07-23T17:05:47+00:00",
       "frequency_hz": 14024000.0,
@@ -121,43 +163,29 @@
       "receiver_locator": "IN91PO",
       "snr_db": "1",
       "distance_km": 995.1
-    },
-    {
-      "timestamp_utc": "2026-07-23T16:55:13+00:00",
-      "frequency_hz": 7049349.0,
-      "band": "40m",
-      "mode": "FT4",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "EB5R",
-      "sender_locator": "IM99SK",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO",
-      "snr_db": "5",
-      "distance_km": 241.8
     }
   ],
   "content_type": "text/xml; charset=utf-8",
-  "upstream_report_count": 6,
-  "accepted_report_count": 6,
+  "upstream_report_count": 8,
+  "accepted_report_count": 8,
   "scope_summary": {
-    "exact_in91po_report_count": 4,
-    "regional_in91_report_count": 6,
+    "exact_in91po_report_count": 3,
+    "regional_in91_report_count": 8,
     "preferred_scope": "exact_IN91PO",
     "exact_in91po_bands": {
       "40m": {
-        "report_count": 4,
-        "station_count": 5,
-        "route_count": 4,
+        "report_count": 3,
+        "station_count": 4,
+        "route_count": 3,
         "modes": {
-          "FT4": 4
+          "FT4": 3
         },
         "directions": {
-          "received_in_IN91": 4
+          "received_in_IN91": 3
         },
         "distance_km": {
-          "minimum": 241.8,
-          "median": 1097.2,
+          "minimum": 995.1,
+          "median": 1199.2,
           "maximum": 1601.1
         },
         "latest_observation_utc": "2026-07-23T17:04:43+00:00"
