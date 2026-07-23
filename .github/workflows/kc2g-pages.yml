@@ -103,6 +103,13 @@ jobs:
         timeout-minutes: 6
         run: python -m scripts.collect_pskreporter_regions
 
+      - name: Collect optional RBN live spots
+        continue-on-error: true
+        env:
+          RBN_TELNET_HOST: ${{ vars.RBN_TELNET_HOST }}
+          RBN_TELNET_PORT: ${{ vars.RBN_TELNET_PORT }}
+        run: python scripts/collect_rbn.py
+
       - name: Collect regional DXView perspectives
         continue-on-error: true
         run: python -m scripts.collect_dxview_regions
@@ -160,6 +167,8 @@ jobs:
             public/diagnostics/giro-diagnostic.json
             public/reader/giro-spain-summary.txt
             public/reader/giro-diagnostic.txt
+            public/data/rbn-spots.json
+            public/diagnostics/rbn-diagnostic.json
             public/data/pskreporter-hf-summary.json
             public/diagnostics/pskreporter-diagnostic.json
             public/reader/pskreporter-hf-summary.txt
