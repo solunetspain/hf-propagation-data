@@ -108,6 +108,7 @@ jobs:
         env:
           RBN_TELNET_HOST: ${{ vars.RBN_TELNET_HOST }}
           RBN_TELNET_PORT: ${{ vars.RBN_TELNET_PORT }}
+          RBN_TELNET_CALLSIGN: ${{ vars.RBN_TELNET_CALLSIGN }}
         run: python scripts/collect_rbn.py
 
       - name: Collect regional DXView perspectives
