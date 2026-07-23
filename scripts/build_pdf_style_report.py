@@ -224,6 +224,7 @@ def main() -> int:
     qrn = load("qrn-spain-summary.json")
     giro = load("giro-spain-summary.json")
     psk = load("pskreporter-hf-regions.json")
+    rbn = load("rbn-spots.json")
     dx = load("dxview-regions-summary.json")
     psk_diag = load("pskreporter-regions-diagnostic.json", DIAG)
     current = get(noaa, "current", default={})
@@ -255,6 +256,7 @@ def main() -> int:
         ("GIRO", "Contraste con ionosondas", "Parcial", "Datos parciales o ausentes", "Tres regiones", age(giro, now), "70 %", "0 %", "Ausencia o cobertura parcial"),
         ("Diagnóstico GIRO", "Distinguir ausencia de datos", "Sí", "Diagnóstico parseado", "Tres regiones", age(giro, now), "90 %", "0 %", "No aporta ionosfera si no hay observaciones"),
         ("PSKReporter regional", "Actividad observada por banda", "Parcial", "Reportes recibidos y regionalizados", "Tres regiones", age(psk, now), "80 %", "19 %", "Cobertura incompleta"),
+        ("RBN", "Spots de receptores automáticos", "Parcial" if rbn.get("status") == "ok" else "No", "Spots HF parseados" if rbn.get("status") == "ok" else "No contado", "Global; sin asignación regional automática", age(rbn, now), "70 %" if rbn.get("status") == "ok" else "0 %", "0 %", rbn.get("limitation") or "Sesgo de skimmers; no demuestra QSO ni ruta"),
         ("Diagnóstico PSKReporter", "Validar separación regional", "Sí", "Parseo y deduplicación", "Tres regiones", age(psk, now), "96 %", "1 %", "Consultas parciales"),
         ("DXView regional", "Actividad, sectores y evolución", "Sí", "Respuestas regionales", "Tres regiones", age(dx, now), "95 %", "13 %", "Muestras representativas"),
         ("Diagnóstico DXView", "Validar muestras e histórico", "Sí", "Parseo completo", "Tres regiones", age(dx, now), "99 %", "1 %", "Resolución espacial limitada"),
@@ -314,6 +316,7 @@ Si sabes poco de propagación, empieza aquí:
         f"- HamQSL: {age(hamqsl, now)}",
         f"- QRN: {age(qrn, now)}",
         f"- PSKReporter regional: {age(psk, now)}",
+        f"- RBN: {age(rbn, now)} ({rbn.get("status", "disabled")})",
         f"- DXView regional: {age(dx, now)}",
         "- Estado del informe: **degradado si alguna fuente es parcial; las limitaciones se conservan**.",
     ]))
