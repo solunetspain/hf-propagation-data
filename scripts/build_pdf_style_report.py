@@ -225,6 +225,7 @@ def main() -> int:
     giro = load("giro-spain-summary.json")
     psk = load("pskreporter-hf-regions.json")
     rbn = load("rbn-spots.json")
+    rbn_diag = load("rbn-diagnostic.json", DIAG)
     rbn_regions = get(rbn, "regions", default={})
     dx = load("dxview-regions-summary.json")
     psk_diag = load("pskreporter-regions-diagnostic.json", DIAG)
@@ -267,6 +268,23 @@ def main() -> int:
     blocks.append("## Fuentes consultadas en esta ejecución\n\n" + table(
         ["Fuente", "Finalidad", "Consultada sí/no/parcial", "Resultado", "Región aplicable", "Antigüedad", "Fiabilidad de esta consulta (%)", "Peso", "Razón del fallo o limitación"],
         sources))
+    rbn_validation = get(rbn_diag, "validation", default={})
+    rbn_status = get(rbn_diag, "status", default=rbn.get("status", "desconocido"))
+    rbn_total = get(rbn_validation, "spots_parsed", default=len(get(rbn, "spots", default=[])))
+    rbn_regional = get(rbn_validation, "regional_spots_attributed", default=sum(int(get(v, "report_count", default=0) or 0) for v in get(rbn, "regions", default={}).values() if isinstance(v, dict)))
+    rbn_receivers = get(rbn_validation, "distinct_receivers", default=0)
+    rbn_unassigned = get(rbn, "global_unassigned_spots", default=max(0, int(rbn_total or 0) - int(rbn_regional or 0)))
+    rbn_diag_table = table(
+        ["Indicador", "Resultado", "Qué significa"],
+        [
+            ("Estado de conexión", str(rbn_status), "Indica si el endpoint Telnet respondió y si se pudo leer el flujo."),
+            ("Spots RBN recibidos y parseados", str(rbn_total), "Número de spots interpretados con receptor, frecuencia y banda."),
+            ("Receptores distintos", str(rbn_receivers), "Cantidad de nodos receptores diferentes observados."),
+            ("Spots atribuidos a una región española", str(rbn_regional), "Solo incluye receptores con ubicación regional verificada."),
+            ("Spots globales no regionalizados", str(rbn_unassigned), "Datos válidos para contexto global, pero no asignables a las tres regiones."),
+            ("Entrada en la fiabilidad histórica", "No", "RBN sigue siendo corroboración auxiliar y no altera las estadísticas históricas.")
+        ])
+    blocks.append("## Diagnóstico operativo de RBN\n\n" + rbn_diag_table + "\n\n" + (rbn.get("limitation") or "La conexión RBN respondió correctamente; la atribución regional depende de la ubicación verificada del receptor.") + "\n\nLos spots RBN no se convierten automáticamente en evidencia regional por el indicativo de la estación escuchada. La región, cuando existe, se asigna por el receptor. Por eso un resultado regional igual a cero puede coexistir con spots globales recibidos.")
     executive = []
     for key, label, _ in REGIONS:
         s = summaries[key]
