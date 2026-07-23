@@ -142,7 +142,8 @@ def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
         return "Serie insuficiente"
     delta = values[-1] - values[0]
     arrow = "↑" if delta > 0.5 else "↓" if delta < -0.5 else "→"
-    return f"{arrow} {abs(delta):.1f} zonas"
+    color = "#2e8b57" if delta > 0.5 else "#c94c4c" if delta < -0.5 else "#607d9b"
+    return f'<strong style="color:{color};font-size:1.15em">{arrow}</strong> {abs(delta):.1f} zonas'
 
 def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
     p = float(get(source, "regions", region, "consultation_reliability_pct", default=0) or 0)
@@ -359,7 +360,7 @@ Si sabes poco de propagación, empieza aquí:
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
         [[band_label(band), trend_text(history, "peninsula", band), trend_text(history, "baleares", band), trend_text(history, "canarias", band)]
-         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]]))
+         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]])) + "\n\n**Leyenda:** <strong style=\"color:#2e8b57\">↑</strong> ascendente · <strong style=\"color:#607d9b\">→</strong> estable · <strong style=\"color:#c94c4c\">↓</strong> descendente."
 
     activity_rows = []
     for key, label, _ in REGIONS:
