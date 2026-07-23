@@ -236,6 +236,7 @@ def main() -> int:
             "status": "ok" if rows else "no_activity_observed",
             "report_count": len(rows),
             "bands": aggregate(rows),
+            "observations": rows[:200],
             "consultation_reliability_pct": consultation_reliability,
             "evidence_weight_recommendation": 2 if len(rows) >= 3 else (1 if rows else 0),
         }
