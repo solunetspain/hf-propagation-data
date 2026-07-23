@@ -285,6 +285,31 @@ def main() -> int:
             ("Entrada en la fiabilidad histórica", "No", "RBN sigue siendo corroboración auxiliar y no altera las estadísticas históricas.")
         ])
     blocks.append("## Diagnóstico operativo de RBN\n\n" + rbn_diag_table + "\n\n" + (rbn.get("limitation") or "La conexión RBN respondió correctamente; la atribución regional depende de la ubicación verificada del receptor.") + "\n\nLos spots RBN no se convierten automáticamente en evidencia regional por el indicativo de la estación escuchada. La región, cuando existe, se asigna por el receptor. Por eso un resultado regional igual a cero puede coexistir con spots globales recibidos.")
+    giro_rows = []
+    for station_name, station in get(giro, "stations", default={}).items():
+        summary = get(station, "summary", default={})
+        values = get(summary, "latest_measurements", default={})
+        trends = get(summary, "trends", default={})
+        def measured(name):
+            value = values.get(name)
+            return "No disponible" if value is None else f"{value:g}"
+        def trend(name):
+            delta = get(trends.get(name, {}), "delta", default=None)
+            return "—" if delta is None else f"{delta:+g}"
+        giro_rows.append((station_name, measured("foF2"), measured("hmF2"), measured("foEs"), measured("fmin"), trend("foF2"), trend("hmF2"), str(get(summary, "sample_count", default=0))))
+    if giro_rows:
+        blocks.append("## Parámetros ionosféricos complementarios y tendencia reciente\\n\\n" + table(
+            ["Estación GIRO", "foF2 MHz", "hmF2 km", "foEs MHz", "fmin MHz", "Δ foF2", "Δ hmF2", "Muestras"],
+            giro_rows) + "\\n\\nValores medidos por ionosonda cuando están disponibles. Las variaciones comparan la muestra más reciente con otra anterior dentro de la ventana consultada; no son una predicción independiente.")
+    receiver_rows = []
+    for region_key, region_label in (("peninsula", "Península"), ("baleares", "Baleares"), ("canarias", "Canarias")):
+        region_data = get(psk, "regions", region_key, default={})
+        for band, metrics in get(region_data, "bands", default={}).items():
+            receiver_rows.append((region_label, band, str(get(metrics, "unique_receiver_count", default=0)), str(get(metrics, "unique_sender_count", default=0)), str(get(metrics, "report_count", default=0))))
+    if receiver_rows:
+        blocks.append("## Independencia de la evidencia observada\\n\\n" + table(
+            ["Región", "Banda", "Receptores distintos", "Emisores distintos", "Reportes"],
+            receiver_rows) + "\\n\\nEl número de receptores distintos ayuda a distinguir una señal respaldada por varios puntos de escucha de otra concentrada en un único receptor. Se usa como indicador de cobertura y calidad observacional; no convierte automáticamente los reportes en probabilidad de contacto.")
     executive = []
     for key, label, _ in REGIONS:
         s = summaries[key]
