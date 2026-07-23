@@ -359,7 +359,7 @@ Si sabes poco de propagación, empieza aquí:
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
         [[band_label(band), trend_text(history, "peninsula", band), trend_text(history, "baleares", band), trend_text(history, "canarias", band)]
-         for band in ["0", "7", "14", "18", "21", "24", "28"]]))
+         for band in ["0", "3", "7", "14", "18", "21", "24", "28"]]))
 
     activity_rows = []
     for key, label, _ in REGIONS:
@@ -387,13 +387,13 @@ Si sabes poco de propagación, empieza aquí:
         s = summaries[key]
         fof2 = float(get(s, "fof2_mhz", "median", default=0) or 0)
         d_bands = get(dx, "regions", key, "bands", default={})
-        for band, ref in [("80 m", "0"), ("40 m", "7"), ("20 m", "14")]:
-            psk_count = get(psk, "regions", key, "bands", {"0": "80m", "7": "40m", "14": "20m"}[ref], "report_count", default=0)
+        for band, ref in [("160 m", "0"), ("80 m", "3"), ("40 m", "7"), ("20 m", "14")]:
+            psk_count = get(psk, "regions", key, "bands", {"0": "160m", "3": "80m", "7": "40m", "14": "20m"}[ref], "report_count", default=0)
             zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
-            absorption = "Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja"
-            state = "Viable, penalizada" if band == "80 m" else ("Marginal/viable" if fof2 >= 7 else "Marginal")
-            coverage = "EA corta/proximidad" if band != "20 m" else "Salto amplio, Europa/DX"
-            action = "Solo cercanía" if band == "80 m" else ("Primera prueba regional" if band == "40 m" else "Usar en trayectos oblicuos")
+            absorption = "Muy baja" if band == "160 m" else ("Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja")
+            state = ("Viable, muy penalizada" if band == "160 m" else ("Viable, penalizada" if band == "80 m" else ("Marginal/viable" if fof2 >= 7 else "Marginal")))
+            coverage = "Proximidad extrema" if band == "160 m" else ("EA corta/proximidad" if band != "20 m" else "Salto amplio, Europa/DX")
+            action = "Solo máxima proximidad" if band == "160 m" else ("Solo cercanía" if band == "80 m" else ("Primera prueba regional" if band == "40 m" else "Usar en trayectos oblicuos"))
             nvis_rows.append([label, band, f"{state}; {psk_count} reportes observados", coverage, absorption, f"{trend_text(history, key, ref)}; {zones:g} zonas DXView", action])
     blocks.append("## 9. NVIS EA para 80, 40 y 20 m\n\n" + table(
         ["Región", "Banda", "Estado", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"], nvis_rows))
