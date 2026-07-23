@@ -160,10 +160,24 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
             (item["sender_callsign"], item["receiver_callsign"])
             for item in items
         }
+        snr_values = []
+        for item in items:
+            try:
+                snr_values.append(float(item.get("snr_db")))
+            except (TypeError, ValueError):
+                pass
         result[band] = {
             "report_count": len(items),
             "station_count": len(stations),
             "route_count": len(routes),
+            "unique_sender_count": len({item["sender_callsign"] for item in items if item["sender_callsign"]}),
+            "unique_receiver_count": len({item["receiver_callsign"] for item in items if item["receiver_callsign"]}),
+            "snr_db": {
+                "median": round(statistics.median(snr_values), 1) if snr_values else None,
+                "minimum": min(snr_values) if snr_values else None,
+                "maximum": max(snr_values) if snr_values else None,
+                "sample_count": len(snr_values),
+            },
             "modes": dict(sorted(Counter(item["mode"] for item in items).items())),
             "directions": dict(sorted(Counter(item["direction"] for item in items).items())),
             "distance_km": {
@@ -224,7 +238,7 @@ def main() -> int:
         attempts = 0
         try:
             body, content_type, attempts = fetch_with_retries(
-                url, "SOLUNET-HF-PSKReporter-Regions/1.0"
+                url, "SOLUNET-HF-PSKReporter-Regions/1.1"
             )
             root = ET.fromstring(body)
             rows = [
@@ -246,11 +260,25 @@ def main() -> int:
         time.sleep(1.0)
 
     now_seconds = time.time()
-    accepted = [
-        normalized
-        for row in raw.values()
-        if (normalized := normalize_report(row, now_seconds)) is not None
-    ]
+    accepted = []
+    rejected = Counter()
+    for row in raw.values():
+        normalized = normalize_report(row, now_seconds)
+        if normalized is None:
+            try:
+                timestamp = float(row.get("flowStartSeconds"))
+                frequency = float(row.get("frequency"))
+            except (TypeError, ValueError):
+                rejected["invalid_timestamp_or_frequency"] += 1
+                continue
+            if timestamp < now_seconds - 3600 or timestamp > now_seconds + 300:
+                rejected["outside_one_hour_window"] += 1
+            elif band_for(frequency) is None:
+                rejected["outside_supported_hf_band"] += 1
+            else:
+                rejected["no_regional_attribution"] += 1
+        else:
+            accepted.append(normalized)
     regions: dict[str, Any] = {}
     successful_queries = sum(1 for item in query_results.values() if item["status"] == "ok")
     consultation_reliability = round(100 * successful_queries / len(QUERY_FIELDS))
@@ -275,8 +303,18 @@ def main() -> int:
         "scope": "Observed HF reports attributable to Península, Baleares or Canarias",
         "classification_method": "Spanish call area with locator cross-check",
         "query_fields": list(QUERY_FIELDS),
+        "query_window_seconds": 3600,
         "raw_report_count": len(raw),
         "accepted_report_count": len(accepted),
+        "rejected_report_counts": dict(sorted(rejected.items())),
+        "coverage": {
+            "queries_total": len(QUERY_FIELDS),
+            "queries_successful": successful_queries,
+            "query_success_pct": consultation_reliability,
+            "regional_attribution_pct": round(100 * len(accepted) / len(raw), 1) if raw else 0.0,
+            "unique_stations": len({call for row in accepted for call in (row["sender_callsign"], row["receiver_callsign"]) if call}),
+            "unique_routes": len({(row["sender_callsign"], row["receiver_callsign"]) for row in accepted}),
+        },
         "regions": regions,
         "national_fallback": {
             "status": "available" if accepted else "no_activity_observed",
@@ -297,6 +335,10 @@ def main() -> int:
             "deduplication_applied": True,
             "regional_classification_applied": True,
             "national_fallback_available": True,
+            "rejection_reasons_recorded": True,
+            "unique_stations_and_routes_counted": True,
+            "snr_statistics_recorded_when_available": True,
+            "strict_one_hour_window_applied": True,
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
