@@ -472,7 +472,7 @@ Si sabes poco de propagación, empieza aquí:
             if evaluations <= 0:
                 continue
             reliability = get(item, "reliability_pct", default=None)
-            reliability_text = text(reliability, "Pendiente")
+            reliability_text = f"{float(reliability):.1f} %".replace(".", ",") if reliability is not None else "Pendiente"
             if evaluations < 100:
                 reliability_text += " · muestra inicial"
             historical_rows.append([
