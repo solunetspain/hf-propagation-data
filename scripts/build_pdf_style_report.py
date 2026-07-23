@@ -316,7 +316,7 @@ Si sabes poco de propagación, empieza aquí:
         f"- HamQSL: {age(hamqsl, now)}",
         f"- QRN: {age(qrn, now)}",
         f"- PSKReporter regional: {age(psk, now)}",
-        f"- RBN: {age(rbn, now)} ({rbn.get(\'status\', \'disabled\')})",
+        f"- RBN: {age(rbn, now)} ({rbn.get('status', 'disabled')})",
         f"- DXView regional: {age(dx, now)}",
         "- Estado del informe: **degradado si alguna fuente es parcial; las limitaciones se conservan**.",
     ]))
