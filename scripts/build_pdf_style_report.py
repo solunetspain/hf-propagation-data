@@ -471,7 +471,7 @@ Si sabes poco de propagación, empieza aquí:
         for band, ref in [("160 m", "0"), ("80 m", "3"), ("40 m", "7"), ("20 m", "14")]:
             psk_metrics = get(psk, "regions", key, "bands", {"0": "160m", "3": "80m", "7": "40m", "14": "20m"}[ref], default={})
             psk_count = get(psk_metrics, "report_count", default=0)
-            reach = nvis_reach_estimate(psk_metrics)
+            reach = nvis_reach_estimate(key, psk_metrics)
             zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
             absorption = "Muy baja" if band == "160 m" else ("Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja")
             frequency = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1}[band]
