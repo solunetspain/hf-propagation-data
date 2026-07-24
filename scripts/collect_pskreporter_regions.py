@@ -230,6 +230,11 @@ def main() -> int:
         default=Path("public/data/pskreporter-hf-regions.json"),
     )
     parser.add_argument(
+        "--history",
+        type=Path,
+        default=Path("public/data/pskreporter-hf-regions-history.json"),
+    )
+    parser.add_argument(
         "--diagnostic",
         type=Path,
         default=Path("public/diagnostics/pskreporter-regions-diagnostic.json"),
@@ -331,6 +336,38 @@ def main() -> int:
             "use_only_when_regional_attribution_is_insufficient": True,
         },
     }
+    # Keep regional summaries for a rolling window used only by NVIS reach.
+    history: dict[str, Any] = {"schema_version": 1, "snapshots": []}
+    try:
+        loaded = json.loads(args.history.read_text(encoding="utf-8"))
+        if isinstance(loaded, dict):
+            history = loaded
+    except (OSError, json.JSONDecodeError):
+        pass
+    snapshots = history.get("snapshots", [])
+    if not isinstance(snapshots, list):
+        snapshots = []
+    snapshots.append(output)
+    try:
+        current_dt = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+    except ValueError:
+        current_dt = datetime.now(timezone.utc)
+    retained = []
+    for snapshot in snapshots:
+        stamp = snapshot.get("generated_at") if isinstance(snapshot, dict) else None
+        try:
+            stamp_dt = datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            continue
+        if (current_dt - stamp_dt).total_seconds() <= 86400:
+            retained.append(snapshot)
+    history = {
+        "schema_version": 1,
+        "window_retention_hours": 24,
+        "updated_at": generated_at,
+        "snapshots": retained[-96:],
+    }
+
     diagnostic = {
         "generated_at": generated_at,
         "status": status,
@@ -350,10 +387,15 @@ def main() -> int:
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.history.parent.mkdir(parents=True, exist_ok=True)
     args.diagnostic.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     args.diagnostic.write_text(
         json.dumps(diagnostic, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    args.history.write_text(
+        json.dumps(history, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     return 0 if successful_queries else 1
