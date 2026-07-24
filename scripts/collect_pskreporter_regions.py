@@ -160,6 +160,12 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
             (item["sender_callsign"], item["receiver_callsign"])
             for item in items
         }
+        ea_area_counts = Counter()
+        for item in items:
+            for call in (item.get("sender_callsign"), item.get("receiver_callsign")):
+                area = call_area(call)
+                if area is not None:
+                    ea_area_counts[str(area)] += 1
         snr_values = []
         for item in items:
             try:
@@ -178,6 +184,8 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
                 "maximum": max(snr_values) if snr_values else None,
                 "sample_count": len(snr_values),
             },
+            "ea_area_counts": dict(sorted(ea_area_counts.items(), key=lambda pair: int(pair[0]))),
+            "ea_areas": [f"EA{area}" for area in sorted(ea_area_counts, key=int)],
             "modes": dict(sorted(Counter(item["mode"] for item in items).items())),
             "directions": dict(sorted(Counter(item["direction"] for item in items).items())),
             "distance_km": {
