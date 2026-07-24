@@ -68,7 +68,7 @@ def endpoint_region(callsign: Any, locator: Any) -> str | None:
         return "baleares"
     if area == 8:
         return "canarias"
-    if area in (1, 2, 3, 4, 5, 7):
+    if area in (1, 2, 3, 4, 5, 7, 9):
         return "peninsula"
     return geographic if geographic == "peninsula" and area != 9 else None
 
