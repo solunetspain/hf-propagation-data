@@ -145,6 +145,25 @@ def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
     color = "#2e8b57" if delta > 0.5 else "#c94c4c" if delta < -0.5 else "#607d9b"
     return f'<strong style="color:{color};font-size:1.15em">{arrow}</strong> {abs(delta):.1f} zonas'
 
+def nvis_reach_estimate(metrics: dict[str, Any]) -> str:
+    """Classify the observed reach without presenting it as a contact probability."""
+    reports = int(get(metrics, "report_count", default=0) or 0)
+    distance = get(metrics, "distance_km", "median", default=None)
+    try:
+        distance = float(distance)
+    except (TypeError, ValueError):
+        distance = None
+    if reports < 3 or distance is None:
+        return "Sin evidencia suficiente"
+    if distance < 500:
+        return "Probablemente corta (EA próxima)"
+    if distance < 1500:
+        return "Mixta (EA próxima y media)"
+    if distance >= 2500:
+        return "Probablemente larga (EA lejana)"
+    return "Selectiva por zonas (EA próximas y lejanas)"
+
+
 def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
     p = float(get(source, "regions", region, "consultation_reliability_pct", default=0) or 0)
     d = 95 if get(dx_source, "regions", region, "status", default="") == "ok" else 70
@@ -172,7 +191,7 @@ NOTES = {
     "6. Estado ionosférico KC2G": "foF2 es la frecuencia crítica de la capa F2; MUF(3000) es la frecuencia máxima utilizable estimada para un trayecto de unos 3.000 km. La mediana resume los puntos regionales y el intervalo muestra su dispersión. FOT 85 % se calcula como el 85 % de la MUF mediana y sirve como referencia prudente, no como techo universal. Un margen positivo de una banda significa que queda por debajo de la MUF estimada; no garantiza que exista un contacto.",
     "7. Tendencias": "Las flechas representan la evolución de las zonas activas observadas por DXView entre capturas, no intensidad de señal ni probabilidad de contacto. «↑» indica más zonas, «↓» menos y «→» estabilidad aproximada. La tendencia puede cambiar por la cadencia, cobertura y geometría de las muestras; por eso debe leerse junto con KC2G y la actividad real.",
     "8. Actividad DXView observada": "DXView aporta una muestra regional de zonas activas, sectores y modos disponibles; PSKReporter aporta reportes, estaciones, rutas y distancia mediana observada. Son evidencias complementarias: DXView describe la actividad espacial de la muestra y PSKReporter confirma tráfico real, con sesgo hacia modos digitales y estaciones que reportan. Los recuentos no son puntos S ni garantizan que una ruta concreta esté abierta.",
-    "9. NVIS EA para 160, 80, 40 y 20 m": "NVIS favorece trayectos cortos y de incidencia casi vertical; no debe confundirse con propagación regional garantizada. 80 m suele ofrecer cobertura cercana pero sufre más absorción diurna; 40 m puede ser una transición útil entre proximidad y trayectos medios; 20 m favorece saltos más amplios y Europa/DX, pero normalmente no es la primera opción NVIS. La acción práctica combina foF2, absorción, tendencia y observaciones PSKReporter. «Usar en trayectos oblicuos» significa utilizar esa banda para comunicaciones cuyo recorrido no sea casi vertical ni estrictamente local, sino con un ángulo de llegada intermedio.",
+    "9. NVIS EA para 160, 80, 40 y 20 m": "La columna «Estimación alcance NVIS» clasifica de forma prudente la distancia predominante observada, no la probabilidad de contacto. «Probablemente corta» indica que la distancia mediana observada es inferior a 500 km; «mixta», entre 500 y 1.500 km; «probablemente larga», 2.500 km o más; y «selectiva por zonas», un comportamiento intermedio o desigual. Entre paréntesis se indica únicamente una descripción amplia de las zonas EA compatibles con esas distancias; no se inventan provincias ni rutas que PSKReporter no haya identificado. Con menos de tres reportes o sin distancia mediana se muestra «Sin evidencia suficiente». " + "NVIS favorece trayectos cortos y de incidencia casi vertical; no debe confundirse con propagación regional garantizada. 80 m suele ofrecer cobertura cercana pero sufre más absorción diurna; 40 m puede ser una transición útil entre proximidad y trayectos medios; 20 m favorece saltos más amplios y Europa/DX, pero normalmente no es la primera opción NVIS. La acción práctica combina foF2, absorción, tendencia y observaciones PSKReporter. «Usar en trayectos oblicuos» significa utilizar esa banda para comunicaciones cuyo recorrido no sea casi vertical ni estrictamente local, sino con un ángulo de llegada intermedio.",
     "10. Europa y DX": "La mejor banda es la primera que conviene probar para ese objetivo según MUF, actividad observada y hora; la segunda opción sirve como respaldo. «Observada» significa que existe evidencia regional compatible; «observada/inferida» combina observación con una interpretación de banda y sector; «teórica» solo expresa una posibilidad física sin confirmación específica de ruta. La tabla no sustituye la comprobación de balizas, waterfall y señales reales.",
     "11. Terminador e iluminación": "La iluminación solar modifica la capa D, la absorción y la transición entre propagación diurna y nocturna. La greyline no debe anunciarse por una hora fija sin geometría solar regional validada: la ventana depende de ambos extremos del trayecto, no solo de la hora local del observador.",
     "12. Ruido y condiciones operativas": "El riesgo meteorológico es un modelo de condiciones atmosféricas favorables a ruido, no una medición del ruido de la antena. «Rayos observados» solo puede afirmarse cuando existe una fuente observacional directa; la ausencia de validación no significa ausencia de ruido. El operador debe contrastar el modelo con el nivel local, la ocupación y la dirección de llegada.",
@@ -437,7 +456,9 @@ Si sabes poco de propagación, empieza aquí:
         fof2 = float(get(s, "fof2_mhz", "median", default=0) or 0)
         d_bands = get(dx, "regions", key, "bands", default={})
         for band, ref in [("160 m", "0"), ("80 m", "3"), ("40 m", "7"), ("20 m", "14")]:
-            psk_count = get(psk, "regions", key, "bands", {"0": "160m", "3": "80m", "7": "40m", "14": "20m"}[ref], "report_count", default=0)
+            psk_metrics = get(psk, "regions", key, "bands", {"0": "160m", "3": "80m", "7": "40m", "14": "20m"}[ref], default={})
+            psk_count = get(psk_metrics, "report_count", default=0)
+            reach = nvis_reach_estimate(psk_metrics)
             zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
             absorption = "Muy baja" if band == "160 m" else ("Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja")
             frequency = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1}[band]
@@ -447,9 +468,9 @@ Si sabes poco de propagación, empieza aquí:
             state = ("Viable para proximidad" if band == "160 m" else ("Adecuada para NVIS" if band == "80 m" else ("Equilibrada entre proximidad y distancia media" if band == "40 m" else "Principalmente oblicua")))
             action = "Probar para máxima proximidad" if band == "160 m" else ("Primera opción NVIS si la absorción lo permite" if band == "80 m" else ("Buena alternativa para proximidad y trayectos medios" if band == "40 m" else "Usar en trayectos oblicuos"))
             coverage = "Proximidad extrema" if band == "160 m" else ("EA corta/proximidad" if band in ("80 m", "40 m") else "Salto amplio, Europa/DX")
-            nvis_rows.append([label, band, f"{state}; {psk_count} reportes observados", aptitude, margin_text, coverage, absorption, f"{trend_text(history, key, ref)}; {zones:g} zonas DXView", action])
+            nvis_rows.append([label, band, f"{state}; {psk_count} reportes observados", aptitude, margin_text, coverage, absorption, f"{trend_text(history, key, ref)}; {zones:g} zonas DXView", action, reach])
     nvis_table = table(
-        ["Región", "Banda", "Estado", "Aptitud NVIS", "Margen ionosférico", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"],
+        ["Región", "Banda", "Estado", "Aptitud NVIS", "Margen ionosférico", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica", "Estimación alcance NVIS"],
         nvis_rows,
     )
     blocks.append("## 9. NVIS EA para 160, 80, 40 y 20 m\n\n" + nvis_table)
