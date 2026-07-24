@@ -56,7 +56,7 @@ def region_from_receiver(receiver: str) -> str | None:
         return "Baleares"
     if area == "8":
         return "Canarias"
-    if area in {"1", "2", "3", "4", "5", "7"}:
+    if area in {"1", "2", "3", "4", "5", "7", "9"}:
         return "Península"
     return None
 
