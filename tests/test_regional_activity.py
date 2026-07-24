@@ -22,7 +22,7 @@ class RegionalPSKReporterTests(unittest.TestCase):
         self.assertEqual(endpoint_region("EA3ABC", "JN11"), "peninsula")
         self.assertEqual(endpoint_region("EA6ABC", ""), "baleares")
         self.assertEqual(endpoint_region("EA8ABC", ""), "canarias")
-        self.assertIsNone(endpoint_region("EA9ABC", "IM75"))
+        self.assertEqual(endpoint_region("EA9ABC", "IM75"), "peninsula")
 
     def test_locator_cross_check(self):
         self.assertEqual(locator_region("JM19"), "baleares")
