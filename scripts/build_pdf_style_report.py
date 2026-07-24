@@ -445,11 +445,14 @@ Si sabes poco de propagación, empieza aquí:
             margin_text = f"{margin:+.1f} MHz; " + ("amplio" if margin >= 1.0 else "justo" if margin >= 0 else "insuficiente")
             aptitude = "Buena" if band in ("160 m", "80 m") and margin >= 0 else ("Aceptable" if band == "40 m" and margin >= 0 else "Limitada")
             state = ("Viable para proximidad" if band == "160 m" else ("Adecuada para NVIS" if band == "80 m" else ("Equilibrada entre proximidad y distancia media" if band == "40 m" else "Principalmente oblicua")))
-        ["Región", "Banda", "Estado", "Aptitud NVIS", "Margen ionosférico", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"], nvis_rows))
             action = "Probar para máxima proximidad" if band == "160 m" else ("Primera opción NVIS si la absorción lo permite" if band == "80 m" else ("Buena alternativa para proximidad y trayectos medios" if band == "40 m" else "Usar en trayectos oblicuos"))
+            coverage = "Proximidad extrema" if band == "160 m" else ("EA corta/proximidad" if band in ("80 m", "40 m") else "Salto amplio, Europa/DX")
             nvis_rows.append([label, band, f"{state}; {psk_count} reportes observados", aptitude, margin_text, coverage, absorption, f"{trend_text(history, key, ref)}; {zones:g} zonas DXView", action])
-    blocks.append("## 9. NVIS EA para 160, 80, 40 y 20 m\n\n" + table(
-        ["Región", "Banda", "Estado", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"], nvis_rows))
+    nvis_table = table(
+        ["Región", "Banda", "Estado", "Aptitud NVIS", "Margen ionosférico", "Cobertura y zona de salto", "Absorción", "Tendencia", "Acción práctica"],
+        nvis_rows,
+    )
+    blocks.append("## 9. NVIS EA para 160, 80, 40 y 20 m\n\n" + nvis_table)
 
     dx_rows = []
     targets = [("EA", ["40 m", "20 m", "17 m", "15 m"]), ("Europa", ["20 m", "17 m", "15 m", "12 m"]), ("Norteamérica", ["20 m", "17 m", "15 m", "12 m"]), ("Sudamérica", ["20 m", "15 m", "17 m", "12 m"]), ("África", ["20 m", "15 m", "17 m", "12 m"]), ("Asia", ["20 m", "17 m", "15 m", "12 m"]), ("Oceanía", ["20 m", "17 m", "15 m", "12 m"]) ]
