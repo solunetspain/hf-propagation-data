@@ -177,6 +177,57 @@ def nvis_reach_estimate(region: str, metrics: dict[str, Any]) -> str:
     if not external_areas:
         return "Selectiva por zonas (zonas EA no identificadas)"
     return f"Selectiva por zonas ({', '.join(external_areas)})"
+def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: datetime, window_minutes: int = 30) -> dict[str, Any]:
+    """Aggregate recent PSK snapshots for NVIS reach only."""
+    snapshots = get(history, "snapshots", default=[])
+    if not isinstance(snapshots, list):
+        snapshots = []
+    selected = []
+    for snapshot in snapshots:
+        stamp = get(snapshot, "generated_at", default=None)
+        try:
+            dt = datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            continue
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        age_seconds = (now - dt.astimezone(timezone.utc)).total_seconds()
+        if 0 <= age_seconds <= window_minutes * 60:
+            selected.append(snapshot)
+    if not selected:
+        return current
+
+    result = {"regions": {}}
+    for key, _, _ in REGIONS:
+        bands = {}
+        band_names = set()
+        for snapshot in selected:
+            band_names.update(get(snapshot, "regions", key, "bands", default={}).keys())
+        for band in band_names:
+            metrics = [get(snapshot, "regions", key, "bands", band, default={}) for snapshot in selected]
+            metrics = [item for item in metrics if isinstance(item, dict)]
+            reports = sum(int(get(item, "report_count", default=0) or 0) for item in metrics)
+            distances = []
+            areas = set()
+            for item in metrics:
+                median = get(item, "distance_km", "median", default=None)
+                try:
+                    weight = max(1, int(get(item, "report_count", default=0) or 0))
+                    distances.extend([float(median)] * weight)
+                except (TypeError, ValueError):
+                    pass
+                areas.update(str(area) for area in get(item, "ea_areas", default=[]) if str(area).startswith("EA"))
+            bands[band] = {
+                "report_count": reports,
+                "ea_areas": sorted(areas),
+                "distance_km": {"median": round(statistics.median(distances), 1) if distances else None},
+                "window_minutes": window_minutes,
+                "snapshot_count": len(metrics),
+            }
+        result["regions"][key] = {"bands": bands}
+    return result
+
+
 def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
     p = float(get(source, "regions", region, "consultation_reliability_pct", default=0) or 0)
     d = 95 if get(dx_source, "regions", region, "status", default="") == "ok" else 70
@@ -464,12 +515,13 @@ Si sabes poco de propagación, empieza aquí:
         [row[:7] + [f"{get(rbn_regions, row[0], default={}).get('bands', {}).get(row[1].replace(' ', ''), 0)} spots regionales" if rbn.get("status") == "ok" else "No validado", row[7]] for row in activity_rows]))
 
     nvis_rows = []
+    psk_window = rolling_psk_metrics(psk, load("pskreporter-hf-regions-history.json"), now)
     for key, label, kc_key in REGIONS:
         s = summaries[key]
         fof2 = float(get(s, "fof2_mhz", "median", default=0) or 0)
         d_bands = get(dx, "regions", key, "bands", default={})
         for band, ref in [("160 m", "0"), ("80 m", "3"), ("40 m", "7"), ("20 m", "14")]:
-            psk_metrics = get(psk, "regions", key, "bands", {"0": "160m", "3": "80m", "7": "40m", "14": "20m"}[ref], default={})
+            psk_metrics = get(psk_window, "regions", key, "bands", {"0": "160m", "3": "80m", "7": "40m", "14": "20m"}[ref], default={})
             psk_count = get(psk_metrics, "report_count", default=0)
             reach = nvis_reach_estimate(key, psk_metrics)
             zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
