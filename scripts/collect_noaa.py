@@ -197,7 +197,11 @@ def parse_planetary_a_index(text: str) -> float | None:
     return numbers[9] if len(numbers) >= 18 else None
 
 def parse_daily_planetary_a(text: str) -> dict[str, Any] | None:
-    """Parse NOAA daily geomagnetic data and return the planetary A value."""
+    """Parse NOAA daily geomagnetic data and return the planetary A value.
+
+    NOAA uses negative values (notably -1) as unavailable/incomplete-data
+    sentinels in this product. They are never valid planetary A measurements.
+    """
     rows = []
     for line in text.splitlines():
         fields = line.split()
@@ -205,7 +209,8 @@ def parse_daily_planetary_a(text: str) -> dict[str, Any] | None:
             continue
         try:
             date = datetime(int(fields[0]), int(fields[1]), int(fields[2]), tzinfo=timezone.utc)
-            planetary_a = finite(fields[21])
+            raw_a = finite(fields[21])
+            planetary_a = raw_a if raw_a is not None and raw_a >= 0 else None
         except (ValueError, IndexError):
             continue
         if planetary_a is not None:
