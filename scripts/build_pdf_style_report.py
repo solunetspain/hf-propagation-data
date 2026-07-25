@@ -594,17 +594,35 @@ Si sabes poco de propagación, empieza aquí:
                 values.append("No procede con R0")
         opening_rows.append([phenomenon, *values])
     blocks.append("## 13. Posibles aperturas repentinas\n\n" + table(["Fenómeno", "Península", "Baleares", "Canarias"], opening_rows))
-    regional_scores = {key: reliability_index(key, psk, dx, kc2g) for key, _, _ in REGIONS}
+    # Source quality is not a validated contact probability. When outcomes exist,
+    # calibrate the current confidence against the observed regional history.
+    history = load("prediction-history.json")
+    regional_scores = {}
+    for key, _, _ in REGIONS:
+        raw_score = reliability_index(key, psk, dx, kc2g)
+        historical = get(history, "regional_totals", key, default={})
+        observations = int(get(historical, "observations_processed", default=0) or 0)
+        historical_pct = get(historical, "reliability_pct", default=None)
+        try:
+            historical_pct = float(historical_pct) if historical_pct is not None else None
+        except (TypeError, ValueError):
+            historical_pct = None
+        if observations > 0 and historical_pct is not None:
+            regional_scores[key] = round(min(float(raw_score), historical_pct + 5.0), 1)
+        else:
+            regional_scores[key] = round(float(raw_score), 1)
+    current_mean = sum(regional_scores.values()) / len(regional_scores)
     blocks.append("## 14. Fiabilidad global estimada de las predicciones en este instante\n\n" + table(
         ["Ámbito", "Fiabilidad"],
-        [["Península", f"{regional_scores['peninsula']} %"],
-         ["Baleares", f"{regional_scores['baleares']} %"],
-         ["Canarias", f"{regional_scores['canarias']} %"],
-         ["Próxima hora", f"{round(sum(regional_scores.values()) / 3)} %"],
-         ["Radioapagones/absorción", "98 %"],
-         ["NVIS", f"{round(sum(regional_scores.values()) / 3) - 2} %"],
-         ["Europa/DX", f"{round(sum(regional_scores.values()) / 3) - 1} %"]]))
-    history = load("prediction-history.json")
+        [["Península", f"{regional_scores['peninsula']:.1f} %"],
+         ["Baleares", f"{regional_scores['baleares']:.1f} %"],
+         ["Canarias", f"{regional_scores['canarias']:.1f} %"],
+         ["Próxima hora", f"{current_mean:.1f} %"],
+         ["Radioapagones/absorción", f"{max(0.0, current_mean - 1.0):.1f} %"],
+         ["NVIS", f"{max(0.0, current_mean - 2.0):.1f} %"],
+         ["Europa/DX", f"{max(0.0, current_mean - 1.0):.1f} %"]]) + "\n\n" +
+        "La cifra se calibra con el histórico regional cuando existe. No es una probabilidad matemática de contacto y no puede superar el histórico observado en más de cinco puntos.")
+
     historical_rows = []
     hsummary = get(history, "summary", default={})
     for key, label, _ in REGIONS:
