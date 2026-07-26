@@ -668,11 +668,28 @@ Si sabes poco de propagación, empieza aquí:
         hist_value, hist_label, interval = history_item_text(historical)
         evaluations = int(get(historical, "confirmed_evaluations", default=0) or 0)
         confidence_rows.append([label, f"{regional_scores[key]:.1f} %".replace(".", ","), hist_value + " · " + hist_label, evaluations, interval, data_quality_text(key, psk, dx, kc2g, rbn)])
+    def domain_history_row(label, domain_key, quality):
+        item = get(history, "domain_totals", domain_key, default={})
+        value, sample_label, interval = history_item_text(item)
+        evaluations = int(get(item, "confirmed_evaluations", default=0) or 0)
+        history_text = value + " · " + sample_label if value != "No disponible" else "No disponible"
+        return [label, history_text, evaluations, interval, quality]
+
+    domain_rows = {
+        "next_hour": domain_history_row("Próxima hora", "next_hour", "Fuentes actuales"),
+        "absorption": domain_history_row("Radioapagones/absorción", "absorption", "NOAA/D-RAP"),
+        "nvis": domain_history_row("NVIS", "nvis", "KC2G + PSKReporter/DXView"),
+        "dx": domain_history_row("Europa/DX", "dx", "MUF + actividad observada"),
+    }
     confidence_rows.extend([
-        ["Próxima hora", f"{current_mean:.1f} %".replace(".", ","), "No disponible", "—", "—", "Fuentes actuales"],
-        ["Radioapagones/absorción", f"{max(0.0, current_mean - 1.0):.1f} %".replace(".", ","), "No disponible", "—", "—", "NOAA/D-RAP"],
-        ["NVIS", f"{max(0.0, current_mean - 2.0):.1f} %".replace(".", ","), "No disponible", "—", "—", "KC2G + PSKReporter/DXView"],
-        ["Europa/DX", f"{max(0.0, current_mean - 1.0):.1f} %".replace(".", ","), "No disponible", "—", "—", "MUF + actividad observada"],
+        [domain_label, f"{current_value:.1f} %".replace(".", ","), history_text, evaluations, interval, quality]
+        for domain_label, current_value, domain_key in [
+            ("Próxima hora", current_mean, "next_hour"),
+            ("Radioapagones/absorción", max(0.0, current_mean - 1.0), "absorption"),
+            ("NVIS", max(0.0, current_mean - 2.0), "nvis"),
+            ("Europa/DX", max(0.0, current_mean - 1.0), "dx"),
+        ]
+        for history_text, evaluations, interval, quality in [domain_rows[domain_key][1:]]
     ])
     blocks.append("## 14. Fiabilidad global estimada de las predicciones en este instante\n\n" + table(
         ["Ámbito", "Índice estimado de confianza de la predicción", "Fiabilidad histórica disponible", "Evaluaciones", "Intervalo histórico 95 %", "Calidad de los datos disponibles"],
