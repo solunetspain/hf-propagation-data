@@ -134,6 +134,7 @@ class CallbookResolver:
         self.timeout = timeout
         self.cache = self._load()
         self.qrz_session: str | None = None
+        self.hamqth_session: str | None = None
         self.qrz_attempted = 0
         self.hamqth_attempted = 0
         self.hamqth_used = 0
@@ -201,13 +202,38 @@ class CallbookResolver:
         username = os.getenv("HAMQTH_USERNAME", "").strip()
         password = os.getenv("HAMQTH_PASSWORD", "").strip()
         if not username or not password:
+            self.hamqth_last_error = "Credenciales HamQTH no disponibles en el entorno"
             return None
         self.hamqth_attempted += 1
-        params = urllib.parse.urlencode({"user": username, "pwd": password, "callsign": callsign, "prg": "EA2EWL-HF-RBN"})
+
+        # HamQTH requiere una sesión previa: la búsqueda no acepta user/pwd
+        # directamente como una consulta de indicativo.
+        if not self.hamqth_session:
+            login = urllib.parse.urlencode({
+                "u": username,
+                "p": password,
+            })
+            root = self._request_xml("https://www.hamqth.com/xml.php?" + login)
+            error = self._text(root, "error") or self._text(root, "Error")
+            if error:
+                self.hamqth_last_error = error[:200]
+                return None
+            self.hamqth_session = self._text(root, "session_id")
+            if not self.hamqth_session:
+                self.hamqth_last_error = "HamQTH no devolvió una sesión válida"
+                return None
+
+        params = urllib.parse.urlencode({
+            "id": self.hamqth_session,
+            "callsign": callsign,
+            "prg": "EA2EWL-HF-RBN",
+        })
         root = self._request_xml("https://www.hamqth.com/xml.php?" + params)
         error = self._text(root, "error") or self._text(root, "Error")
         if error:
             self.hamqth_last_error = error[:200]
+            if "expired" in error.lower() or "session" in error.lower():
+                self.hamqth_session = None
             return None
         locator = self._text(root, "grid") or self._text(root, "grid_square")
         if not locator:
