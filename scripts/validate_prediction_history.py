@@ -8,10 +8,10 @@ from pathlib import Path
 REGIONS = ("peninsula", "baleares", "canarias")
 BANDS = ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m")
 BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12m":"24","10m":"28"}
-WINDOW_MINUTES = 90
+WINDOW_MINUTES = 30
 MAX_CYCLES = 10000
 MIN_CONFIRMING_OBSERVATIONS = 3
-METHOD_VERSION = "2.0-minimum-three-observations"
+METHOD_VERSION = "3.0-rolling-30m-context"
 
 def load(path: Path, default):
     try:
@@ -146,7 +146,7 @@ def main():
                 item["failures"] += result == "failure"
                 item["unconfirmed"] += result == "unconfirmed"
             if item["observations_processed"]:
-                item["reliability_pct"] = round((item["hits"] + 0.5 * item["partial"]) / item["observations_processed"] * 100)
+                item["reliability_pct"] = round((item["hits"] + 0.5 * item["partial"]) / item["observations_processed"] * 100, 1)
             summary[region][band] = item
 
     totals = {}
@@ -157,13 +157,13 @@ def main():
             for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
                 totals[region][key] += item[key]
         if totals[region]["observations_processed"]:
-            totals[region]["reliability_pct"] = round((totals[region]["hits"] + 0.5 * totals[region]["partial"]) / totals[region]["observations_processed"] * 100)
+            totals[region]["reliability_pct"] = round((totals[region]["hits"] + 0.5 * totals[region]["partial"]) / totals[region]["observations_processed"] * 100, 1)
     total = empty_item()
     for region in REGIONS:
-        for key in ("observations_processed", "observations_total", "hits", "partial", "failures"):
+        for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
             total[key] += totals[region][key]
     if total["observations_processed"]:
-        total["reliability_pct"] = round((total["hits"] + 0.5 * total["partial"]) / total["observations_processed"] * 100)
+        total["reliability_pct"] = round((total["hits"] + 0.5 * total["partial"]) / total["observations_processed"] * 100, 1)
 
     history.update({
         "schema_version": "1.0",
@@ -176,7 +176,7 @@ def main():
         "summary": summary,
         "regional_totals": totals,
         "total": total,
-        "method": "first recommendation=hit and alternative=partial only with at least three observations; no observation is a failure only when the regional source is valid, otherwise it is unconfirmed; other bands are not evaluated",
+        "method": "rolling 30-minute validation: first recommendation=hit and alternative=partial only with at least three observations; no observation is a failure only when the regional source is valid, otherwise it is unconfirmed; other bands are not evaluated",
         "sources": ["PSKReporter", "DXView"],
     })
     history_path.parent.mkdir(parents=True, exist_ok=True)
