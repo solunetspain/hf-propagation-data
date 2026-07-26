@@ -152,9 +152,15 @@ class CallbookResolver:
 
     @staticmethod
     def _text(root: ET.Element, name: str) -> str | None:
-        node = root.find(".//" + name)
-        value = node.text.strip() if node is not None and node.text else ""
-        return value or None
+        # QRZ XML uses a default namespace; compare local names so both
+        # namespaced and non-namespaced callbook responses are accepted.
+        for node in root.iter():
+            local_name = node.tag.rsplit("}", 1)[-1] if isinstance(node.tag, str) else ""
+            if local_name == name:
+                value = node.text.strip() if node.text else ""
+                if value:
+                    return value
+        return None
 
     def _request_xml(self, url: str) -> ET.Element:
         request = urllib.request.Request(url, headers={"User-Agent": "EA2EWL-HF-RBN/1.0"})
