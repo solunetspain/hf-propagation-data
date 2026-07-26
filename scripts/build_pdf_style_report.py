@@ -375,6 +375,9 @@ def main() -> int:
         ("DXView regional", "Actividad, sectores y evolución", "Sí", "Respuestas regionales", "Tres regiones", age(dx, now), "95 %", "13 %", "Muestras representativas"),
         ("Diagnóstico DXView", "Validar muestras e histórico", "Sí", "Parseo completo", "Tres regiones", age(dx, now), "99 %", "1 %", "Resolución espacial limitada"),
         ("PSKReporter nacional", "Respaldo contextual", "No", "No necesario", "España sin separación regional", "—", "0 %", "0 %", "Hay atribución regional válida"),
+        ("Ventana móvil de evidencia", "Combinar PSKReporter, DXView y RBN recientes", "Sí", "Capturas de los últimos 30 minutos", "Tres regiones", age(psk, now), "Derivada", "No sumable", "No es una fuente independiente"),
+        ("Histórico de predicciones", "Comparar recomendaciones con resultados posteriores", "Sí", "Evaluación posterior a 60 minutos", "Tres regiones", "Variable", "Derivada", "No sumable", "Muestra inicial hasta alcanzar volumen suficiente"),
+        ("QRZ / HamQTH", "Resolver localizadores de receptores y emisores", "Parcial", "QRZ primero; HamQTH como respaldo", "Solo ubicación fiable", "Variable", "Auxiliar", "No sumable", "Sin asignación regional si ambas consultas fallan"),
     ]
     blocks = []
     blocks.append("## Fuentes consultadas en esta ejecución\n\n" + table(
