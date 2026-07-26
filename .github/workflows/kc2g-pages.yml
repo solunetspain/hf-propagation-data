@@ -109,6 +109,11 @@ jobs:
           RBN_TELNET_HOST: ${{ vars.RBN_TELNET_HOST }}
           RBN_TELNET_PORT: ${{ vars.RBN_TELNET_PORT }}
           RBN_TELNET_CALLSIGN: ${{ vars.RBN_TELNET_CALLSIGN }}
+          QRZ_USERNAME: ${{ secrets.QRZ_USERNAME }}
+          QRZ_PASSWORD: ${{ secrets.QRZ_PASSWORD }}
+          QRZ_API_KEY: ${{ secrets.QRZ_API_KEY }}
+          HAMQTH_USERNAME: ${{ secrets.HAMQTH_USERNAME }}
+          HAMQTH_PASSWORD: ${{ secrets.HAMQTH_PASSWORD }}
         run: python scripts/collect_rbn.py
 
       - name: Collect regional DXView perspectives
