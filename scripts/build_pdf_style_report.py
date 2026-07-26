@@ -399,7 +399,7 @@ def main() -> int:
         s = summaries[key]
         executive.append(f"**{label}** mantiene foF2 mediana de **{num(get(s, 'fof2_mhz', 'median'), suffix=' MHz')}** y MUF(3000) mediana de **{num(get(s, 'mufd_mhz', 'median'), suffix=' MHz')}**. La actividad observada se conserva como contraste, no como garantía de contacto.")
     band_frequency_mhz = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1, "17 m": 18.1, "15 m": 21.2, "12 m": 24.9, "10 m": 28.5}
-    prediction_history = load("prediction-history.json", {})
+    prediction_history = load("prediction-history.json")
     historical_summary = get(prediction_history, "summary", default={})
 
     def recommendation_score(region_key, band):
