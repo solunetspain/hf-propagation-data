@@ -138,6 +138,8 @@ class CallbookResolver:
         self.hamqth_attempted = 0
         self.hamqth_used = 0
         self.unresolved = 0
+        self.qrz_last_error: str | None = None
+        self.hamqth_last_error: str | None = None
 
     def _load(self) -> dict[str, dict[str, object]]:
         try:
@@ -178,11 +180,21 @@ class CallbookResolver:
             root = self._request_xml("https://xmldata.qrz.com/xml/current/?" + params)
             error = self._text(root, "Error")
             self.qrz_session = self._text(root, "Key")
-            if error or not self.qrz_session:
+            if error:
+                self.qrz_last_error = error[:200]
+                return None
+            if not self.qrz_session:
+                self.qrz_last_error = "QRZ no devolvió una sesión válida"
                 return None
         query = urllib.parse.urlencode({"s": self.qrz_session, "callsign": callsign})
         root = self._request_xml("https://xmldata.qrz.com/xml/current/?" + query)
+        error = self._text(root, "Error")
+        if error:
+            self.qrz_last_error = error[:200]
+            return None
         locator = self._text(root, "grid") or self._text(root, "grid_square")
+        if not locator:
+            self.qrz_last_error = "QRZ respondió sin locator"
         return self._location_record(locator, "QRZ")
 
     def _hamqth(self, callsign: str) -> dict[str, object] | None:
@@ -193,7 +205,13 @@ class CallbookResolver:
         self.hamqth_attempted += 1
         params = urllib.parse.urlencode({"user": username, "pwd": password, "callsign": callsign, "prg": "EA2EWL-HF-RBN"})
         root = self._request_xml("https://www.hamqth.com/xml.php?" + params)
+        error = self._text(root, "error") or self._text(root, "Error")
+        if error:
+            self.hamqth_last_error = error[:200]
+            return None
         locator = self._text(root, "grid") or self._text(root, "grid_square")
+        if not locator:
+            self.hamqth_last_error = "HamQTH respondió sin locator"
         return self._location_record(locator, "HamQTH")
 
     @staticmethod
@@ -272,6 +290,8 @@ def main() -> int:
             "qrz_lookups": 0,
             "hamqth_fallback_lookups": 0,
             "unresolved_callbooks": 0,
+            "qrz_last_error": None,
+            "hamqth_last_error": None,
         },
         "interpretation": "RBN reports skimmer receptions, not completed QSOs. Regional use requires a verified locator.",
     }
@@ -333,6 +353,8 @@ def main() -> int:
                 "qrz_lookups": resolver.qrz_attempted,
                 "hamqth_fallback_lookups": resolver.hamqth_attempted,
                 "unresolved_callbooks": resolver.unresolved,
+                "qrz_last_error": resolver.qrz_last_error,
+                "hamqth_last_error": resolver.hamqth_last_error,
             })
             if resolver.hamqth_used:
                 diagnostic["fallback_notice"] = "HamQTH se usó como respaldo para algunas búsquedas porque QRZ no devolvió una ubicación utilizable."
