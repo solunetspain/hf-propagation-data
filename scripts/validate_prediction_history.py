@@ -201,6 +201,34 @@ def main():
             for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
                 totals[region][key] += item[key]
         finalize_item(totals[region])
+    # Resúmenes históricos por ámbito. Son agregaciones transparentes de resultados región+banda;
+    # no son probabilidades de contacto y no se mezclan con la confianza instantánea.
+    DOMAIN_BANDS = {
+        "next_hour": BANDS,
+        "absorption": ("160m", "80m", "40m"),
+        "nvis": ("160m", "80m", "40m", "20m"),
+        "dx": ("20m", "17m", "15m", "12m", "10m"),
+    }
+
+    def aggregate_items(items):
+        aggregated = empty_item()
+        for source in items:
+            for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
+                aggregated[key] += int(source.get(key, 0) or 0)
+        return finalize_item(aggregated)
+
+    domain_summary = {
+        region: {
+            domain: aggregate_items([summary[region][band] for band in bands])
+            for domain, bands in DOMAIN_BANDS.items()
+        }
+        for region in REGIONS
+    }
+    domain_totals = {
+        domain: aggregate_items([domain_summary[region][domain] for region in REGIONS])
+        for domain in DOMAIN_BANDS
+    }
+
     total = empty_item()
     for region in REGIONS:
         for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
@@ -225,6 +253,19 @@ def main():
         "entries": entries,
         "summary": summary,
         "regional_totals": totals,
+        "domain_summary": domain_summary,
+        "domain_totals": domain_totals,
+        "domain_method": {
+            "aggregation_unit": "evaluaciones región+banda ya maduras",
+            "domains": {
+                "next_hour": "todas las bandas evaluadas",
+                "absorption": "160m, 80m y 40m",
+                "nvis": "160m, 80m, 40m y 20m",
+                "dx": "20m, 17m, 15m, 12m y 10m"
+            },
+            "provisional": True,
+            "note": "Los ámbitos se muestran como histórico agregado; no equivalen a una probabilidad de contacto."
+        },
         "total": total,
         "method": "ventana móvil de 30 minutos; evaluación posterior a 60 minutos; no confirmadas excluidas del denominador; parcial=0,5 evidencia; suavizado Beta(2,2); intervalo Wilson del 95 %; cobertura regional mínima de 3 receptores; otras bandas no recomendadas no se evalúan",
         "sources": ["KC2G", "NOAA", "QRN", "PSKReporter", "DXView", "RBN"],
