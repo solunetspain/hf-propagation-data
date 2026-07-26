@@ -38,6 +38,34 @@ def num(value: Any, digits: int = 1, suffix: str = "") -> str:
     except (TypeError, ValueError):
         return "no validado"
 
+def history_item_text(item: dict[str, Any]) -> tuple[str, str, str]:
+    pct = get(item, "reliability_pct", default=None)
+    label = text(get(item, "sample_label", default="sin muestra"), "sin muestra")
+    interval = get(item, "uncertainty_95_pct", default=[None, None])
+    if pct is None:
+        return "Pendiente", label, "—"
+    value = f"{float(pct):.1f} %".replace(".", ",")
+    try:
+        low, high = interval
+        interval_text = f"{float(low):.1f}–{float(high):.1f} %".replace(".", ",")
+    except (TypeError, ValueError):
+        interval_text = "no disponible"
+    return value, label, interval_text
+
+def data_quality_text(region_key: str, psk_source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any], rbn_source: dict[str, Any]) -> str:
+    psk_region = get(psk_source, "regions", region_key, default={})
+    reports = int(get(psk_region, "report_count", default=0) or 0)
+    receivers = sum(int(get(v, "unique_receiver_count", default=0) or 0) for v in get(psk_region, "bands", default={}).values() if isinstance(v, dict))
+    dx_ok = get(dx_source, "regions", region_key, "status", default="") == "ok"
+    kc_key = {"peninsula": "mainland", "baleares": "balearics", "canarias": "canaries"}[region_key]
+    kc_ok = bool(get(kc_source, "regions", kc_key, "summary", default={}))
+    rbn_regional = int(get(rbn_source, "regions", region_key, "report_count", default=0) or 0)
+    if reports >= 100 and receivers >= 3 and dx_ok and kc_ok:
+        return "Alta"
+    if reports >= 10 or receivers >= 2 or dx_ok or kc_ok or rbn_regional > 0:
+        return "Moderada"
+    return "Limitada"
+
 def age(source: dict[str, Any], now: datetime) -> str:
     stamp = source.get("generated_at") or source.get("generated_at_utc") or source.get("timestamp_utc")
     try:
@@ -631,16 +659,21 @@ Si sabes poco de propagación, empieza aquí:
         else:
             regional_scores[key] = round(float(raw_score), 1)
     current_mean = sum(regional_scores.values()) / len(regional_scores)
+    confidence_rows = []
+    for key, label, _ in REGIONS:
+        historical = get(history, "regional_totals", key, default={})
+        hist_value, hist_label, interval = history_item_text(historical)
+        evaluations = int(get(historical, "confirmed_evaluations", default=0) or 0)
+        confidence_rows.append([label, f"{regional_scores[key]:.1f} %".replace(".", ","), hist_value + " · " + hist_label, evaluations, interval, data_quality_text(key, psk, dx, kc2g, rbn)])
+    confidence_rows.extend([
+        ["Próxima hora", f"{current_mean:.1f} %".replace(".", ","), "No disponible", "—", "—", "Fuentes actuales"],
+        ["Radioapagones/absorción", f"{max(0.0, current_mean - 1.0):.1f} %".replace(".", ","), "No disponible", "—", "—", "NOAA/D-RAP"],
+        ["NVIS", f"{max(0.0, current_mean - 2.0):.1f} %".replace(".", ","), "No disponible", "—", "—", "KC2G + PSKReporter/DXView"],
+        ["Europa/DX", f"{max(0.0, current_mean - 1.0):.1f} %".replace(".", ","), "No disponible", "—", "—", "MUF + actividad observada"],
+    ])
     blocks.append("## 14. Fiabilidad global estimada de las predicciones en este instante\n\n" + table(
-        ["Ámbito", "Fiabilidad"],
-        [["Península", f"{regional_scores['peninsula']:.1f} %"],
-         ["Baleares", f"{regional_scores['baleares']:.1f} %"],
-         ["Canarias", f"{regional_scores['canarias']:.1f} %"],
-         ["Próxima hora", f"{current_mean:.1f} %"],
-         ["Radioapagones/absorción", f"{max(0.0, current_mean - 1.0):.1f} %"],
-         ["NVIS", f"{max(0.0, current_mean - 2.0):.1f} %"],
-         ["Europa/DX", f"{max(0.0, current_mean - 1.0):.1f} %"]]) + "\n\n" +
-        "La cifra se calibra con el histórico regional cuando existe. No es una probabilidad matemática de contacto y no puede superar el histórico observado en más de cinco puntos.")
+        ["Ámbito", "Índice estimado de confianza de la predicción", "Fiabilidad histórica disponible", "Evaluaciones", "Intervalo histórico 95 %", "Calidad de los datos disponibles"],
+        confidence_rows) + "\n\nEl índice estimado de confianza resume la coherencia de las fuentes disponibles ahora; no es una probabilidad de contacto. La fiabilidad histórica mide aciertos posteriores y se muestra separada, con su tamaño de muestra e intervalo de incertidumbre.\n\nLos casos no confirmados no se cuentan como fallos: quedan fuera del denominador histórico.")
 
     historical_rows = []
     hsummary = get(history, "summary", default={})
@@ -650,24 +683,18 @@ Si sabes poco de propagación, empieza aquí:
             evaluations = int(get(item, "observations_processed", default=0) or 0)
             if evaluations <= 0:
                 continue
-            reliability = get(item, "reliability_pct", default=None)
-            reliability_text = f"{float(reliability):.1f} %".replace(".", ",") if reliability is not None else "Pendiente"
-            if evaluations < 100:
-                reliability_text += " · muestra inicial"
+            reliability_text, sample_label, interval_text = history_item_text(item)
             historical_rows.append([
                 label, band, evaluations, get(item, "hits", default=0),
                 get(item, "partial", default=0), get(item, "failures", default=0),
-                get(item, "unconfirmed", default=0), reliability_text
+                get(item, "unconfirmed", default=0), reliability_text + " · " + sample_label, interval_text
             ])
     regional_history_rows = []
     for key, label, _ in REGIONS:
         item = get(history, "regional_totals", key, default={})
-        reliability = get(item, "reliability_pct", default=None)
-        observations = int(get(item, "observations_processed", default=0) or 0)
-        reliability_text = f"{float(reliability):.1f} %".replace(".", ",") if reliability is not None else "Pendiente"
-        if observations < 100:
-            reliability_text += " · muestra inicial"
-        regional_history_rows.append([label, reliability_text,
+        reliability_text, sample_label, _interval = history_item_text(item)
+        observations = int(get(item, "confirmed_evaluations", default=0) or 0)
+        regional_history_rows.append([label, reliability_text + " · " + sample_label,
                                       observations, get(item, "hits", default=0),
                                       get(item, "partial", default=0), get(item, "failures", default=0),
                                       get(item, "unconfirmed", default=0)])
@@ -684,7 +711,7 @@ Si sabes poco de propagación, empieza aquí:
     ))
 
     blocks.append("### Fiabilidad histórica por región y banda recomendada\n\n" + table(
-        ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas", "Fiabilidad histórica"], historical_rows
+        ["Región", "Banda", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas", "Fiabilidad histórica", "Intervalo 95 %"], historical_rows
     ) + "\n\n" + "Esta tabla solo muestra combinaciones región+banda que ya han sido recomendadas y evaluadas. Una banda nueva aparece automáticamente desde su primera evaluación y se marca como «muestra limitada» mientras tenga menos de cinco casos. Las bandas que no aparecen todavía no tienen evaluaciones; su ausencia no significa que no hayan tenido actividad. La primera recomendación cuenta como acierto, la alternativa como parcial y una primera recomendación sin evidencia suficiente como fallo. PSKReporter y DXView aportan la evidencia regional. RBN se integra como corroboración secundaria: se muestra por banda y, cuando el receptor permite una atribución regional explícita, por región. Los spots no atribuibles permanecen globales y RBN no cuenta como acierto histórico por sí solo.")
 
     blocks.append("""## 15. Incertidumbres y datos faltantes
