@@ -169,13 +169,13 @@ class CallbookResolver:
         self.qrz_attempted += 1
         if not self.qrz_session:
             params = urllib.parse.urlencode({"username": username, "password": password, "agent": "EA2EWL-HF-RBN/1.0"})
-            root = self._request_xml("https://xmldata.qrz.com/xml/current/?op=logbook&" + params)
+            root = self._request_xml("https://xmldata.qrz.com/xml/current/?" + params)
             error = self._text(root, "Error")
             self.qrz_session = self._text(root, "Key")
             if error or not self.qrz_session:
                 return None
         query = urllib.parse.urlencode({"s": self.qrz_session, "callsign": callsign})
-        root = self._request_xml("https://xmldata.qrz.com/xml/current/?op= callsign" .replace("op= ", "op=") + "&" + query)
+        root = self._request_xml("https://xmldata.qrz.com/xml/current/?" + query)
         locator = self._text(root, "grid") or self._text(root, "grid_square")
         return self._location_record(locator, "QRZ")
 
