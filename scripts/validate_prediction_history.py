@@ -11,7 +11,7 @@ BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12
 WINDOW_MINUTES = 30
 MAX_CYCLES = 10000
 MIN_CONFIRMING_OBSERVATIONS = 3
-METHOD_VERSION = "3.0-rolling-30m-context"
+METHOD_VERSION = "4.0-smoothed-quality-separated"
 
 def load(path: Path, default):
     try:
@@ -62,9 +62,33 @@ def classify(predicted, alternative, observed, source_valid):
         return "unconfirmed"
     return "not_evaluated"
 
+def wilson_interval(successes, trials, z=1.96):
+    if trials <= 0:
+        return (None, None)
+    p = max(0.0, min(1.0, float(successes) / float(trials)))
+    denominator = 1.0 + z * z / trials
+    centre = (p + z * z / (2.0 * trials)) / denominator
+    margin = z * ((p * (1.0 - p) / trials + z * z / (4.0 * trials * trials)) ** 0.5) / denominator
+    return (round(max(0.0, centre - margin) * 100, 1), round(min(1.0, centre + margin) * 100, 1))
+
+def finalize_item(item):
+    # No confirmadas no son fallos: se excluyen del denominador.
+    confirmed = item["hits"] + item["partial"] + item["failures"]
+    evidence = item["hits"] + 0.5 * item["partial"]
+    item["confirmed_evaluations"] = confirmed
+    item["evidence_score"] = evidence
+    item["raw_reliability_pct"] = round(evidence / confirmed * 100, 1) if confirmed else None
+    # Suavizado Beta(2,2): evita saltos artificiales con muestras pequeñas.
+    item["reliability_pct"] = round((evidence + 2.0) / (confirmed + 4.0) * 100, 1) if confirmed else None
+    item["uncertainty_95_pct"] = list(wilson_interval(evidence, confirmed))
+    item["sample_label"] = "muestra inicial" if confirmed < 100 else "muestra consolidada"
+    return item
+
 def empty_item():
     return {"observations_processed": 0, "observations_total": 0, "hits": 0, "partial": 0,
-            "failures": 0, "unconfirmed": 0, "reliability_pct": None}
+            "failures": 0, "unconfirmed": 0, "confirmed_evaluations": 0,
+            "evidence_score": 0.0, "raw_reliability_pct": None, "reliability_pct": None,
+            "uncertainty_95_pct": [None, None], "sample_label": "sin muestra"}
 
 def main():
     data = Path("public/data")
@@ -145,8 +169,7 @@ def main():
                 item["partial"] += result == "partial"
                 item["failures"] += result == "failure"
                 item["unconfirmed"] += result == "unconfirmed"
-            if item["observations_processed"]:
-                item["reliability_pct"] = round((item["hits"] + 0.5 * item["partial"]) / item["observations_processed"] * 100, 1)
+            finalize_item(item)
             summary[region][band] = item
 
     totals = {}
@@ -156,14 +179,12 @@ def main():
             item = summary[region][band]
             for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
                 totals[region][key] += item[key]
-        if totals[region]["observations_processed"]:
-            totals[region]["reliability_pct"] = round((totals[region]["hits"] + 0.5 * totals[region]["partial"]) / totals[region]["observations_processed"] * 100, 1)
+        finalize_item(totals[region])
     total = empty_item()
     for region in REGIONS:
         for key in ("observations_processed", "observations_total", "hits", "partial", "failures", "unconfirmed"):
             total[key] += totals[region][key]
-    if total["observations_processed"]:
-        total["reliability_pct"] = round((total["hits"] + 0.5 * total["partial"]) / total["observations_processed"] * 100, 1)
+    finalize_item(total)
 
     history.update({
         "schema_version": "1.0",
@@ -176,7 +197,7 @@ def main():
         "summary": summary,
         "regional_totals": totals,
         "total": total,
-        "method": "rolling 30-minute validation: first recommendation=hit and alternative=partial only with at least three observations; no observation is a failure only when the regional source is valid, otherwise it is unconfirmed; other bands are not evaluated",
+        "method": "rolling 30-minute validation; no confirmadas excluded from denominator; partial=0.5 evidence; Beta(2,2) smoothing; Wilson 95% interval; other bands are not evaluated",
         "sources": ["PSKReporter", "DXView"],
     })
     history_path.parent.mkdir(parents=True, exist_ok=True)
