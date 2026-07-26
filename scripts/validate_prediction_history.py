@@ -9,9 +9,12 @@ REGIONS = ("peninsula", "baleares", "canarias")
 BANDS = ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m")
 BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12m":"24","10m":"28"}
 WINDOW_MINUTES = 30
+EVALUATION_DELAY_MINUTES = 60
 MAX_CYCLES = 10000
 MIN_CONFIRMING_OBSERVATIONS = 3
-METHOD_VERSION = "4.0-smoothed-quality-separated"
+MIN_REGION_RECEIVERS = 3
+CALIBRATION_MIN_EVALUATIONS = 50
+METHOD_VERSION = "5.0-rolling-evidence-stability"
 
 def load(path: Path, default):
     try:
@@ -25,6 +28,17 @@ def nested(value, *keys, default=None):
             return default
         value = value.get(key)
     return default if value is None else value
+
+def evidence_snapshot(psk, dx, region, band):
+    metrics = nested(psk, "regions", region, "bands", band, default={})
+    dx_metrics = nested(dx, "regions", region, "bands", BAND_KEYS[band], default={})
+    return {
+        "reports": int(metrics.get("report_count", 0) or 0) if isinstance(metrics, dict) else 0,
+        "receivers": int(metrics.get("unique_receiver_count", 0) or 0) if isinstance(metrics, dict) else 0,
+        "senders": int(metrics.get("unique_sender_count", 0) or 0) if isinstance(metrics, dict) else 0,
+        "dx_zones": int(nested(dx_metrics, "activity_zone_count", "median", default=0) or 0),
+        "coverage": "suficiente" if (int(metrics.get("unique_receiver_count", 0) or 0) if isinstance(metrics, dict) else 0) >= MIN_REGION_RECEIVERS else "limitada",
+    }
 
 def count_observations(psk, dx, region, band):
     psk_count = nested(psk, "regions", region, "bands", band, "report_count", default=0) or 0
@@ -115,6 +129,13 @@ def main():
             region: {band: count_observations(psk, dx, region, band) for band in BANDS}
             for region in REGIONS
         },
+        "evidence_snapshot": {
+            region: {band: evidence_snapshot(psk, dx, region, band) for band in BANDS}
+            for region in REGIONS
+        },
+        "sources_used": ["KC2G", "NOAA", "QRN", "PSKReporter", "DXView", "RBN"],
+        "evidence_types": {"KC2G": "modelado", "NOAA": "medido", "QRN": "modelado", "PSKReporter": "medido", "DXView": "medido", "RBN": "medido"},
+        "stability": "pendiente de varias capturas" ,
         "evaluation": None,
     }
 
@@ -122,7 +143,7 @@ def main():
         if entry.get("evaluation") is not None:
             continue
         created = iso_datetime(entry.get("generated_at_utc"), now)
-        if (now - created).total_seconds() < WINDOW_MINUTES * 60:
+        if (now - created).total_seconds() < EVALUATION_DELAY_MINUTES * 60:
             continue
         evaluation = {}
         old_recommendations = entry.get("recommendations", {})
@@ -189,16 +210,31 @@ def main():
     history.update({
         "schema_version": "1.0",
         "window_minutes": WINDOW_MINUTES,
+        "evaluation_delay_minutes": EVALUATION_DELAY_MINUTES,
         "max_cycles": MAX_CYCLES,
         "method_version": METHOD_VERSION,
         "minimum_confirming_observations": MIN_CONFIRMING_OBSERVATIONS,
+        "minimum_region_receivers": MIN_REGION_RECEIVERS,
+        "calibration": {
+            "status": "preparando" if total["confirmed_evaluations"] < CALIBRATION_MIN_EVALUATIONS else "elegible",
+            "minimum_evaluations": CALIBRATION_MIN_EVALUATIONS,
+            "weights_adjusted": False,
+            "note": "Los pesos no se ajustan automáticamente hasta disponer de una muestra suficiente y variada."
+        },
         "generated_at_utc": now.isoformat(),
         "entries": entries,
         "summary": summary,
         "regional_totals": totals,
         "total": total,
-        "method": "rolling 30-minute validation; no confirmadas excluded from denominator; partial=0.5 evidence; Beta(2,2) smoothing; Wilson 95% interval; other bands are not evaluated",
-        "sources": ["PSKReporter", "DXView"],
+        "method": "ventana móvil de 30 minutos; evaluación posterior a 60 minutos; no confirmadas excluidas del denominador; parcial=0,5 evidencia; suavizado Beta(2,2); intervalo Wilson del 95 %; cobertura regional mínima de 3 receptores; otras bandas no recomendadas no se evalúan",
+        "sources": ["KC2G", "NOAA", "QRN", "PSKReporter", "DXView", "RBN"],
+        "evidence_policy": {
+            "measured": ["NOAA", "PSKReporter", "DXView", "RBN"],
+            "modelled": ["KC2G", "QRN"],
+            "inferred": ["recommendations", "reach_estimates"],
+            "theoretical": ["possible_openings"],
+            "double_counting_control": "Las fuentes derivadas de la misma observación no se suman como observaciones independientes."
+        },
     })
     history_path.parent.mkdir(parents=True, exist_ok=True)
     history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
