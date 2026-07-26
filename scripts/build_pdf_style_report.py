@@ -399,11 +399,30 @@ def main() -> int:
         s = summaries[key]
         executive.append(f"**{label}** mantiene foF2 mediana de **{num(get(s, 'fof2_mhz', 'median'), suffix=' MHz')}** y MUF(3000) mediana de **{num(get(s, 'mufd_mhz', 'median'), suffix=' MHz')}**. La actividad observada se conserva como contraste, no como garantía de contacto.")
     band_frequency_mhz = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1, "17 m": 18.1, "15 m": 21.2, "12 m": 24.9, "10 m": 28.5}
-    recommendations = {
-        "peninsula": ("20 m", "17 m", "15 m", "10 m"),
-        "baleares": ("20 m", "17 m", "40 m", "15 m"),
-        "canarias": ("15 m", "20 m", "17 m", "12 m"),
-    }
+    prediction_history = load("prediction-history.json", {})
+    historical_summary = get(prediction_history, "summary", default={})
+
+    def recommendation_score(region_key, band):
+        """Rank a band from present ionospheric margin, independent evidence and mature history."""
+        frequency = band_frequency_mhz[band]
+        muf = float(get(summaries[region_key], "mufd_mhz", "median", default=0) or 0)
+        score = max(-35.0, min(35.0, (muf - frequency) * 6.0))
+        metrics = get(psk, "regions", region_key, "bands", band.replace(" ", ""), default={})
+        reports = int(get(metrics, "report_count", default=0) or 0)
+        receivers = int(get(metrics, "unique_receiver_count", default=0) or 0)
+        score += min(24.0, math.log1p(max(0, reports)) * 3.5)
+        score += min(18.0, max(0, receivers) * 1.5)
+        hist = get(historical_summary, region_key, band.replace(" ", ""), default={})
+        evaluations = int(get(hist, "observations_processed", default=0) or 0)
+        reliability = get(hist, "reliability_pct", default=None)
+        if evaluations >= 5 and reliability is not None:
+            score += max(-12.0, min(12.0, (float(reliability) - 50.0) * 0.20))
+        return score
+
+    recommendations = {}
+    for region_key, _label, _kc_key in REGIONS:
+        ranked = sorted(band_frequency_mhz, key=lambda band: (-recommendation_score(region_key, band), band_frequency_mhz[band]))
+        recommendations[region_key] = tuple(ranked[:4])
     quick_rows = []
     for key, label, _ in REGIONS:
         muf = float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)
@@ -717,7 +736,7 @@ No hay tormenta solar ni radioapagón activo cuando las escalas son R0/S0/G0. Au
         "valid_until_utc": (now + timedelta(minutes=90)).isoformat(),
         "regions": ["peninsula", "baleares", "canarias"],
         "publication": {"publisher": "hf-data-generator", "source_automation": "HF data cycle", "content_mode": "verbatim", "publish_web": True, "publish_chat": False, "flags": {"web": "publication.publish_web", "chat": "publication.publish_chat"}},
-        "prediction_model": {"recommendations": recommendations, "bands": list(band_frequency_mhz), "validation_window_minutes": 90},
+        "prediction_model": {"recommendations": recommendations, "bands": list(band_frequency_mhz), "validation_window_minutes": 30, "recommendation_method": "MUF margin + recent independent evidence + mature history"},
         "report_markdown": annotate_blocks("\n\n".join(blocks)),
     }
     output = DATA / "web-report-es.json"
