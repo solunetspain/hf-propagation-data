@@ -93,7 +93,7 @@ def data_quality_text(region_key: str, psk_source: dict[str, Any], dx_source: di
     return "Limitada"
 
 def age(source: dict[str, Any], now: datetime) -> str:
-    stamp = source.get("generated_at") or source.get("generated_at_utc") or source.get("timestamp_utc")
+    stamp = source.get("generated_at") or source.get("generated_at_utc") or source.get("timestamp_utc") or source.get("retrieved_at_utc")
     try:
         dt = datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
         if dt.tzinfo is None:
@@ -402,7 +402,7 @@ def main() -> int:
         ("DXView regional", "Actividad, sectores y evolución", "Sí", "Respuestas regionales", "Tres regiones", age(dx, now), "95 %", "13 %", "Muestras representativas"),
         ("Diagnóstico DXView", "Validar muestras e histórico", "Sí", "Parseo completo", "Tres regiones", age(dx, now), "99 %", "1 %", "Resolución espacial limitada"),
         ("PSKReporter nacional", "Respaldo contextual", "No", "No necesario", "España sin separación regional", "—", "0 %", "0 %", "Hay atribución regional válida"),
-        ("NASA OMNI2", "Contexto solar y geomagnético independiente", "Sí" if omni.get("status") in {"ok", "partial"} else "No", "Registro OMNI2 parseado" if omni.get("status") in {"ok", "partial"} else "No disponible", "Global", age(omni, now), "0 %", "0 %", "Solo contraste diagnóstico; no entra en la puntuación"),
+        ("NASA OMNI2", "Contexto solar y geomagnético independiente", "Sí" if omni.get("status") in {"ok", "partial"} else "No", "Registro OMNI2 parseado" if omni.get("status") in {"ok", "partial"} else ("Error: " + text(omni.get("error"), "respuesta no válida")), "Global", age(omni, now), "0 %", "0 %", "Solo contraste diagnóstico; no entra en la puntuación"),
         ("Ventana móvil de evidencia", "Combinar PSKReporter, DXView y RBN recientes", "Sí", "Capturas de los últimos 30 minutos", "Tres regiones", age(psk, now), "Derivada", "No sumable", "No es una fuente independiente"),
         ("Histórico de predicciones", "Comparar recomendaciones con resultados posteriores", "Sí", "Evaluación posterior a 60 minutos", "Tres regiones", "Variable", "Derivada", "No sumable", "Muestra inicial hasta alcanzar volumen suficiente"),
         ("QRZ / HamQTH", "Resolver localizadores de receptores y emisores", "Parcial", "QRZ primero; HamQTH como respaldo", "Solo ubicación fiable", "Variable", "Auxiliar", "No sumable", "Sin asignación regional si ambas consultas fallan"),
