@@ -80,6 +80,10 @@ jobs:
             --diagnostic public/diagnostics/hamqsl-diagnostic.json \
             --last-good public/data/hamqsl-last-good.json
 
+      - name: Collect NASA OMNI diagnostic context
+        run: python scripts/collect_omni.py
+        continue-on-error: true
+
       - name: Collect NOAA SWPC
         continue-on-error: true
         run: python scripts/collect_noaa.py
