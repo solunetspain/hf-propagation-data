@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 DATA = Path("public/data")
-URL_TEMPLATE = "https://omniweb.gsfc.nasa.gov/pub/omni2/omni2_{year}.dat"
-NOAA_MAG_URL = "https://services.swpc.noaa.gov/products/solar-wind/mag-1-day.json"
-NOAA_PLASMA_URL = "https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json"
+URL_TEMPLATE = "https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_{year}.dat"
+NOAA_MAG_URL = "https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json"
+NOAA_PLASMA_URL = "https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json"
 
 
 def fetch(url: str, timeout: int = 20):
