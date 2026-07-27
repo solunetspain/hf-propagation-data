@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-07-27T01:15:44.314718+00:00",
+  "generated_at": "2026-07-27T01:18:38.170764+00:00",
   "status": "ok",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-07-27T01:13:00+00:00",
+      "timestamp_utc": "2026-07-27T01:17:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -30,47 +30,54 @@
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-07-27T01:11:00+00:00",
-      "kp": 1.0,
-      "estimated_kp": 0.67,
-      "kp_code": "1M",
+      "timestamp_utc": "2026-07-27T01:14:00+00:00",
+      "kp": 0.0,
+      "estimated_kp": 0.33,
+      "kp_code": "0P",
       "classification": "estimated 1-minute Kp; auxiliary, not official 3-hour Kp"
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-07-27T01:09:00+00:00",
+        "timestamp_utc": "2026-07-27T01:12:00+00:00",
         "source": "ACE",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 1.47,
-        "speed_km_s": 397.09,
-        "temperature_k": 43227.5
+        "density_p_cm3": 1.515,
+        "speed_km_s": 395.12,
+        "temperature_k": 60692.0
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-07-27T01:09:00+00:00",
+        "timestamp_utc": "2026-07-27T01:14:00+00:00",
         "source": "ACE",
-        "samples": 6,
+        "samples": 5,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": 1.53,
-        "by_gsm_nt": -2.435,
-        "bz_gsm_nt": -0.815,
-        "bt_nt": 3.065
+        "bx_gsm_nt": 2.19,
+        "by_gsm_nt": -2.01,
+        "bz_gsm_nt": -0.96,
+        "bt_nt": 3.08
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
     "xray": {
-      "timestamp_utc": "2026-07-27T01:12:00+00:00",
-      "flux_w_m2": 1.281378786188725e-06,
-      "class": "C1.3",
+      "timestamp_utc": "2026-07-27T01:15:00+00:00",
+      "flux_w_m2": 1.2350222959867097e-06,
+      "class": "C1.2",
       "energy": "0.1-0.8nm",
       "satellite": 18
     },
+    "protons": {
+      "timestamp_utc": "2026-07-27T01:10:00+00:00",
+      "flux": 0.22703661024570465,
+      "energy": ">=10 MeV",
+      "units": null,
+      "satellite": 18
+    },
     "electrons": {
-      "timestamp_utc": "2026-07-27T01:05:00+00:00",
-      "flux": 721.10302734375,
+      "timestamp_utc": "2026-07-27T01:10:00+00:00",
+      "flux": 670.9774780273438,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -95,7 +102,7 @@
     "scales": {
       "1": {
         "DateStamp": "2026-07-27",
-        "TimeStamp": "01:13:00",
+        "TimeStamp": "01:17:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -154,7 +161,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-07-27T01:12:00+00:00",
+    "timestamp_utc": "2026-07-27T01:14:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -253,7 +260,7 @@
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
-    "protons": false,
+    "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
