@@ -52,6 +52,32 @@ def history_item_text(item: dict[str, Any]) -> tuple[str, str, str]:
         interval_text = "no disponible"
     return value, label, interval_text
 
+def regional_coverage_index(region_key: str, psk_source: dict[str, Any], rbn_source: dict[str, Any], now: datetime) -> dict[str, Any]:
+    """Estimate observational coverage for one region; never a contact probability."""
+    psk_region = get(psk_source, "regions", region_key, default={})
+    bands = get(psk_region, "bands", default={})
+    reports = int(get(psk_region, "report_count", default=0) or 0)
+    receivers = sum(int(get(v, "unique_receiver_count", default=0) or 0) for v in bands.values() if isinstance(v, dict))
+    senders = sum(int(get(v, "unique_sender_count", default=0) or 0) for v in bands.values() if isinstance(v, dict))
+    rbn_region = get(rbn_source, "regions", region_key, default={})
+    rbn_spots = int(get(rbn_region, "report_count", default=0) or 0)
+    rbn_receivers = int(get(rbn_region, "distinct_receivers", default=0) or 0)
+    stamp = psk_source.get("generated_at") or psk_source.get("generated_at_utc") or psk_source.get("timestamp_utc")
+    try:
+        dt = datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        age_minutes = max(0.0, (now - dt.astimezone(timezone.utc)).total_seconds() / 60.0)
+    except (TypeError, ValueError):
+        age_minutes = None
+    receiver_score = min((receivers + rbn_receivers) / 8.0, 1.0) * 100
+    sender_score = min(senders / 12.0, 1.0) * 100
+    report_score = min(math.log1p(reports + rbn_spots) / math.log1p(500), 1.0) * 100 if reports + rbn_spots else 0.0
+    freshness_score = 0.0 if age_minutes is None else max(0.0, 100.0 - min(age_minutes, 60.0) / 60.0 * 100.0)
+    score = round(0.40 * receiver_score + 0.25 * sender_score + 0.20 * report_score + 0.15 * freshness_score, 1)
+    level = "Alta" if score >= 70 else ("Moderada" if score >= 40 else ("Baja" if score > 0 else "Sin cobertura"))
+    return {"score": score, "level": level, "receivers": receivers + rbn_receivers, "senders": senders, "reports": reports + rbn_spots, "age_minutes": age_minutes}
+
 def data_quality_text(region_key: str, psk_source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any], rbn_source: dict[str, Any]) -> str:
     psk_region = get(psk_source, "regions", region_key, default={})
     reports = int(get(psk_region, "report_count", default=0) or 0)
@@ -418,13 +444,24 @@ def main() -> int:
         blocks.append("## Parámetros ionosféricos complementarios y tendencia reciente\n\n" + table(
             ["Estación GIRO", "foF2 MHz", "hmF2 km", "foEs MHz", "fmin MHz", "Δ foF2", "Δ hmF2", "Muestras"],
             giro_rows) + "\n\nValores medidos por ionosonda cuando están disponibles. Las variaciones comparan la muestra más reciente con otra anterior dentro de la ventana consultada; no son una predicción independiente.")
+    coverage_rows = []
+    for region_key, region_label in (("peninsula", "Península"), ("baleares", "Baleares"), ("canarias", "Canarias")):
+        coverage = regional_coverage_index(region_key, psk, rbn, now)
+        age_text = "no verificable" if coverage["age_minutes"] is None else f"{coverage['age_minutes']:.0f} min"
+        coverage_rows.append([region_label, f"{coverage['score']:.1f} %", coverage["level"], coverage["receivers"], coverage["senders"], coverage["reports"], age_text])
+    coverage_block = table(
+        ["Región", "Índice de cobertura observacional", "Nivel", "Receptores independientes", "Emisores independientes", "Reportes", "Antigüedad"],
+        coverage_rows)
+    coverage_note = ("Este índice resume la cantidad, diversidad y frescura de la evidencia regional disponible. "
+                     "Se calcula por región y no es una probabilidad de contacto ni un predictor de banda. "
+                     "Los receptores RBN solo suman cuando su ubicación regional está verificada; los datos sin localización no se asignan.")
     receiver_rows = []
     for region_key, region_label in (("peninsula", "Península"), ("baleares", "Baleares"), ("canarias", "Canarias")):
         region_data = get(psk, "regions", region_key, default={})
         for band, metrics in get(region_data, "bands", default={}).items():
             receiver_rows.append((region_label, band, str(get(metrics, "unique_receiver_count", default=0)), str(get(metrics, "unique_sender_count", default=0)), str(get(metrics, "report_count", default=0))))
     if receiver_rows:
-        blocks.append("## Independencia de la evidencia observada\n\n" + table(
+        blocks.append("## Independencia de la evidencia observada\n\n" + coverage_block + "\n\n" + coverage_note + "\n\n" + table(
             ["Región", "Banda", "Receptores distintos", "Emisores distintos", "Reportes"],
             receiver_rows) + "\n\nEl número de receptores distintos ayuda a distinguir una señal respaldada por varios puntos de escucha de otra concentrada en un único receptor. Se usa como indicador de cobertura y calidad observacional; no convierte automáticamente los reportes en probabilidad de contacto.")
     executive = []
