@@ -19,24 +19,49 @@ URL_TEMPLATE = "https://omniweb.gsfc.nasa.gov/pub/omni2/omni2_{year}.dat"
 
 def collect() -> dict:
     now = datetime.now(timezone.utc)
-    url = URL_TEMPLATE.format(year=now.year)
-    req = urllib.request.Request(url, headers={"User-Agent": "hf-propagation-data/1.0"})
-    with urllib.request.urlopen(req, timeout=20) as response:
-        payload = response.read().decode("ascii", "replace")
-    lines = [line.strip() for line in payload.splitlines() if line.strip() and not line.lstrip().startswith("#")]
+    errors = []
+    selected_url = ""
+    payload = ""
+    for year in (now.year, now.year - 1):
+        url = URL_TEMPLATE.format(year=year)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "hf-propagation-data/1.0"})
+            with urllib.request.urlopen(req, timeout=20) as response:
+                candidate = response.read().decode("ascii", "replace")
+            if candidate.strip():
+                payload = candidate
+                selected_url = url
+                break
+        except Exception as exc:
+            errors.append(f"{year}: {exc}")
+    lines = []
+    for raw in payload.splitlines():
+        fields = raw.split()
+        if len(fields) >= 3:
+            try:
+                int(fields[0]); int(fields[1]); int(fields[2])
+            except ValueError:
+                continue
+            lines.append(raw.strip())
     latest = lines[-1] if lines else ""
     fields = latest.split()
-    return {
-        "status": "ok" if len(fields) >= 3 else "partial",
+    result = {
+        "status": "ok" if len(fields) >= 3 else "error",
         "source": "NASA OMNI2",
-        "url": url,
+        "url": selected_url or URL_TEMPLATE.format(year=now.year),
         "retrieved_at_utc": now.isoformat(),
+        "generated_at": now.isoformat(),
         "latest_record": latest,
         "latest_record_fields": fields,
         "prediction_weight": 0,
         "use_in_prediction": False,
         "note": "Independent solar-wind context only; no prediction weight until calibrated.",
     }
+    if errors:
+        result["attempt_errors"] = errors
+    if not latest:
+        result["error"] = "; ".join(errors) or "No se encontró un registro OMNI2 válido."
+    return result
 
 
 def main() -> int:
@@ -52,7 +77,7 @@ def main() -> int:
             "use_in_prediction": False,
             "error": str(exc),
         }
-    (DATA / "omni-summary.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    (DATA / "omni-summary.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))
     return 0 if result["status"] in {"ok", "partial"} else 0
 
