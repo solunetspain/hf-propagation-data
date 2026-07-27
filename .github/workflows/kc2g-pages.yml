@@ -45,7 +45,24 @@ jobs:
 
       - name: Run tests
         run: python -m unittest discover -s tests -v
+      - name: Test external source connectivity
+        run: |
+          python - <<'PY'
+          import urllib.request
 
+          urls = [
+              "https://omniweb.gsfc.nasa.gov/pub/omni2/omni2_2026.dat",
+              "https://services.swpc.noaa.gov/products/solar-wind/mag-1-day.json",
+          ]
+
+          for url in urls:
+              try:
+                  with urllib.request.urlopen(url, timeout=20) as response:
+                      data = response.read()
+                  print(f"OK {response.status} {len(data)} bytes: {url}")
+              except Exception as error:
+                  print(f"ERROR {repr(error)}: {url}")
+          PY
       - name: Collect and validate KC2G
         id: kc2g
         continue-on-error: true
