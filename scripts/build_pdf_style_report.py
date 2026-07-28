@@ -231,9 +231,9 @@ def nvis_reach_estimate(region: str, metrics: dict[str, Any]) -> str:
             return f"{evidence_prefix}Probablemente larga (zonas EA lejanas no identificadas)"
         return f"{evidence_prefix}Probablemente larga ({', '.join(external_areas)})"
     if not external_areas:
-        return "Selectiva por zonas (zonas EA no identificadas)"
-    return f"Selectiva por zonas ({', '.join(external_areas)})"
-def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: datetime, window_minutes: int = 30) -> dict[str, Any]:
+        return f"{evidence_prefix}Selectiva por zonas (zonas EA no identificadas)"
+    return f"{evidence_prefix}Selectiva por zonas ({', '.join(external_areas)})"
+def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: datetime, window_minutes: int = 60) -> dict[str, Any]:
     """Aggregate recent PSK snapshots for NVIS reach only."""
     snapshots = get(history, "snapshots", default=[])
     if not isinstance(snapshots, list):
