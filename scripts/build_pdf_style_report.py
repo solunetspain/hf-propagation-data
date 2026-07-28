@@ -204,7 +204,21 @@ def nvis_reach_estimate(region: str, metrics: dict[str, Any]) -> str:
     """Classify observed reach, distinguishing local and external EA areas."""
     reports = int(get(metrics, "report_count", default=0) or 0)
     distance = get(metrics, "distance_km", "median", default=None)
-    areas = [str(area) for area in get(metrics, "ea_areas", default=[]) if str(area).startswith("EA")]
+    # Prefer district counts when the collector provides them; the older
+    # flat list is retained as a compatibility fallback.  This prevents the
+    # label from being dominated by the first district returned by the source.
+    area_counts = get(metrics, "ea_area_counts", default={})
+    if isinstance(area_counts, dict):
+        areas = [
+            str(area) for area, count in area_counts.items()
+            if str(area).startswith("EA") and int(count or 0) > 0
+        ]
+        areas.sort(key=lambda area: (int(area[2:]) if area[2:].isdigit() else 99, area))
+    else:
+        areas = sorted({
+            str(area) for area in get(metrics, "ea_areas", default=[])
+            if str(area).startswith("EA")
+        }, key=lambda area: (int(area[2:]) if area[2:].isdigit() else 99, area))
     local_areas = {
         "peninsula": {"EA1", "EA2", "EA3", "EA4", "EA5", "EA7", "EA9"},
         "baleares": {"EA6"},
