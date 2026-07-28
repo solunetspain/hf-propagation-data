@@ -367,6 +367,35 @@ def annotate_blocks(markdown: str) -> str:
         annotated.append(full + ("\n\n" + notes if notes else ""))
     return "\n\n".join(annotated)
 
+def nvis_absorption_label(noaa: dict[str, Any], region: str, band: str) -> str:
+    """Classify D-layer absorption from the regional NOAA D-RAP grid."""
+    point_names = {
+        "peninsula": ("IN91PO", "Galicia", "Cantabrico", "Centro", "Mediterraneo", "Andalucia"),
+        "baleares": ("Baleares",),
+        "canarias": ("Canarias",),
+    }
+    points = get(noaa, "drap", "points", default={})
+    values = []
+    for name in point_names.get(region, ()):
+        value = get(points, name, "highest_frequency_affected_1db_mhz", default=None)
+        try:
+            if value is not None:
+                values.append(float(value))
+        except (TypeError, ValueError):
+            pass
+    if not values:
+        return "No validado"
+    affected = statistics.median(values)
+    frequency = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1}[band]
+    if affected <= 0.5:
+        return "Muy baja"
+    if affected >= frequency:
+        return "Alta"
+    if affected >= frequency * 0.5:
+        return "Moderada"
+    return "Baja"
+
+
 def main() -> int:
     now = datetime.now(timezone.utc)
     kc2g = load("kc2g-spain.json")
@@ -628,7 +657,7 @@ Si sabes poco de propagación, empieza aquí:
             psk_count = get(psk_metrics, "report_count", default=0)
             reach = nvis_reach_estimate(key, psk_metrics)
             zones = get(d_bands, ref, "activity_zone_count", "median", default=0)
-            absorption = "Muy baja" if band == "160 m" else ("Alta" if band == "80 m" else "Moderada" if band == "40 m" else "Baja")
+            absorption = nvis_absorption_label(noaa, key, band)
             frequency = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1}[band]
             margin = fof2 - frequency
             margin_text = f"{margin:+.1f} MHz; " + ("amplio" if margin >= 1.0 else "justo" if margin >= 0 else "insuficiente")
