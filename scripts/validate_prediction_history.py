@@ -8,7 +8,7 @@ from pathlib import Path
 REGIONS = ("peninsula", "baleares", "canarias")
 BANDS = ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m")
 BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12m":"24","10m":"28"}
-WINDOW_MINUTES = 30
+WINDOW_MINUTES = 60
 EVALUATION_DELAY_MINUTES = 60
 MAX_CYCLES = 100000
 MIN_CONFIRMING_OBSERVATIONS = 3
@@ -267,7 +267,7 @@ def main():
             "note": "Los ámbitos se muestran como histórico agregado; no equivalen a una probabilidad de contacto."
         },
         "total": total,
-        "method": "ventana móvil de 30 minutos; evaluación posterior a 60 minutos; no confirmadas excluidas del denominador; parcial=0,5 evidencia; suavizado Beta(2,2); intervalo Wilson del 95 %; cobertura regional mínima de 3 receptores; otras bandas no recomendadas no se evalúan",
+        "method": "ventana móvil de 60 minutos; evaluación posterior a 60 minutos; no confirmadas excluidas del denominador; parcial=0,5 evidencia; suavizado Beta(2,2); intervalo Wilson del 95 %; cobertura regional mínima de 3 receptores; otras bandas no recomendadas no se evalúan",
         "sources": ["KC2G", "NOAA", "QRN", "PSKReporter", "DXView", "RBN"],
         "evidence_policy": {
             "measured": ["NOAA", "PSKReporter", "DXView", "RBN"],
