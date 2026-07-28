@@ -254,12 +254,12 @@ def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: d
     # before the rolling-history artifact is persisted, so relying only on
     # snapshots may incorrectly produce zero regional reports.
     current_stamp = get(current, "generated_at", default=None)
-    selected_stamps = {
-        get(snapshot, "generated_at", default=None)
-        for snapshot in selected
-        if isinstance(snapshot, dict)
-    }
-    if isinstance(current, dict) and current_stamp not in selected_stamps:
+    # Prefer the live snapshot over a same-timestamp copy from the history.
+    selected = [
+        snapshot for snapshot in selected
+        if get(snapshot, "generated_at", default=None) != current_stamp
+    ]
+    if isinstance(current, dict):
         selected.append(current)
 
     if not selected:
