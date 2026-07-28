@@ -515,19 +515,30 @@ def main() -> int:
     historical_summary = get(prediction_history, "summary", default={})
 
     def recommendation_score(region_key, band):
-        """Rank a band from present ionospheric margin, independent evidence and mature history."""
+        """Rank a band using current physics, independent evidence and calibrated history."""
         frequency = band_frequency_mhz[band]
         muf = float(get(summaries[region_key], "mufd_mhz", "median", default=0) or 0)
         score = max(-35.0, min(35.0, (muf - frequency) * 6.0))
+
         metrics = get(psk, "regions", region_key, "bands", band.replace(" ", ""), default={})
         reports = int(get(metrics, "report_count", default=0) or 0)
         receivers = int(get(metrics, "unique_receiver_count", default=0) or 0)
-        score += min(24.0, math.log1p(max(0, reports)) * 3.5)
-        score += min(18.0, max(0, receivers) * 1.5)
+        coverage = regional_coverage_index(region_key, psk, rbn, now)
+        coverage_factor = 0.35 + 0.65 * min(1.0, max(0.0, float(coverage["score"]) / 100.0))
+
+        # Evidence is useful only in proportion to its independent regional coverage.
+        report_weight = float(get(get(prediction_history, "calibration", default={}), "weights", "observed_reports", default=1.0) or 1.0)
+        receiver_weight = float(get(get(prediction_history, "calibration", default={}), "weights", "independent_receivers", default=1.0) or 1.0)
+        report_weight = max(0.25, min(1.5, report_weight))
+        receiver_weight = max(0.25, min(1.5, receiver_weight))
+        score += min(24.0, math.log1p(max(0, reports)) * 3.5 * report_weight * coverage_factor)
+        score += min(18.0, max(0, receivers) * 1.5 * receiver_weight * coverage_factor)
+
         hist = get(historical_summary, region_key, band.replace(" ", ""), default={})
         evaluations = int(get(hist, "observations_processed", default=0) or 0)
         reliability = get(hist, "reliability_pct", default=None)
-        if evaluations >= 5 and reliability is not None:
+        if evaluations >= 50 and reliability is not None:
+            # Historical calibration is deliberately inactive for small samples.
             score += max(-12.0, min(12.0, (float(reliability) - 50.0) * 0.20))
         return score
 
