@@ -1,7 +1,7 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-07-28T16:11:42.887884+00:00",
-  "status": "partial",
+  "generated_at": "2026-07-28T16:21:38.450790+00:00",
+  "status": "ok",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
     "callsign": "IN91",
@@ -15,8 +15,374 @@
   "query_strategy": "Official PSKReporter grid query: callsign=IN91 and modify=grid",
   "scope": "Reports with sender or receiver locator beginning IN91, amateur HF, last hour",
   "classification": "Observed reports after strict local post-filtering",
-  "bands": {},
-  "examples": [],
-  "weight_recommendation": 0,
-  "limitation": "PSKReporter response was unavailable or unparseable."
+  "bands": {
+    "20m": {
+      "report_count": 18,
+      "station_count": 18,
+      "route_count": 18,
+      "modes": {
+        "FT2": 18
+      },
+      "directions": {
+        "received_in_IN91": 4,
+        "transmitted_from_IN91": 14
+      },
+      "distance_km": {
+        "minimum": 599.4,
+        "median": 1308.5,
+        "maximum": 2074.2
+      },
+      "latest_observation_utc": "2026-07-28T16:18:03+00:00"
+    },
+    "15m": {
+      "report_count": 33,
+      "station_count": 34,
+      "route_count": 33,
+      "modes": {
+        "FT8": 33
+      },
+      "directions": {
+        "received_in_IN91": 17,
+        "transmitted_from_IN91": 16
+      },
+      "distance_km": {
+        "minimum": 878.1,
+        "median": 1675.3,
+        "maximum": 11995.9
+      },
+      "latest_observation_utc": "2026-07-28T16:07:59+00:00"
+    },
+    "12m": {
+      "report_count": 16,
+      "station_count": 17,
+      "route_count": 16,
+      "modes": {
+        "FT8": 16
+      },
+      "directions": {
+        "transmitted_from_IN91": 16
+      },
+      "distance_km": {
+        "minimum": 1014.8,
+        "median": 1325.9,
+        "maximum": 1645.2
+      },
+      "latest_observation_utc": "2026-07-28T16:18:15+00:00"
+    },
+    "10m": {
+      "report_count": 189,
+      "station_count": 180,
+      "route_count": 189,
+      "modes": {
+        "FT8": 189
+      },
+      "directions": {
+        "received_in_IN91": 67,
+        "transmitted_from_IN91": 122
+      },
+      "distance_km": {
+        "minimum": 785.8,
+        "median": 1370.8,
+        "maximum": 11611.0
+      },
+      "latest_observation_utc": "2026-07-28T16:18:43+00:00"
+    }
+  },
+  "examples": [
+    {
+      "timestamp_utc": "2026-07-28T16:18:43+00:00",
+      "frequency_hz": 28074460.0,
+      "band": "10m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "DL2XP",
+      "sender_locator": "JN68CR18",
+      "receiver_callsign": "EA2AVX",
+      "receiver_locator": "IN91JR",
+      "snr_db": "-6",
+      "distance_km": 1304.5
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:29+00:00",
+      "frequency_hz": 28075407.0,
+      "band": "10m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "PD1B",
+      "sender_locator": "JO32GQ",
+      "receiver_callsign": "EA2AVX",
+      "receiver_locator": "IN91JR",
+      "snr_db": "-13",
+      "distance_km": 1350.0
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:15+00:00",
+      "frequency_hz": 24916014.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "OE6ADD",
+      "receiver_locator": "JN77PA",
+      "snr_db": "-10",
+      "distance_km": 1414.4
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:15+00:00",
+      "frequency_hz": 24915994.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "ON8ST",
+      "receiver_locator": "JO21HA",
+      "snr_db": "-21",
+      "distance_km": 1123.9
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:13+00:00",
+      "frequency_hz": 24916000.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "ON6AO",
+      "receiver_locator": "JO20TP",
+      "snr_db": "-16",
+      "distance_km": 1118.0
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:13+00:00",
+      "frequency_hz": 24915999.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "DK1MAX",
+      "receiver_locator": "JN58SP06",
+      "snr_db": "3",
+      "distance_km": 1244.0
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:12+00:00",
+      "frequency_hz": 24916021.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "PA0RDY",
+      "receiver_locator": "JO22LJ25",
+      "snr_db": "-18",
+      "distance_km": 1273.5
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:11+00:00",
+      "frequency_hz": 24916056.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "OK1GU",
+      "receiver_locator": "JN69NO",
+      "snr_db": "-12",
+      "distance_km": 1399.1
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:03+00:00",
+      "frequency_hz": 14086129.0,
+      "band": "20m",
+      "mode": "FT2",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2Z",
+      "sender_locator": "IN91MP",
+      "receiver_callsign": "F1BAY",
+      "receiver_locator": "JN33AE",
+      "snr_db": "-9",
+      "distance_km": 599.4
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:03+00:00",
+      "frequency_hz": 14086116.0,
+      "band": "20m",
+      "mode": "FT2",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2Z",
+      "sender_locator": "IN91MP",
+      "receiver_callsign": "OE6ADD",
+      "receiver_locator": "JN77PA",
+      "snr_db": "-11",
+      "distance_km": 1420.4
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:03+00:00",
+      "frequency_hz": 14086115.0,
+      "band": "20m",
+      "mode": "FT2",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2Z",
+      "sender_locator": "IN91MP",
+      "receiver_callsign": "EA8-DF4UE",
+      "receiver_locator": "IL38BP",
+      "snr_db": "7",
+      "distance_km": 1858.0
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:03+00:00",
+      "frequency_hz": 14086112.0,
+      "band": "20m",
+      "mode": "FT2",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2Z",
+      "sender_locator": "IN91MP",
+      "receiver_callsign": "EA8TL",
+      "receiver_locator": "IL18NF",
+      "snr_db": "13",
+      "distance_km": 2074.2
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24916006.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "DPH207",
+      "receiver_locator": "JO52AE",
+      "snr_db": "-18",
+      "distance_km": 1432.4
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24916007.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "ON5KQ",
+      "receiver_locator": "JO10OS38",
+      "snr_db": null,
+      "distance_km": 1061.8
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24916003.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "ON1",
+      "receiver_locator": "JO11HC",
+      "snr_db": "-19",
+      "distance_km": 1085.1
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 14086121.0,
+      "band": "20m",
+      "mode": "FT2",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2Z",
+      "sender_locator": "IN91MP",
+      "receiver_callsign": "IN3IJJ",
+      "receiver_locator": "JN56XU",
+      "snr_db": "-6",
+      "distance_km": 1178.5
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24915999.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "OE3GBB",
+      "receiver_locator": "JN87AQ",
+      "snr_db": "-6",
+      "distance_km": 1492.7
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24916001.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "F6JUW",
+      "receiver_locator": "JO10KJ",
+      "snr_db": "-14",
+      "distance_km": 1014.8
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24916001.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "DM5JBN",
+      "receiver_locator": "JO60EQ",
+      "snr_db": "-17",
+      "distance_km": 1428.4
+    },
+    {
+      "timestamp_utc": "2026-07-28T16:18:00+00:00",
+      "frequency_hz": 24916016.0,
+      "band": "12m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2ELX",
+      "sender_locator": "IN91NP",
+      "receiver_callsign": "DL5XL",
+      "receiver_locator": "JO43GI26",
+      "snr_db": "-11",
+      "distance_km": 1478.8
+    }
+  ],
+  "content_type": "text/xml; charset=utf-8",
+  "http_attempts": 1,
+  "upstream_report_count": 256,
+  "accepted_report_count": 256,
+  "scope_summary": {
+    "exact_in91po_report_count": 0,
+    "regional_in91_report_count": 256,
+    "preferred_scope": "regional_IN91",
+    "exact_in91po_bands": {}
+  },
+  "rejected_report_counts": {},
+  "upstream_grid_filter_honored": true,
+  "upstream_filter_note": "Grid query may match either sender or receiver in IN91; strict local post-filter remains mandatory.",
+  "weight_recommendation": 1,
+  "limitation": null
 }
