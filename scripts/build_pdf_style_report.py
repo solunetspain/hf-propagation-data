@@ -250,6 +250,18 @@ def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: d
         age_seconds = (now - dt.astimezone(timezone.utc)).total_seconds()
         if 0 <= age_seconds <= window_minutes * 60:
             selected.append(snapshot)
+    # Include the freshly collected snapshot explicitly. The workflow can run
+    # before the rolling-history artifact is persisted, so relying only on
+    # snapshots may incorrectly produce zero regional reports.
+    current_stamp = get(current, "generated_at", default=None)
+    selected_stamps = {
+        get(snapshot, "generated_at", default=None)
+        for snapshot in selected
+        if isinstance(snapshot, dict)
+    }
+    if isinstance(current, dict) and current_stamp not in selected_stamps:
+        selected.append(current)
+
     if not selected:
         return current
 
