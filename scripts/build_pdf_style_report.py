@@ -204,21 +204,39 @@ def nvis_reach_estimate(region: str, metrics: dict[str, Any]) -> str:
     """Classify observed reach, distinguishing local and external EA areas."""
     reports = int(get(metrics, "report_count", default=0) or 0)
     distance = get(metrics, "distance_km", "median", default=None)
-    # Prefer district counts when the collector provides them; the older
-    # flat list is retained as a compatibility fallback.  This prevents the
-    # label from being dominated by the first district returned by the source.
+    # Accept all collector formats: EA area list, area-count map, or
+    # nested records containing an EA district code. Historical snapshots used
+    # different shapes, so the parser remains compatible with all of them.
     area_counts = get(metrics, "ea_area_counts", default={})
+    raw_areas = get(metrics, "ea_areas", default=[])
+    candidates = []
     if isinstance(area_counts, dict):
-        areas = [
-            str(area) for area, count in area_counts.items()
-            if str(area).startswith("EA") and int(count or 0) > 0
-        ]
-        areas.sort(key=lambda area: (int(area[2:]) if area[2:].isdigit() else 99, area))
-    else:
-        areas = sorted({
-            str(area) for area in get(metrics, "ea_areas", default=[])
-            if str(area).startswith("EA")
-        }, key=lambda area: (int(area[2:]) if area[2:].isdigit() else 99, area))
+        candidates.extend(area_counts.keys())
+    elif isinstance(area_counts, list):
+        candidates.extend(area_counts)
+    if isinstance(raw_areas, dict):
+        candidates.extend(raw_areas.keys())
+    elif isinstance(raw_areas, list):
+        candidates.extend(raw_areas)
+    for key in ("districts", "areas", "ea_districts"):
+        value = get(metrics, key, default=[])
+        if isinstance(value, dict):
+            candidates.extend(value.keys())
+        elif isinstance(value, list):
+            candidates.extend(value)
+    areas = set()
+    for candidate in candidates:
+        if isinstance(candidate, dict):
+            candidate = (
+                candidate.get("district")
+                or candidate.get("ea_area")
+                or candidate.get("area")
+                or candidate.get("code")
+            )
+        code = str(candidate).strip().upper()
+        if code.startswith("EA") and code[2:].isdigit():
+            areas.add(code)
+    areas = sorted(areas, key=lambda area: (int(area[2:]), area))
     local_areas = {
         "peninsula": {"EA1", "EA2", "EA3", "EA4", "EA5", "EA7", "EA9"},
         "baleares": {"EA6"},
