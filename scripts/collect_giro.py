@@ -35,39 +35,66 @@ def fetch_station(code: str, hours: int = 6):
         return url, r.read().decode("utf-8", errors="replace")
 
 def parse_text(text: str):
-    """Parse DIDB rows conservatively while retaining the original line."""
+    """Parse the tabular DIDBase response conservatively.
+
+    DIDBase normally returns one ISO-8601 timestamp followed by the
+    confidence score and the requested characteristics. Values may be
+    followed by quality flags (//, --- or __); those flags are ignored,
+    while missing values remain None.
+    """
+    import re
+
     rows = []
     names = ("foF2", "MUF(3000)F2", "hmF2", "foEs", "fmin")
+    missing = {"-999", "-999.0", "9999", "9999.0", "---", "__"}
     for line in text.splitlines():
         raw = line.strip()
         if not raw or raw.startswith("#"):
             continue
-        parts = raw.replace(",", " ").split()
-        if len(parts) < 3:
-            continue
-        row = {"raw": raw, "tokens": parts}
-        # DIDB commonly begins with date and time, followed by values in the
-        # requested charName order. Missing/flagged values remain None.
-        date_token = parts[0]
-        time_token = parts[1] if len(parts) > 1 else ""
-        if "." in date_token and ":" in time_token:
-            row["timestamp_utc"] = f"{date_token} {time_token}Z"
-            values = parts[2:]
-            measurements = {}
-            for index, name in enumerate(names):
-                if index >= len(values):
-                    measurements[name] = None
-                    continue
-                token = values[index].strip()
-                try:
-                    value = float(token)
-                    measurements[name] = None if value in (-999, -999.0, 9999, 9999.0) else value
-                except ValueError:
-                    measurements[name] = None
-            row["measurements"] = measurements
-        rows.append(row)
-    return rows[-100:]
 
+        tokens = raw.replace(",", " ").split()
+        if not tokens:
+            continue
+
+        timestamp = tokens[0]
+        if not re.match(r"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", timestamp):
+            # Keep support for the older two-column date/time form.
+            if len(tokens) > 1 and "." in tokens[0] and ":" in tokens[1]:
+                timestamp = f"{tokens[0]}T{tokens[1]}Z"
+                value_tokens = tokens[2:]
+            else:
+                continue
+        else:
+            value_tokens = tokens[1:]
+
+        numeric = []
+        for token in value_tokens:
+            clean = token.strip()
+            if clean in missing:
+                numeric.append(None)
+                continue
+            try:
+                numeric.append(float(clean))
+            except ValueError:
+                # Quality flags and separators are not measurements.
+                continue
+
+        # The first numeric field is DIDBase confidence score. The
+        # following fields correspond to the requested characteristics.
+        confidence = numeric[0] if numeric else None
+        measurements = {}
+        values = numeric[1:]
+        for index, name in enumerate(names):
+            value = values[index] if index < len(values) else None
+            measurements[name] = value
+
+        rows.append({
+            "raw": raw,
+            "timestamp_utc": timestamp if timestamp.endswith("Z") else timestamp + "Z",
+            "confidence_score": confidence,
+            "measurements": measurements,
+        })
+    return rows[-100:]
 
 def summarize_rows(rows):
     """Return latest values and a conservative 30-60 minute comparison."""
