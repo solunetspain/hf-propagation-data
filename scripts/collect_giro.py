@@ -11,11 +11,11 @@ import argparse, json, urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-# Candidate nearby/relevant stations. Codes can be changed without touching report logic.
 STATIONS = {
     "Roquetes": "EB040",
     "El_Arenosillo": "EA036",
 }
+PARAMETERS = ("foF2", "MUF(3000)F2", "hmF2", "foEs", "fmin")
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
@@ -23,42 +23,34 @@ def now_iso():
 def fetch_station(code: str, hours: int = 6):
     now = datetime.now(timezone.utc)
     start = now - timedelta(hours=hours)
-    params = {
-        "ursiCode": code,
-        "charName": "foF2,MUF(3000)F2,hmF2,foEs,fmin",
-        "fromDate": start.strftime("%Y.%m.%d %H:%M:%S"),
-        "toDate": now.strftime("%Y.%m.%d %H:%M:%S"),
-    }
+    # DIDBase expects one charName parameter per characteristic. A single
+    # comma-separated charName is accepted by some frontends but returns no
+    # measurement rows on the public servlet.
+    params = [
+        ("ursiCode", code),
+        *[(("charName", name)) for name in PARAMETERS],
+        ("fromDate", start.strftime("%Y.%m.%d %H:%M:%S")),
+        ("toDate", now.strftime("%Y.%m.%d %H:%M:%S")),
+    ]
     url = "https://lgdc.uml.edu/common/DIDBGetValues?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={"User-Agent":"SOLUNET-HF-GIRO/1.0"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return url, r.read().decode("utf-8", errors="replace")
+    req = urllib.request.Request(url, headers={"User-Agent": "SOLUNET-HF-GIRO/1.1"})
+    with urllib.request.urlopen(req, timeout=30) as response:
+        body = response.read().decode("utf-8", errors="replace")
+        return url, getattr(response, "status", 200), body
 
 def parse_text(text: str):
-    """Parse the tabular DIDBase response conservatively.
-
-    DIDBase normally returns one ISO-8601 timestamp followed by the
-    confidence score and the requested characteristics. Values may be
-    followed by quality flags (//, --- or __); those flags are ignored,
-    while missing values remain None.
-    """
     import re
-
     rows = []
-    names = ("foF2", "MUF(3000)F2", "hmF2", "foEs", "fmin")
-    missing = {"-999", "-999.0", "9999", "9999.0", "---", "__"}
+    missing = {"-999", "-999.0", "9999", "9999.0", "---", "__", "//"}
     for line in text.splitlines():
         raw = line.strip()
         if not raw or raw.startswith("#"):
             continue
-
         tokens = raw.replace(",", " ").split()
         if not tokens:
             continue
-
         timestamp = tokens[0]
         if not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", timestamp):
-            # Keep support for the older two-column date/time form.
             if len(tokens) > 1 and "." in tokens[0] and ":" in tokens[1]:
                 timestamp = f"{tokens[0]}T{tokens[1]}Z"
                 value_tokens = tokens[2:]
@@ -66,7 +58,6 @@ def parse_text(text: str):
                 continue
         else:
             value_tokens = tokens[1:]
-
         numeric = []
         for token in value_tokens:
             clean = token.strip()
@@ -76,18 +67,15 @@ def parse_text(text: str):
             try:
                 numeric.append(float(clean))
             except ValueError:
-                # Quality flags and separators are not measurements.
                 continue
-
-        # The first numeric field is DIDBase confidence score. The
-        # following fields correspond to the requested characteristics.
-        confidence = numeric[0] if numeric else None
-        measurements = {}
+        if not numeric:
+            continue
+        confidence = numeric[0]
         values = numeric[1:]
-        for index, name in enumerate(names):
-            value = values[index] if index < len(values) else None
-            measurements[name] = value
-
+        measurements = {
+            name: (values[index] if index < len(values) else None)
+            for index, name in enumerate(PARAMETERS)
+        }
         rows.append({
             "raw": raw,
             "timestamp_utc": timestamp if timestamp.endswith("Z") else timestamp + "Z",
@@ -97,8 +85,10 @@ def parse_text(text: str):
     return rows[-100:]
 
 def summarize_rows(rows):
-    """Return latest values and a conservative 30-60 minute comparison."""
-    valid = [row for row in rows if isinstance(row.get("measurements"), dict)]
+    valid = [
+        row for row in rows
+        if any(value is not None for value in row.get("measurements", {}).values())
+    ]
     latest = valid[-1] if valid else {}
     comparison = {}
     if len(valid) >= 2:
@@ -110,13 +100,15 @@ def summarize_rows(rows):
     latest_values = latest.get("measurements", {})
     previous_values = comparison.get("measurements", {}) if comparison else {}
     trends = {}
-    for name in ("foF2", "MUF(3000)F2", "hmF2", "foEs", "fmin"):
+    for name in PARAMETERS:
         current = latest_values.get(name)
         previous_value = previous_values.get(name)
         trends[name] = {
             "latest": current,
             "previous": previous_value,
-            "delta": round(current - previous_value, 3) if isinstance(current, (int, float)) and isinstance(previous_value, (int, float)) else None,
+            "delta": round(current - previous_value, 3)
+            if isinstance(current, (int, float)) and isinstance(previous_value, (int, float))
+            else None,
             "classification": "measured" if current is not None else "unavailable",
         }
     return {
@@ -132,23 +124,46 @@ def main():
     ap.add_argument("--output", type=Path, default=Path("public/data/giro-spain-summary.json"))
     ap.add_argument("--diagnostic", type=Path, default=Path("public/diagnostics/giro-diagnostic.json"))
     args = ap.parse_args()
-    out = {"source":"GIRO/DIDBase cross-check","generated_at":now_iso(),"status":"partial","stations":{},"parameters":["foF2","MUF(3000)F2","hmF2","foEs","fmin"],"data_classification":"measured ionosonde values when parsed; unavailable values are not inferred"}
-    diag = {"generated_at":now_iso(),"status":"partial","errors":[],"parameters_requested":["foF2","MUF(3000)F2","hmF2","fmin"],"interpretation":"GIRO values are measured by ionosonde when parsed; trend deltas compare two observations in the six-hour query window."}
+    out = {
+        "source": "GIRO/DIDBase cross-check",
+        "generated_at": now_iso(),
+        "status": "partial",
+        "stations": {},
+        "parameters": list(PARAMETERS),
+        "data_classification": "measured ionosonde values when parsed; unavailable values are not inferred",
+    }
+    diag = {
+        "generated_at": now_iso(),
+        "status": "partial",
+        "errors": [],
+        "parameters_requested": list(PARAMETERS),
+        "interpretation": "GIRO values are measured by ionosonde when parsed; trend deltas compare two observations in the six-hour query window.",
+    }
     for name, code in STATIONS.items():
         try:
-            url, text = fetch_station(code)
+            url, http_status, text = fetch_station(code)
             rows = parse_text(text)
-            out["stations"][name] = {"ursi_code":code,"url":url,"parsed_rows":rows,"summary":summarize_rows(rows),"raw_excerpt":text[:4000]}
+            summary = summarize_rows(rows)
+            out["stations"][name] = {
+                "ursi_code": code,
+                "url": url,
+                "http_status": http_status,
+                "parsed_rows": rows,
+                "summary": summary,
+                "raw_excerpt": text[:4000],
+            }
+            diag.setdefault("stations", {})[name] = summary
             if rows:
                 out["status"] = "ok"
-                diag.setdefault("stations", {})[name] = summarize_rows(rows)
-        except Exception as e:
-            diag["errors"].append(f"{name}/{code}: {type(e).__name__}: {e}")
+        except Exception as error:
+            message = f"{name}/{code}: {type(error).__name__}: {error}"
+            diag["errors"].append(message)
+            out["stations"][name] = {"ursi_code": code, "status": "error", "error": message}
     diag["status"] = out["status"]
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.diagnostic.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(out, ensure_ascii=False, indent=2)+"\n",encoding="utf-8")
-    args.diagnostic.write_text(json.dumps(diag, ensure_ascii=False, indent=2)+"\n",encoding="utf-8")
+    args.output.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.diagnostic.write_text(json.dumps(diag, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0
 
 if __name__ == "__main__":
