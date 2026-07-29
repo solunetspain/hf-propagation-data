@@ -57,7 +57,7 @@ def parse_text(text: str):
             continue
 
         timestamp = tokens[0]
-        if not re.match(r"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", timestamp):
+        if not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", timestamp):
             # Keep support for the older two-column date/time form.
             if len(tokens) > 1 and "." in tokens[0] and ":" in tokens[1]:
                 timestamp = f"{tokens[0]}T{tokens[1]}Z"
