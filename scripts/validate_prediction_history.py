@@ -235,6 +235,50 @@ def main():
             total[key] += totals[region][key]
     finalize_item(total)
 
+    def classify_recent_trend(values):
+        confirmed = [value for value in values if value is not None]
+        if len(confirmed) < 4:
+            return "Sin tendencia suficiente"
+        midpoint = len(confirmed) // 2
+        previous = confirmed[:midpoint]
+        recent = confirmed[midpoint:]
+        if not previous or not recent:
+            return "Sin tendencia suficiente"
+        delta = (sum(recent) / len(recent)) - (sum(previous) / len(previous))
+        if delta >= 0.15:
+            return "Mejora"
+        if delta <= -0.15:
+            return "Empeora"
+        return "Estable"
+
+    def result_score(result):
+        return {"hit": 1.0, "partial": 0.5, "failure": 0.0}.get(result)
+
+    def trend_for(region_names, bands):
+        values = []
+        for entry in entries:
+            cycle = []
+            for region_name in region_names:
+                for band_name in bands:
+                    result = nested(entry, "evaluation", region_name, band_name, "result", default=None)
+                    score = result_score(result)
+                    if score is not None:
+                        cycle.append(score)
+            if cycle:
+                values.append(sum(cycle) / len(cycle))
+        return classify_recent_trend(values[-20:])
+
+    for region in REGIONS:
+        for band in BANDS:
+            summary[region][band]["recent_trend"] = trend_for((region,), (band,))
+        totals[region]["recent_trend"] = trend_for((region,), BANDS)
+    for region in REGIONS:
+        for domain, bands in DOMAIN_BANDS.items():
+            domain_summary[region][domain]["recent_trend"] = trend_for((region,), bands)
+    for domain, bands in DOMAIN_BANDS.items():
+        domain_totals[domain]["recent_trend"] = trend_for(REGIONS, bands)
+    total["recent_trend"] = trend_for(REGIONS, BANDS)
+
     history.update({
         "schema_version": "1.0",
         "window_minutes": WINDOW_MINUTES,
