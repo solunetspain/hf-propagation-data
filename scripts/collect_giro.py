@@ -107,7 +107,6 @@ def parse_text(text: str):
             "measurements": measurements,
         })
     return rows[-100:]
- 
 def summarize_rows(rows):
     valid = [
         row for row in rows
