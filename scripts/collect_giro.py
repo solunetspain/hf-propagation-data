@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Optional GIRO/DIDBase cross-check.
+Optional GIRO/DIDBase/FastChar cross-check.
 
 The public DIDBase interface may change or throttle automated requests.
 This collector never breaks the workflow: it records exact failures and
@@ -32,7 +32,7 @@ def fetch_station(code: str, hours: int = 6):
         ("fromDate", start.strftime("%Y.%m.%d %H:%M:%S")),
         ("toDate", now.strftime("%Y.%m.%d %H:%M:%S")),
     ]
-    url = "https://lgdc.uml.edu/common/DIDBGetValues?" + urllib.parse.urlencode(params)
+    url = "https://giro.uml.edu/common/DIDBGetValues?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(url, headers={"User-Agent": "SOLUNET-HF-GIRO/1.1"})
     with urllib.request.urlopen(req, timeout=30) as response:
         body = response.read().decode("utf-8", errors="replace")
