@@ -23,40 +23,44 @@ def now_iso():
 def fetch_station(code: str, hours: int = 6):
     now = datetime.now(timezone.utc)
     start = now - timedelta(hours=hours)
-    dates = [
-        (start.strftime("%Y.%m.%d %H:%M:%S"), now.strftime("%Y.%m.%d %H:%M:%S")),
-        (start.strftime("%Y-%m-%dT%H:%M:%SZ"), now.strftime("%Y-%m-%dT%H:%M:%SZ")),
-    ]
-    hosts = ("giro.uml.edu", "lgdc.uml.edu")
+    # FastChar/DIDBase expects one comma-separated characteristic list and
+    # the legacy UTC date syntax used by its public servlet.
+    from_date = start.strftime("%Y.%m.%d (...) %H:%M:%S")
+    to_date = now.strftime("%Y.%m.%d (...) %H:%M:%S")
+    char_names = ",".join(PARAMETERS)
     attempts = []
-    for host in hosts:
-        for from_date, to_date in dates:
-            params = [
-                ("ursiCode", code),
-                *[( "charName", name) for name in PARAMETERS],
-                ("fromDate", from_date),
-                ("toDate", to_date),
-            ]
-            url = "https://" + host + "/common/DIDBGetValues?" + urllib.parse.urlencode(params)
-            req = urllib.request.Request(
-                url,
-                headers={
-                    "User-Agent": "SOLUNET-HF-GIRO/1.2 (+https://previsionespropagacion.ea2ewl.es/)",
-                    "Accept": "text/plain,text/csv,text/html;q=0.8,*/*;q=0.5",
-                },
-            )
-            try:
-                with urllib.request.urlopen(req, timeout=30) as response:
-                    body = response.read().decode("utf-8", errors="replace")
-                    status = getattr(response, "status", 200)
-                    attempts.append({"url": url, "http_status": status, "bytes": len(body)})
-                    rows = parse_text(body)
-                    if rows:
-                        return url, status, body, attempts
-                    attempts[-1]["parsed_rows"] = 0
-            except Exception as error:
-                attempts.append({"url": url, "error": f"{type(error).__name__}: {error}"})
-    raise RuntimeError(json.dumps({"message": "GIRO returned no parseable measurements", "attempts": attempts}, ensure_ascii=False))
+    for host in ("lgdc.uml.edu", "giro.uml.edu"):
+        params = [
+            ("ursiCode", code),
+            ("charName", char_names),
+            ("fromDate", from_date),
+            ("toDate", to_date),
+            ("DMUF", "3000"),
+        ]
+        url = "https://" + host + "/common/DIDBGetValues?" + urllib.parse.urlencode(params)
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "SOLUNET-HF-GIRO/1.3 (+https://previsionespropagacion.ea2ewl.es/)",
+                "Accept": "text/plain,text/csv,*/*;q=0.5",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as response:
+                body = response.read().decode("utf-8", errors="replace")
+                status = getattr(response, "status", 200)
+                rows = parse_text(body)
+                attempt = {"url": url, "http_status": status, "bytes": len(body),
+                           "parsed_rows": len(rows)}
+                attempts.append(attempt)
+                if rows:
+                    return url, status, body, attempts
+        except Exception as error:
+            attempts.append({"url": url, "error": f"{type(error).__name__}: {error}"})
+    raise RuntimeError(json.dumps({
+        "message": "GIRO returned no parseable measurements",
+        "attempts": attempts,
+    }, ensure_ascii=False))
 
 def parse_text(text: str):
     import re
