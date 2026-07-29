@@ -313,23 +313,35 @@ def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: d
     return result
 
 
-def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
+def confidence_components(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any], history: dict[str, Any]) -> dict[str, Any]:
+    """Return separate, auditable confidence dimensions; never a contact probability."""
     p = float(get(source, "regions", region, "consultation_reliability_pct", default=0) or 0)
     d = 95 if get(dx_source, "regions", region, "status", default="") == "ok" else 70
     kc_key = {"peninsula": "mainland", "baleares": "balearics", "canarias": "canaries"}[region]
     k = 98 if get(kc_source, "regions", kc_key, "summary", default={}) else 0
-
     quality = 0.35 * p + 0.30 * d + 0.35 * k
     kc_points = float(get(kc_source, "regions", kc_key, "summary", "points", default=0) or 0)
     psk_reports = float(get(source, "regions", region, "report_count", default=0) or 0)
     dx_samples = float(get(dx_source, "regions", region, "available_sample_count", default=0) or 0)
-
     kc_coverage = min(kc_points / 10.0, 1.0)
     psk_coverage = min(math.log1p(psk_reports) / math.log1p(3000), 1.0) if psk_reports else 0.0
     dx_coverage = min(dx_samples / 6.0, 1.0)
-    coverage = 0.50 * kc_coverage + 0.30 * psk_coverage + 0.20 * dx_coverage
+    coverage = 100.0 * (0.50 * kc_coverage + 0.30 * psk_coverage + 0.20 * dx_coverage)
+    stability = get(history, "stability", region, "score", default=None)
+    if stability is None:
+        stability = get(history, "regional_totals", region, "stability_score", default=None)
+    try:
+        stability = max(0.0, min(100.0, float(stability)))
+        stability_label = "Evaluable"
+    except (TypeError, ValueError):
+        stability = 50.0
+        stability_label = "Sin serie suficiente"
+    instant = 0.55 * quality + 0.25 * coverage + 0.20 * stability
+    quality_label = "Alta" if coverage >= 70 and quality >= 85 else ("Moderada" if coverage >= 35 or quality >= 70 else "Limitada")
+    return {"quality": round(quality, 1), "coverage": round(coverage, 1), "stability": round(stability, 1), "stability_label": stability_label, "instant": round(instant, 1), "quality_label": quality_label}
 
-    return round(0.80 * quality + 0.20 * coverage * 100)
+def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
+    return round(confidence_components(region, source, dx_source, kc_source, {}).get("instant", 0))
 
 
 NOTES = {
@@ -757,8 +769,11 @@ Si sabes poco de propagación, empieza aquí:
     # calibrate the current confidence against the observed regional history.
     history = load("prediction-history.json")
     regional_scores = {}
+    regional_components = {}
     for key, _, _ in REGIONS:
-        raw_score = reliability_index(key, psk, dx, kc2g)
+        components = confidence_components(key, psk, dx, kc2g, history)
+        regional_components[key] = components
+        raw_score = components["instant"]
         historical = get(history, "regional_totals", key, default={})
         observations = int(get(historical, "observations_processed", default=0) or 0)
         historical_pct = get(historical, "reliability_pct", default=None)
@@ -776,7 +791,8 @@ Si sabes poco de propagación, empieza aquí:
         historical = get(history, "regional_totals", key, default={})
         hist_value, hist_label, interval = history_item_text(historical)
         evaluations = int(get(historical, "confirmed_evaluations", default=0) or 0)
-        confidence_rows.append([label, f"{regional_scores[key]:.1f} %".replace(".", ","), hist_value + " · " + hist_label, evaluations, interval, data_quality_text(key, psk, dx, kc2g, rbn)])
+        components = regional_components[key]
+        confidence_rows.append([label, f"{regional_scores[key]:.1f} %".replace(".", ","), hist_value + " · " + hist_label, evaluations, interval, f"{components['quality_label']} · cobertura {components['coverage']:.1f} %".replace(".", ","), f"{components['stability']:.1f} % · {components['stability_label']}".replace(".", ",")])
     def domain_history_row(label, domain_key, quality):
         item = get(history, "domain_totals", domain_key, default={})
         value, sample_label, interval = history_item_text(item)
@@ -791,7 +807,7 @@ Si sabes poco de propagación, empieza aquí:
         "dx": domain_history_row("Europa/DX", "dx", "MUF + actividad observada"),
     }
     confidence_rows.extend([
-        [domain_label, f"{current_value:.1f} %".replace(".", ","), history_text, evaluations, interval, quality]
+        [domain_label, f"{current_value:.1f} %".replace(".", ","), history_text, evaluations, interval, quality, "No serie regional específica"]
         for domain_label, current_value, domain_key in [
             ("Próxima hora", current_mean, "next_hour"),
             ("Radioapagones/absorción", max(0.0, current_mean - 1.0), "absorption"),
@@ -801,7 +817,7 @@ Si sabes poco de propagación, empieza aquí:
         for history_text, evaluations, interval, quality in [domain_rows[domain_key][1:]]
     ])
     blocks.append("## 14. Fiabilidad global estimada de las predicciones en este instante\n\n" + table(
-        ["Ámbito", "Índice estimado de confianza de la predicción", "Fiabilidad histórica disponible", "Evaluaciones", "Intervalo histórico 95 %", "Calidad de los datos disponibles"],
+        ["Ámbito", "Índice estimado de confianza de la predicción", "Fiabilidad histórica disponible", "Evaluaciones", "Intervalo histórico 95 %", "Calidad y cobertura de los datos", "Estabilidad reciente"],
         confidence_rows) + "\n\nEl índice estimado de confianza resume la coherencia de las fuentes disponibles ahora; no es una probabilidad de contacto. La fiabilidad histórica mide aciertos posteriores y se muestra separada, con su tamaño de muestra e intervalo de incertidumbre.\n\nLos casos no confirmados no se cuentan como fallos: quedan fuera del denominador histórico.")
 
     historical_rows = []
