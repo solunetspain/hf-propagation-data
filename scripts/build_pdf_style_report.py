@@ -431,7 +431,6 @@ def main() -> int:
     noaa = load("noaa-summary.json")
     hamqsl = load("hamqsl-summary.json")
     qrn = load("qrn-spain-summary.json")
-    giro = load("giro-spain-summary.json")
     psk = load("pskreporter-hf-regions.json")
     rbn = load("rbn-spots.json")
     omni = load("omni-summary.json")
@@ -476,8 +475,6 @@ def main() -> int:
         ("Diagnóstico NOAA", "Validar productos oficiales", "Sí", "Secciones válidas", "Global y tres regiones", age(noaa, now), "99 %", "1 %", "Ninguna"),
         ("QRN", "Riesgo de ruido meteorológico", "Sí", "Riesgo modelado", "Tres regiones", age(qrn, now), "90 %", "6 %", "Modelo meteorológico, no rayos observados"),
         ("Diagnóstico QRN", "Validar el modelo", "Sí", "Puntos correctos", "Tres regiones", age(qrn, now), "98 %", "1 %", "Sin detección directa de rayos"),
-        ("GIRO", "Contraste con ionosondas", "Parcial", "Datos parciales o ausentes", "Tres regiones", age(giro, now), "70 %", "0 %", "Ausencia o cobertura parcial"),
-        ("Diagnóstico GIRO", "Distinguir ausencia de datos", "Sí", "Diagnóstico parseado", "Tres regiones", age(giro, now), "90 %", "0 %", "No aporta ionosfera si no hay observaciones"),
         ("PSKReporter regional", "Actividad observada por banda", "Parcial", "Reportes recibidos y regionalizados", "Tres regiones", age(psk, now), "80 %", "19 %", "Cobertura incompleta"),
         ("RBN", "Spots de receptores automáticos", "Parcial" if rbn.get("status") == "ok" else "No", "Spots HF parseados con receptor y frecuencia" if rbn.get("status") == "ok" else "No contado", "Global; región solo por área explícita del receptor", age(rbn, now), "70 %" if rbn.get("status") == "ok" else "0 %", "0 %", rbn.get("limitation") or "Corroboración auxiliar; no demuestra QSO ni ruta"),
         ("Diagnóstico PSKReporter", "Validar separación regional", "Sí", "Parseo y deduplicación", "Tres regiones", age(psk, now), "96 %", "1 %", "Consultas parciales"),
@@ -510,22 +507,6 @@ def main() -> int:
             ("Entrada en la fiabilidad histórica", "No", "RBN sigue siendo corroboración auxiliar y no altera las estadísticas históricas.")
         ])
     blocks.append("## Diagnóstico operativo de RBN\n\n" + rbn_diag_table + "\n\n" + (rbn.get("limitation") or "La conexión RBN respondió correctamente; la atribución regional depende de la ubicación verificada del receptor.") + "\n\nLos spots RBN no se convierten automáticamente en evidencia regional por el indicativo de la estación escuchada. La región, cuando existe, se asigna por el receptor. Por eso un resultado regional igual a cero puede coexistir con spots globales recibidos.")
-    giro_rows = []
-    for station_name, station in get(giro, "stations", default={}).items():
-        summary = get(station, "summary", default={})
-        values = get(summary, "latest_measurements", default={})
-        trends = get(summary, "trends", default={})
-        def measured(name):
-            value = values.get(name)
-            return "No disponible" if value is None else f"{value:g}"
-        def trend(name):
-            delta = get(trends.get(name, {}), "delta", default=None)
-            return "—" if delta is None else f"{delta:+g}"
-        giro_rows.append((station_name, measured("foF2"), measured("hmF2"), measured("foEs"), measured("fmin"), trend("foF2"), trend("hmF2"), str(get(summary, "sample_count", default=0))))
-    if giro_rows:
-        blocks.append("## Parámetros ionosféricos complementarios y tendencia reciente\n\n" + table(
-            ["Estación GIRO", "foF2 MHz", "hmF2 km", "foEs MHz", "fmin MHz", "Δ foF2", "Δ hmF2", "Muestras"],
-            giro_rows) + "\n\nValores medidos por ionosonda cuando están disponibles. Las variaciones comparan la muestra más reciente con otra anterior dentro de la ventana consultada; no son una predicción independiente.")
     coverage_rows = []
     for region_key, region_label in (("peninsula", "Península"), ("baleares", "Baleares"), ("canarias", "Canarias")):
         coverage = regional_coverage_index(region_key, psk, rbn, now)
@@ -952,7 +933,7 @@ No se dispone de una medición universal del ruido local, la antena, la potencia
 No hay tormenta solar ni radioapagón activo cuando las escalas son R0/S0/G0. Aun así, la propagación real depende de la ruta, la hora, la absorción, el ruido, la antena y la estación corresponsal.""")
     report = {
         "schema_version": "1.0",
-        "status": "degraded" if not giro or not psk else "ok",
+        "status": "degraded" if not psk else "ok",
         "generated_at_utc": now.isoformat(),
         "valid_until_utc": (now + timedelta(minutes=90)).isoformat(),
         "regions": ["peninsula", "baleares", "canarias"],
