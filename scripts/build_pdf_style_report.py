@@ -829,7 +829,7 @@ Si sabes poco de propagación, empieza aquí:
     def calibration_row(label, item):
         if not isinstance(item, dict):
             item = {}
-        evaluations = int(get(item, "confirmed_evaluations", default=0) or 0)
+        evaluations = int(get(item, "confirmed_evaluations", default=get(item, "observations_processed", default=0)) or 0)
         return [
             label,
             evaluations,
