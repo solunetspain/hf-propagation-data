@@ -495,7 +495,11 @@ def main() -> int:
     ]:
         gate = source_promotion_gate(source_key)
         station = get(giro, "stations", station_key, default={})
-        status = str(get(station, "status", default=get(giro, "status", default="no disponible")))
+        station_status = get(station, "status", default=None)
+        if station_status is None:
+            has_measurements = bool(get(station, "parsed_rows", default=[])) or bool(get(station, "summary", "latest_timestamp_utc", default=None))
+            station_status = "ok" if has_measurements else "no disponible"
+        status = str(station_status)
         consulted = "Sí" if status in {"ok", "partial"} else "No"
         result = "Parámetros ionosféricos consultados" if consulted == "Sí" else "No disponible; se conserva el diagnóstico"
         limitation = f"Referencia {area}; no representa toda España. Promoción bloqueada hasta {gate['valid_evaluations']}/{100} evaluaciones válidas y mejora histórica demostrada."
