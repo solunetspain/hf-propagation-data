@@ -489,22 +489,6 @@ def main() -> int:
         ("Histórico de predicciones", "Comparar recomendaciones con resultados posteriores", "Sí", "Evaluación posterior a 60 minutos", "Tres regiones", "Variable", "Derivada", "No sumable", "Muestra inicial hasta alcanzar volumen suficiente"),
         ("QRZ / HamQTH", "Resolver localizadores de receptores y emisores", "Parcial", "QRZ primero; HamQTH como respaldo", "Solo ubicación fiable", "Variable", "Auxiliar", "No sumable", "Sin asignación regional si ambas consultas fallan"),
     ]
-    for source_key, source_name, station_key, area, url in [
-        ("ionosonde_ea036", "Ionosonda El Arenosillo (EA036)", "El_Arenosillo", "Sur de la Península", "https://iono.inta.es/"),
-        ("ionosonde_eb040", "Ionosonda Observatori de l’Ebre (EB040)", "Roquetes", "Noreste/este de la Península", "http://dgs.obsebre.es:8081/ionogif/latest.html"),
-    ]:
-        gate = source_promotion_gate(source_key)
-        station = get(giro, "stations", station_key, default={})
-        station_status = get(station, "status", default=None)
-        if station_status is None:
-            has_measurements = bool(get(station, "parsed_rows", default=[])) or bool(get(station, "summary", "latest_timestamp_utc", default=None))
-            station_status = "ok" if has_measurements else "no disponible"
-        status = str(station_status)
-        consulted = "Sí" if status in {"ok", "partial"} else "No"
-        result = "Parámetros ionosféricos consultados" if consulted == "Sí" else "No disponible; se conserva el diagnóstico"
-        limitation = f"Referencia {area}; no representa toda España. Promoción bloqueada hasta {gate['valid_evaluations']}/{100} evaluaciones válidas y mejora histórica demostrada."
-        sources.append((source_name, "Comparar ionosfera regional norte–sur y contrastar KC2G", consulted, result, area, age(giro, now), "90 %" if consulted == "Sí" else "0 %", f"{gate['weight_pct']} %", limitation))
-
     blocks = []
     blocks.append("## Fuentes consultadas en esta ejecución\n\n" + table(
         ["Fuente", "Finalidad", "Consultada sí/no/parcial", "Resultado", "Región aplicable", "Antigüedad", "Fiabilidad de esta consulta (%)", "Peso", "Razón del fallo o limitación"],
