@@ -201,24 +201,11 @@ def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
     return f'<strong style="color:{color};font-size:1.15em">{arrow}</strong> {abs(delta):.1f} zonas'
 
 def nvis_reach_estimate(region: str, metrics: dict[str, Any]) -> str:
-    """Classify observed reach, distinguishing local and external EA areas."""
+    """Classify observed NVIS reach from real distance and resolved EA districts."""
     reports = int(get(metrics, "report_count", default=0) or 0)
     distance = get(metrics, "distance_km", "median", default=None)
-    # Accept all collector formats: EA area list, area-count map, or
-    # nested records containing an EA district code. Historical snapshots used
-    # different shapes, so the parser remains compatible with all of them.
-    area_counts = get(metrics, "ea_area_counts", default={})
-    raw_areas = get(metrics, "ea_areas", default=[])
     candidates = []
-    if isinstance(area_counts, dict):
-        candidates.extend(area_counts.keys())
-    elif isinstance(area_counts, list):
-        candidates.extend(area_counts)
-    if isinstance(raw_areas, dict):
-        candidates.extend(raw_areas.keys())
-    elif isinstance(raw_areas, list):
-        candidates.extend(raw_areas)
-    for key in ("districts", "areas", "ea_districts"):
+    for key in ("ea_area_counts", "ea_areas", "districts", "areas", "ea_districts"):
         value = get(metrics, key, default=[])
         if isinstance(value, dict):
             candidates.extend(value.keys())
@@ -227,44 +214,42 @@ def nvis_reach_estimate(region: str, metrics: dict[str, Any]) -> str:
     areas = set()
     for candidate in candidates:
         if isinstance(candidate, dict):
-            candidate = (
-                candidate.get("district")
-                or candidate.get("ea_area")
-                or candidate.get("area")
-                or candidate.get("code")
-            )
+            candidate = candidate.get("district") or candidate.get("ea_area") or candidate.get("area") or candidate.get("code")
         code = str(candidate).strip().upper()
         if code.startswith("EA") and code[2:].isdigit():
             areas.add(code)
-    areas = sorted(areas, key=lambda area: (int(area[2:]), area))
+    areas = sorted(areas, key=lambda area: int(area[2:]))
     local_areas = {
         "peninsula": {"EA1", "EA2", "EA3", "EA4", "EA5", "EA7", "EA9"},
         "baleares": {"EA6"},
         "canarias": {"EA8"},
     }.get(region, set())
     external_areas = [area for area in areas if area not in local_areas]
-    has_local = any(area in local_areas for area in areas)
     try:
         distance = float(distance)
     except (TypeError, ValueError):
         distance = None
     if distance is None:
         return "Sin evidencia suficiente"
-    evidence_prefix = "Evidencia limitada: " if reports < 3 else ""
+    prefix = "Evidencia limitada: " if reports < 3 else ""
+    observed = ", ".join(areas)
     if distance < 500:
-        area_text = ", ".join(areas) if areas else "zonas EA no identificadas"
-        return f"{evidence_prefix}Probablemente corta ({area_text})"
-    if distance < 1500:
-        if has_local and external_areas:
-            return f"{evidence_prefix}Selectiva por zonas ({', '.join(external_areas)})"
-        return f"{evidence_prefix}Mixta"
+        return f"{prefix}Probablemente corta ({observed or 'destinos no regionalizados'})"
     if distance >= 2500:
-        if not external_areas:
-            return f"{evidence_prefix}Probablemente larga (zonas EA lejanas no identificadas)"
-        return f"{evidence_prefix}Probablemente larga ({', '.join(external_areas)})"
-    if not external_areas:
-        return f"{evidence_prefix}Selectiva por zonas (zonas EA no identificadas)"
-    return f"{evidence_prefix}Selectiva por zonas ({', '.join(external_areas)})"
+        distant = ", ".join(external_areas)
+        return f"{prefix}Probablemente larga ({distant or 'destinos lejanos no regionalizados'})"
+    if distance < 1500:
+        # A medium distance with several identified districts is selective,
+        # not automatically “mixed”. “Mixta” is reserved for evidence without
+        # a geographically coherent district pattern.
+        if len(areas) >= 2:
+            return f"{prefix}Selectiva por zonas ({observed})"
+        return f"{prefix}Mixta"
+    # 1,500–2,499 km is an intermediate/uneven range. Keep every reliable
+    # observed district visible, rather than showing only EA6 or EA8.
+    if areas:
+        return f"{prefix}Selectiva por zonas ({observed})"
+    return f"{prefix}Selectiva por zonas (destinos EA no regionalizados)"
 def rolling_psk_metrics(current: dict[str, Any], history: dict[str, Any], now: datetime, window_minutes: int = 60) -> dict[str, Any]:
     """Aggregate recent PSK snapshots for NVIS reach only."""
     snapshots = get(history, "snapshots", default=[])
