@@ -23,41 +23,61 @@ def now_iso():
 def fetch_station(code: str, hours: int = 6):
     now = datetime.now(timezone.utc)
     start = now - timedelta(hours=hours)
-    # DIDBase expects one charName parameter per characteristic. A single
-    # comma-separated charName is accepted by some frontends but returns no
-    # measurement rows on the public servlet.
-    params = [
-        ("ursiCode", code),
-        *[(("charName", name)) for name in PARAMETERS],
-        ("fromDate", start.strftime("%Y.%m.%d %H:%M:%S")),
-        ("toDate", now.strftime("%Y.%m.%d %H:%M:%S")),
+    dates = [
+        (start.strftime("%Y.%m.%d %H:%M:%S"), now.strftime("%Y.%m.%d %H:%M:%S")),
+        (start.strftime("%Y-%m-%dT%H:%M:%SZ"), now.strftime("%Y-%m-%dT%H:%M:%SZ")),
     ]
-    url = "https://giro.uml.edu/common/DIDBGetValues?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={"User-Agent": "SOLUNET-HF-GIRO/1.1"})
-    with urllib.request.urlopen(req, timeout=30) as response:
-        body = response.read().decode("utf-8", errors="replace")
-        return url, getattr(response, "status", 200), body
+    hosts = ("giro.uml.edu", "lgdc.uml.edu")
+    attempts = []
+    for host in hosts:
+        for from_date, to_date in dates:
+            params = [
+                ("ursiCode", code),
+                *[( "charName", name) for name in PARAMETERS],
+                ("fromDate", from_date),
+                ("toDate", to_date),
+            ]
+            url = "https://" + host + "/common/DIDBGetValues?" + urllib.parse.urlencode(params)
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": "SOLUNET-HF-GIRO/1.2 (+https://previsionespropagacion.ea2ewl.es/)",
+                    "Accept": "text/plain,text/csv,text/html;q=0.8,*/*;q=0.5",
+                },
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=30) as response:
+                    body = response.read().decode("utf-8", errors="replace")
+                    status = getattr(response, "status", 200)
+                    attempts.append({"url": url, "http_status": status, "bytes": len(body)})
+                    rows = parse_text(body)
+                    if rows:
+                        return url, status, body, attempts
+                    attempts[-1]["parsed_rows"] = 0
+            except Exception as error:
+                attempts.append({"url": url, "error": f"{type(error).__name__}: {error}"})
+    raise RuntimeError(json.dumps({"message": "GIRO returned no parseable measurements", "attempts": attempts}, ensure_ascii=False))
 
 def parse_text(text: str):
     import re
     rows = []
-    missing = {"-999", "-999.0", "9999", "9999.0", "---", "__", "//"}
+    missing = {"-999", "-999.0", "9999", "9999.0", "---", "__", "//", "/_"}
     for line in text.splitlines():
         raw = line.strip()
-        if not raw or raw.startswith("#"):
+        if not raw or raw.startswith("#") or raw.startswith("<"):
             continue
-        tokens = raw.replace(",", " ").split()
+        tokens = raw.replace(",", " ").replace(";", " ").split()
         if not tokens:
             continue
         timestamp = tokens[0]
-        if not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", timestamp):
-            if len(tokens) > 1 and "." in tokens[0] and ":" in tokens[1]:
-                timestamp = f"{tokens[0]}T{tokens[1]}Z"
-                value_tokens = tokens[2:]
-            else:
-                continue
-        else:
+        value_tokens = []
+        if re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", timestamp):
             value_tokens = tokens[1:]
+        elif len(tokens) > 1 and ":" in tokens[1] and re.match(r"^\d{4}[-.]\d{2}[-.]\d{2}$", timestamp):
+            timestamp = f"{timestamp.replace('.', '-')}T{tokens[1]}Z"
+            value_tokens = tokens[2:]
+        else:
+            continue
         numeric = []
         for token in value_tokens:
             clean = token.strip()
@@ -68,7 +88,7 @@ def parse_text(text: str):
                 numeric.append(float(clean))
             except ValueError:
                 continue
-        if not numeric:
+        if len(numeric) < 2:
             continue
         confidence = numeric[0]
         values = numeric[1:]
@@ -83,7 +103,7 @@ def parse_text(text: str):
             "measurements": measurements,
         })
     return rows[-100:]
-
+ 
 def summarize_rows(rows):
     valid = [
         row for row in rows
@@ -141,7 +161,7 @@ def main():
     }
     for name, code in STATIONS.items():
         try:
-            url, http_status, text = fetch_station(code)
+            url, http_status, text, attempts = fetch_station(code)
             rows = parse_text(text)
             summary = summarize_rows(rows)
             out["stations"][name] = {
@@ -151,6 +171,7 @@ def main():
                 "parsed_rows": rows,
                 "summary": summary,
                 "raw_excerpt": text[:4000],
+                "attempts": attempts,
             }
             diag.setdefault("stations", {})[name] = summary
             if rows:
