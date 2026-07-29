@@ -160,9 +160,11 @@ def main():
         "interpretation": "GIRO values are measured by ionosonde when parsed; trend deltas compare two observations in the six-hour query window.",
     }
     for name, code in STATIONS.items():
+        print(f"GIRO {name}/{code}: iniciando consulta", flush=True)
         try:
             url, http_status, text, attempts = fetch_station(code)
             rows = parse_text(text)
+            print(f"GIRO {name}/{code}: HTTP {http_status}, bytes={len(text)}, filas_parseadas={len(rows)}", flush=True)
             summary = summarize_rows(rows)
             out["stations"][name] = {
                 "ursi_code": code,
@@ -178,6 +180,7 @@ def main():
                 out["status"] = "ok"
         except Exception as error:
             message = f"{name}/{code}: {type(error).__name__}: {error}"
+            print(f"GIRO ERROR: {message}", flush=True)
             diag["errors"].append(message)
             out["stations"][name] = {"ursi_code": code, "status": "error", "error": message}
     diag["status"] = out["status"]
