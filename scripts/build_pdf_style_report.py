@@ -820,6 +820,45 @@ Si sabes poco de propagación, empieza aquí:
         ["Ámbito", "Índice estimado de confianza de la predicción", "Fiabilidad histórica disponible", "Evaluaciones", "Intervalo histórico 95 %", "Calidad y cobertura de los datos", "Estabilidad reciente"],
         confidence_rows) + "\n\nEl índice estimado de confianza resume la coherencia de las fuentes disponibles ahora; no es una probabilidad de contacto. La fiabilidad histórica mide aciertos posteriores y se muestra separada, con su tamaño de muestra e intervalo de incertidumbre.\n\nLos casos no confirmados no se cuentan como fallos: quedan fuera del denominador histórico.")
 
+    def calibration_trend(item):
+        direct = get(item, "recent_trend", default=None) or get(item, "trend", default=None)
+        if direct:
+            return str(direct)
+        return "No calculada"
+
+    def calibration_row(label, item):
+        if not isinstance(item, dict):
+            item = {}
+        evaluations = int(get(item, "confirmed_evaluations", default=0) or 0)
+        return [
+            label,
+            evaluations,
+            get(item, "hits", default=0),
+            get(item, "partial", default=0),
+            get(item, "failures", default=0),
+            get(item, "unconfirmed", default=0),
+            history_item_text(item)[0] + " · " + history_item_text(item)[1],
+            history_item_text(item)[2],
+            calibration_trend(item),
+        ]
+
+    calibration_rows = []
+    for key, label, _ in REGIONS:
+        calibration_rows.append(calibration_row(label, get(history, "regional_totals", key, default={})))
+    for domain_label, domain_key in [
+        ("Próxima hora", "next_hour"),
+        ("Radioapagones/absorción", "absorption"),
+        ("NVIS", "nvis"),
+        ("Europa/DX", "dx"),
+    ]:
+        calibration_rows.append(calibration_row(domain_label, get(history, "domain_totals", domain_key, default={})))
+    calibration_rows.append(calibration_row("**Total general**", get(history, "total", default={})))
+    blocks.append("### Panel de calibración histórica por ámbito\\n\\n" + table(
+        ["Ámbito", "Evaluaciones", "Aciertos", "Parciales", "Fallos", "No confirmadas",
+         "Fiabilidad histórica", "Intervalo histórico 95 %", "Tendencia reciente"],
+        calibration_rows
+    ) + "\\n\\nEste panel separa el comportamiento observado de la confianza instantánea. Los porcentajes se calculan con el histórico disponible, suavizado estadísticamente; no se modifican para alcanzar un objetivo. «No calculada» significa que todavía no existe una serie temporal de tendencia almacenada para ese ámbito.")
+
     historical_rows = []
     hsummary = get(history, "summary", default={})
     for key, label, _ in REGIONS:
