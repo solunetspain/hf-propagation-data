@@ -489,12 +489,12 @@ def main() -> int:
         ("Histórico de predicciones", "Comparar recomendaciones con resultados posteriores", "Sí", "Evaluación posterior a 60 minutos", "Tres regiones", "Variable", "Derivada", "No sumable", "Muestra inicial hasta alcanzar volumen suficiente"),
         ("QRZ / HamQTH", "Resolver localizadores de receptores y emisores", "Parcial", "QRZ primero; HamQTH como respaldo", "Solo ubicación fiable", "Variable", "Auxiliar", "No sumable", "Sin asignación regional si ambas consultas fallan"),
     ]
-    for source_key, source_name, area, url in [
-        ("ionosonde_ea036", "Ionosonda El Arenosillo (EA036)", "Sur de la Península", "https://iono.inta.es/"),
-        ("ionosonde_eb040", "Ionosonda Observatori de l’Ebre (EB040)", "Noreste/este de la Península", "http://dgs.obsebre.es:8081/ionogif/latest.html"),
+    for source_key, source_name, station_key, area, url in [
+        ("ionosonde_ea036", "Ionosonda El Arenosillo (EA036)", "El_Arenosillo", "Sur de la Península", "https://iono.inta.es/"),
+        ("ionosonde_eb040", "Ionosonda Observatori de l’Ebre (EB040)", "Roquetes", "Noreste/este de la Península", "http://dgs.obsebre.es:8081/ionogif/latest.html"),
     ]:
         gate = source_promotion_gate(source_key)
-        station = get(giro, "stations", source_name, default={})
+        station = get(giro, "stations", station_key, default={})
         status = str(get(station, "status", default=get(giro, "status", default="no disponible")))
         consulted = "Sí" if status in {"ok", "partial"} else "No"
         result = "Parámetros ionosféricos consultados" if consulted == "Sí" else "No disponible; se conserva el diagnóstico"
