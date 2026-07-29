@@ -454,6 +454,17 @@ def main() -> int:
     if any(not get(summaries[key], "fof2_mhz", "median", default=None) or not get(summaries[key], "mufd_mhz", "median", default=None) for key, _, _ in REGIONS):
         raise ValueError("KC2G regional summaries missing; refusing to publish no validado values")
 
+    prediction_history = load("prediction-history.json")
+
+    def source_promotion_gate(source_key: str) -> dict[str, Any]:
+        """Keep a new source at zero influence until out-of-sample evidence proves value."""
+        candidates = get(prediction_history, "source_promotion", source_key, default={})
+        evaluations = int(get(candidates, "valid_evaluations", default=0) or 0)
+        improvement = get(candidates, "improvement_vs_baseline_pct", default=None)
+        minimum = 100
+        promoted = evaluations >= minimum and improvement is not None and float(improvement) > 0
+        return {"status": "promoted" if promoted else "blocked", "valid_evaluations": evaluations, "improvement": improvement, "weight_pct": 1 if promoted else 0}
+
     source_rows = []
     sources = [
         ("Estado", "Validar generación y actualidad", "Sí", "Estado correcto", "Tres regiones", age(kc2g, now), "99 %", "1 %", "Ninguna"),
@@ -478,6 +489,18 @@ def main() -> int:
         ("Histórico de predicciones", "Comparar recomendaciones con resultados posteriores", "Sí", "Evaluación posterior a 60 minutos", "Tres regiones", "Variable", "Derivada", "No sumable", "Muestra inicial hasta alcanzar volumen suficiente"),
         ("QRZ / HamQTH", "Resolver localizadores de receptores y emisores", "Parcial", "QRZ primero; HamQTH como respaldo", "Solo ubicación fiable", "Variable", "Auxiliar", "No sumable", "Sin asignación regional si ambas consultas fallan"),
     ]
+    for source_key, source_name, area, url in [
+        ("ionosonde_ea036", "Ionosonda El Arenosillo (EA036)", "Sur de la Península", "https://iono.inta.es/"),
+        ("ionosonde_eb040", "Ionosonda Observatori de l’Ebre (EB040)", "Noreste/este de la Península", "http://dgs.obsebre.es:8081/ionogif/latest.html"),
+    ]:
+        gate = source_promotion_gate(source_key)
+        station = get(giro, "stations", source_name, default={})
+        status = str(get(station, "status", default=get(giro, "status", default="no disponible")))
+        consulted = "Sí" if status in {"ok", "partial"} else "No"
+        result = "Parámetros ionosféricos consultados" if consulted == "Sí" else "No disponible; se conserva el diagnóstico"
+        limitation = f"Referencia {area}; no representa toda España. Promoción bloqueada hasta {gate['valid_evaluations']}/{100} evaluaciones válidas y mejora histórica demostrada."
+        sources.append((source_name, "Comparar ionosfera regional norte–sur y contrastar KC2G", consulted, result, area, age(giro, now), "90 %" if consulted == "Sí" else "0 %", f"{gate['weight_pct']} %", limitation))
+
     blocks = []
     blocks.append("## Fuentes consultadas en esta ejecución\n\n" + table(
         ["Fuente", "Finalidad", "Consultada sí/no/parcial", "Resultado", "Región aplicable", "Antigüedad", "Fiabilidad de esta consulta (%)", "Peso", "Razón del fallo o limitación"],
@@ -540,7 +563,6 @@ def main() -> int:
         s = summaries[key]
         executive.append(f"**{label}** mantiene foF2 mediana de **{num(get(s, 'fof2_mhz', 'median'), suffix=' MHz')}** y MUF(3000) mediana de **{num(get(s, 'mufd_mhz', 'median'), suffix=' MHz')}**. La actividad observada se conserva como contraste, no como garantía de contacto.")
     band_frequency_mhz = {"160 m": 1.8, "80 m": 3.5, "40 m": 7.1, "20 m": 14.1, "17 m": 18.1, "15 m": 21.2, "12 m": 24.9, "10 m": 28.5}
-    prediction_history = load("prediction-history.json")
     historical_summary = get(prediction_history, "summary", default={})
 
     def recommendation_score(region_key, band):
