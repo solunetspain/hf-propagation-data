@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-30T01:11:38.055834+00:00",
+  "generated_at": "2026-07-30T01:21:38.954357+00:00",
   "status": "ok",
   "requests": [
     {
@@ -36,21 +36,21 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2683949,
+      "bytes": 2683201,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1512602,
+      "bytes": 1512092,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163535,
+      "bytes": 163529,
       "usable": true
     },
     {
@@ -58,6 +58,13 @@
       "http_status": 200,
       "content_type": "application/json",
       "bytes": 59045,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 7214,
       "usable": true
     },
     {
@@ -82,9 +89,7 @@
       "usable": true
     }
   ],
-  "errors": [
-    "electrons: Expecting value: line 1 column 7212 (char 7211)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
@@ -93,12 +98,12 @@
     "magnetic_field": true,
     "xray": true,
     "protons": true,
-    "electrons": false,
+    "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
