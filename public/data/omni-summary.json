@@ -1,19 +1,53 @@
 {
-  "status": "error",
-  "source": "NASA OMNI2",
-  "url": "https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_2026.dat",
-  "retrieved_at_utc": "2026-07-31T18:21:48.258537+00:00",
-  "generated_at": "2026-07-31T18:21:48.258537+00:00",
-  "prediction_weight": 0,
-  "use_in_prediction": false,
+  "status": "partial",
+  "source": "NASA OMNI2 / NOAA SWPC",
+  "url": "https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json",
+  "retrieved_at_utc": "2026-07-31T18:31:43.938889+00:00",
+  "generated_at": "2026-07-31T18:31:43.938889+00:00",
+  "latest_record": {
+    "plasma": {
+      "url": "https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json",
+      "latest": [
+        "2026-07-31T18:27:00Z",
+        310.0,
+        4.57,
+        70609.0,
+        -2.54,
+        2.66,
+        -2.03,
+        4.21,
+        -308.4,
+        2.1,
+        -31.1,
+        "2026-07-31T19:33:57Z"
+      ]
+    }
+  },
+  "latest_record_fields": [
+    [
+      "2026-07-31T18:27:00Z",
+      310.0,
+      4.57,
+      70609.0,
+      -2.54,
+      2.66,
+      -2.03,
+      4.21,
+      -308.4,
+      2.1,
+      -31.1,
+      "2026-07-31T19:33:57Z"
+    ]
+  ],
+  "fallback_source": "NOAA SWPC solar-wind products",
   "attempt_errors": [
     "2026: <urlopen error [Errno 101] Network is unreachable>",
     "2025: <urlopen error [Errno 101] Network is unreachable>"
   ],
   "fallback_errors": [
-    "mag: respuesta sin registros",
-    "plasma: Extra data: line 1 column 6682 (char 6681)"
+    "mag: respuesta sin registros"
   ],
-  "error": "NASA OMNI2 inaccesible y el respaldo NOAA SWPC tampoco devolvió datos válidos.",
-  "note": "Contexto diagnóstico no disponible; peso 0 %."
+  "prediction_weight": 0,
+  "use_in_prediction": false,
+  "note": "NASA OMNI2 no fue accesible; se conserva contexto NOAA SWPC de respaldo. Solo diagnóstico; peso 0 %."
 }
