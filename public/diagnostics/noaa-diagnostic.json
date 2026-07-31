@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-30T23:51:44.645100+00:00",
-  "status": "ok",
+  "generated_at": "2026-07-31T00:01:41.138748+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -13,7 +13,7 @@
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 4862,
+      "bytes": 4240,
       "usable": true
     },
     {
@@ -29,49 +29,42 @@
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 27925,
+      "bytes": 27769,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2683865,
+      "bytes": 2683121,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1494802,
+      "bytes": 1495268,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163919,
+      "bytes": 164363,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 58687,
+      "bytes": 58685,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7296,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 23395,
+      "bytes": 7194,
       "usable": true
     },
     {
@@ -89,7 +82,9 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "solar_flux: Extra data: line 1 column 22839 (char 22838)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
@@ -99,11 +94,11 @@
     "xray": true,
     "protons": true,
     "electrons": true,
-    "solar_flux": true,
+    "solar_flux": false,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "solar_flux"
+  ]
 }
