@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-31T09:51:39.897353+00:00",
+  "generated_at": "2026-07-31T10:01:45.562192+00:00",
   "status": "ok",
   "requests": [
     {
@@ -36,35 +36,21 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2686011,
+      "bytes": 2687477,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1501097,
+      "bytes": 1502079,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163555,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 58758,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 7308,
+      "bytes": 163081,
       "usable": true
     },
     {
@@ -89,7 +75,10 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "protons: Extra data: line 1 column 58754 (char 58753)",
+    "electrons: Expecting value: line 1 column 7205 (char 7204)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
@@ -97,13 +86,13 @@
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
-    "protons": true,
-    "electrons": true,
+    "protons": false,
+    "electrons": false,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 9,
   "required_sections": [
     "drap",
     "kp",
