@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-08-01T18:21:37.433242+00:00",
-  "status": "partial",
+  "generated_at": "2026-08-01T18:31:39.321713+00:00",
+  "status": "ok",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-08-01T18:19:00+00:00",
+      "timestamp_utc": "2026-08-01T18:30:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -22,15 +22,15 @@
       }
     },
     "geomagnetic": {
-      "timestamp_utc": "2026-07-31T00:00:00+00:00",
+      "timestamp_utc": "2026-08-01T00:00:00+00:00",
       "kp": 1.0,
-      "a_index": 5.0,
+      "a_index": 0.67,
       "a_index_source": "NOAA estimated planetary A",
       "station_count": 8,
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-08-01T18:18:00+00:00",
+      "timestamp_utc": "2026-08-01T18:27:00+00:00",
       "kp": 0.0,
       "estimated_kp": 0.0,
       "kp_code": "0Z",
@@ -38,39 +38,46 @@
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-08-01T18:14:00+00:00",
+        "timestamp_utc": "2026-08-01T18:26:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 4.37,
-        "speed_km_s": 271.25,
-        "temperature_k": 25504.5
+        "density_p_cm3": 4.35,
+        "speed_km_s": 269.65,
+        "temperature_k": 25044.5
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-08-01T18:15:00+00:00",
+        "timestamp_utc": "2026-08-01T18:25:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": -0.605,
-        "by_gsm_nt": 1.96,
-        "bz_gsm_nt": -0.315,
-        "bt_nt": 2.085
+        "bx_gsm_nt": -0.525,
+        "by_gsm_nt": 2.355,
+        "bz_gsm_nt": 0.02,
+        "bt_nt": 2.415
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
+    "xray": {
+      "timestamp_utc": "2026-08-01T18:27:00+00:00",
+      "flux_w_m2": 1.0088958788401214e-06,
+      "class": "C1.0",
+      "energy": "0.1-0.8nm",
+      "satellite": 18
+    },
     "protons": {
-      "timestamp_utc": "2026-08-01T18:10:00+00:00",
-      "flux": 1.1352323293685913,
+      "timestamp_utc": "2026-08-01T18:20:00+00:00",
+      "flux": 0.9108858704566956,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
     },
     "electrons": {
-      "timestamp_utc": "2026-08-01T18:10:00+00:00",
-      "flux": 960.4441528320312,
+      "timestamp_utc": "2026-08-01T18:25:00+00:00",
+      "flux": 823.1118774414062,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -95,7 +102,7 @@
     "scales": {
       "1": {
         "DateStamp": "2026-08-01",
-        "TimeStamp": "18:19:00",
+        "TimeStamp": "18:30:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -154,7 +161,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-08-01T18:17:00+00:00",
+    "timestamp_utc": "2026-08-01T18:27:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -174,61 +181,61 @@
         "longitude": -0.7083333,
         "grid_latitude": 41.0,
         "grid_longitude": -2.0,
-        "highest_frequency_affected_1db_mhz": 1.4
+        "highest_frequency_affected_1db_mhz": 1.2
       },
       "Galicia": {
         "latitude": 42.75,
         "longitude": -8.4,
         "grid_latitude": 43.0,
         "grid_longitude": -10.0,
-        "highest_frequency_affected_1db_mhz": 1.9
+        "highest_frequency_affected_1db_mhz": 1.8
       },
       "Cantabrico": {
         "latitude": 43.3,
         "longitude": -3.0,
         "grid_latitude": 43.0,
         "grid_longitude": -2.0,
-        "highest_frequency_affected_1db_mhz": 1.4
+        "highest_frequency_affected_1db_mhz": 1.3
       },
       "Centro": {
         "latitude": 40.42,
         "longitude": -3.7,
         "grid_latitude": 41.0,
         "grid_longitude": -2.0,
-        "highest_frequency_affected_1db_mhz": 1.4
+        "highest_frequency_affected_1db_mhz": 1.2
       },
       "Mediterraneo": {
         "latitude": 39.47,
         "longitude": -0.38,
         "grid_latitude": 39.0,
         "grid_longitude": -2.0,
-        "highest_frequency_affected_1db_mhz": 1.3
+        "highest_frequency_affected_1db_mhz": 1.2
       },
       "Andalucia": {
         "latitude": 37.39,
         "longitude": -5.99,
         "grid_latitude": 37.0,
         "grid_longitude": -6.0,
-        "highest_frequency_affected_1db_mhz": 1.5
+        "highest_frequency_affected_1db_mhz": 1.4
       },
       "Baleares": {
         "latitude": 39.57,
         "longitude": 2.65,
         "grid_latitude": 39.0,
         "grid_longitude": 2.0,
-        "highest_frequency_affected_1db_mhz": 1.0
+        "highest_frequency_affected_1db_mhz": 0.8
       },
       "Canarias": {
         "latitude": 28.1,
         "longitude": -15.42,
         "grid_latitude": 29.0,
         "grid_longitude": -14.0,
-        "highest_frequency_affected_1db_mhz": 2.0
+        "highest_frequency_affected_1db_mhz": 1.8
       }
     },
     "spain": {
-      "median_mhz": 1.4,
-      "maximum_mhz": 2.0
+      "median_mhz": 1.25,
+      "maximum_mhz": 1.8
     }
   },
   "source_urls": {
@@ -252,7 +259,7 @@
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": false,
+    "xray": true,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
@@ -269,7 +276,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "xray"
-  ]
+  "missing_required_sections": []
 }
