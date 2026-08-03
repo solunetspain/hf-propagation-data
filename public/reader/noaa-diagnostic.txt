@@ -1,7 +1,14 @@
 {
-  "generated_at": "2026-08-03T10:31:39.117001+00:00",
-  "status": "partial",
+  "generated_at": "2026-08-03T10:41:33.757603+00:00",
+  "status": "ok",
   "requests": [
+    {
+      "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 1104,
+      "usable": true
+    },
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
@@ -29,28 +36,28 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2768306,
+      "bytes": 2768326,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1561887,
+      "bytes": 1561933,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163139,
+      "bytes": 163596,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59021,
+      "bytes": 59868,
       "usable": true
     },
     {
@@ -82,11 +89,9 @@
       "usable": true
     }
   ],
-  "errors": [
-    "scales: <urlopen error [Errno 104] Connection reset by peer>"
-  ],
+  "errors": [],
   "validation": {
-    "scales": false,
+    "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
@@ -98,7 +103,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -109,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "scales"
-  ]
+  "missing_required_sections": []
 }
