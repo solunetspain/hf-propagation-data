@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-03T04:51:36.911088+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-03T05:01:34.681657+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -33,38 +33,31 @@
       "usable": true
     },
     {
-      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 2762639,
-      "usable": true
-    },
-    {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1566732,
+      "bytes": 1567611,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163223,
+      "bytes": 163663,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 58997,
+      "bytes": 58996,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7341,
+      "bytes": 7237,
       "usable": true
     },
     {
@@ -89,12 +82,14 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "solar_wind: Unterminated string starting at: line 1 column 2764113 (char 2764112)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
-    "solar_wind": true,
+    "solar_wind": false,
     "magnetic_field": true,
     "xray": true,
     "protons": true,
@@ -103,7 +98,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "solar_wind"
+  ]
 }
