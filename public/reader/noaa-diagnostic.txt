@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-05T07:11:42.822542+00:00",
-  "status": "partial",
+  "generated_at": "2026-08-05T07:21:39.395623+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -33,17 +33,24 @@
       "usable": true
     },
     {
+      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 2665436,
+      "usable": true
+    },
+    {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1493171,
+      "bytes": 1493057,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163469,
+      "bytes": 163486,
       "usable": true
     },
     {
@@ -82,14 +89,12 @@
       "usable": true
     }
   ],
-  "errors": [
-    "solar_wind: Extra data: line 1 column 2665451 (char 2665450)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
-    "solar_wind": false,
+    "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
     "protons": true,
@@ -98,7 +103,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -109,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "solar_wind"
-  ]
+  "missing_required_sections": []
 }
