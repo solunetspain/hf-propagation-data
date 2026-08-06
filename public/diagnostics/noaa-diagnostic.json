@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-06T11:01:31.573652+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-06T11:11:37.938152+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -36,35 +36,28 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2637826,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 1489392,
+      "bytes": 2634861,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163199,
+      "bytes": 163203,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59097,
+      "bytes": 59093,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7251,
+      "bytes": 7249,
       "usable": true
     },
     {
@@ -89,13 +82,15 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "magnetic_field: Extra data: line 1 column 1488170 (char 1488169)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
-    "magnetic_field": true,
+    "magnetic_field": false,
     "xray": true,
     "protons": true,
     "electrons": true,
@@ -103,7 +98,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "magnetic_field"
+  ]
 }
