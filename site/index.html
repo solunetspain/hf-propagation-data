@@ -39,6 +39,65 @@
       font-weight: 700;
     }
 
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 24px 0;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+
+    .tab-button {
+      border: 1px solid #aaa;
+      border-radius: 999px;
+      background: #fff;
+      color: #17324d;
+      cursor: pointer;
+      font: inherit;
+      padding: 8px 15px;
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: #17324d;
+      color: #fff;
+      border-color: #17324d;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.is-active {
+      display: block;
+    }
+
+    .version-entry {
+      border-left: 4px solid #17324d;
+      padding: 4px 0 4px 14px;
+      margin: 20px 0;
+    }
+
+    .version-entry h3 {
+      margin-bottom: 6px;
+    }
+
+    .version-meta {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .version-type {
+      display: inline-block;
+      border-radius: 999px;
+      background: #e7eef5;
+      color: #17324d;
+      padding: 3px 9px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
     code {
       background: #f2f2f2;
       padding: 2px 5px;
@@ -65,6 +124,14 @@
 </head>
 <body>
   <h1>HF Propagation Data — España e IN91PO</h1>
+
+  <nav class="tabs" aria-label="Secciones del sitio">
+    <button class="tab-button" type="button" data-tab="informe" aria-selected="true">Informe</button>
+    <button class="tab-button" type="button" data-tab="versiones" aria-selected="false">Versiones</button>
+    <button class="tab-button" type="button" data-tab="documentacion" aria-selected="false">Documentación</button>
+  </nav>
+
+  <main id="tab-informe" class="tab-panel is-active">
   <p>
     Datos automáticos de KC2G, DXView, HamQSL, NOAA/SWPC, QRN,
     GIRO y PSKReporter validados antes de su publicación.
@@ -167,7 +234,63 @@
     </ul>
   </div>
 
+  </main>
+
+  <section id="tab-versiones" class="tab-panel" aria-labelledby="tab-versiones-title">
+    <div class="card">
+      <h2 id="tab-versiones-title">Versiones</h2>
+      <p>Historial de cambios, mejoras y correcciones de la web y de sus datos publicados.</p>
+
+      <article class="version-entry">
+        <h3>v0.1.0 — Sistema de versiones y documentación</h3>
+        <p class="version-meta"><span class="version-type">Mejora menor</span> · 08/08/2026</p>
+        <ul>
+          <li>Se añade la pestaña Versiones.</li>
+          <li>Se añade la pestaña Documentación.</li>
+          <li>Se establece un registro visible para futuras mejoras, cambios y correcciones de bugs.</li>
+          <li>Se conserva el informe actual dentro de la pestaña Informe.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="tab-documentacion" class="tab-panel" aria-labelledby="tab-documentacion-title">
+    <div class="card">
+      <h2 id="tab-documentacion-title">Documentación</h2>
+      <p>Esta sección explica qué muestra la web y cómo interpretar sus datos.</p>
+      <h3>Objetivo</h3>
+      <p>Ofrecer una lectura práctica de las condiciones de propagación HF y de las fuentes que las respaldan.</p>
+      <h3>Cómo leer el informe</h3>
+      <ol>
+        <li>Comprueba la fecha y la antigüedad de los datos.</li>
+        <li>Revisa primero la recomendación operativa.</li>
+        <li>Consulta las fuentes y sus limitaciones antes de interpretar una predicción como confirmación.</li>
+        <li>Contrasta siempre la recomendación con actividad real, balizas, waterfall o reportes recientes.</li>
+      </ol>
+      <h3>Convenciones</h3>
+      <ul>
+        <li><strong>Observado:</strong> procede de actividad registrada.</li>
+        <li><strong>Modelado:</strong> procede de un modelo físico o meteorológico.</li>
+        <li><strong>Inferido:</strong> combina varios indicios.</li>
+        <li><strong>Teórico:</strong> es físicamente posible, pero no está confirmado.</li>
+      </ul>
+      <p>Cada nueva versión debe describir aquí los cambios relevantes y mantener actualizado este apartado cuando cambie el funcionamiento de la web.</p>
+    </div>
+  </section>
+
   <script>
+    document.querySelectorAll(".tab-button").forEach(button => {
+      button.addEventListener("click", () => {
+        const selectedTab = button.dataset.tab;
+        document.querySelectorAll(".tab-button").forEach(item => {
+          item.setAttribute("aria-selected", String(item === button));
+        });
+        document.querySelectorAll(".tab-panel").forEach(panel => {
+          panel.classList.toggle("is-active", panel.id === `tab-${selectedTab}`);
+        });
+      });
+    });
+
     function escapeHtml(value) {
       return String(value)
         .replaceAll("&", "&amp;")
