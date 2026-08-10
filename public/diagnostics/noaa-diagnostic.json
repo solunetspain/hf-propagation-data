@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-10T00:01:39.247014+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-10T00:05:26.307868+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -29,49 +29,42 @@
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 27847,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 2797074,
+      "bytes": 27925,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1581736,
+      "bytes": 1578692,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163149,
+      "bytes": 163141,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59111,
+      "bytes": 59954,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7246,
+      "bytes": 7350,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 23218,
+      "bytes": 22661,
       "usable": true
     },
     {
@@ -89,12 +82,14 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "solar_wind: Extra data: line 1 column 2794847 (char 2794846)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
-    "solar_wind": true,
+    "solar_wind": false,
     "magnetic_field": true,
     "xray": true,
     "protons": true,
@@ -103,7 +98,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "solar_wind"
+  ]
 }
