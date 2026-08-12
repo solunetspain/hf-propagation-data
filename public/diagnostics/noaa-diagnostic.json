@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-12T04:11:39.115509+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-12T04:21:39.051520+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -33,31 +33,24 @@
       "usable": true
     },
     {
-      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 2876490,
-      "usable": true
-    },
-    {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1626261,
+      "bytes": 1627555,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 162996,
+      "bytes": 163440,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59111,
+      "bytes": 59113,
       "usable": true
     },
     {
@@ -89,12 +82,14 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "solar_wind: Expecting value: line 1 column 2875769 (char 2875768)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
-    "solar_wind": true,
+    "solar_wind": false,
     "magnetic_field": true,
     "xray": true,
     "protons": true,
@@ -103,7 +98,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "solar_wind"
+  ]
 }
