@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-12T02:51:56.425245+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-12T03:01:55.511732+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -36,35 +36,28 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2892698,
+      "bytes": 2890444,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1627974,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 163010,
+      "bytes": 1628018,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59103,
+      "bytes": 59108,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7245,
+      "bytes": 7348,
       "usable": true
     },
     {
@@ -89,21 +82,23 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "xray: Unterminated string starting at: line 1 column 163469 (char 163468)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": true,
+    "xray": false,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "xray"
+  ]
 }
