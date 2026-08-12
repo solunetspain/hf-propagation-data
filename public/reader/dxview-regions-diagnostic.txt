@@ -1,7 +1,18 @@
 {
-  "generated_at": "2026-08-12T17:04:11.225312+00:00",
-  "status": "ok",
-  "errors": [],
+  "generated_at": "2026-08-12T17:14:09.556812+00:00",
+  "status": "partial",
+  "errors": [
+    {
+      "bucket_id": 32030,
+      "band": 24,
+      "error": "Banda 24: 'bands' no es una lista"
+    },
+    {
+      "bucket_id": 31028,
+      "band": 3,
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    }
+  ],
   "validation": {
     "response_received": true,
     "format_parsed": true,
@@ -11,7 +22,7 @@
     "canarias_sample_available": true,
     "national_fallback_available": true
   },
-  "response_count": 56,
+  "response_count": 54,
   "expected_response_count": 56,
   "response_metadata": {
     "33028:0": {
@@ -164,22 +175,12 @@
       "content_type": "application/json",
       "cache_control": "public, max-age=10, immutable"
     },
-    "32030:24": {
-      "status_code": 200,
-      "content_type": "application/json",
-      "cache_control": "public, max-age=10, immutable"
-    },
     "32030:28": {
       "status_code": 200,
       "content_type": "application/json",
       "cache_control": "public, max-age=10, immutable"
     },
     "31028:0": {
-      "status_code": 200,
-      "content_type": "application/json",
-      "cache_control": "public, max-age=10, immutable"
-    },
-    "31028:3": {
       "status_code": 200,
       "content_type": "application/json",
       "cache_control": "public, max-age=10, immutable"
@@ -423,5 +424,5 @@
       }
     ]
   },
-  "output_signature": "9db73ab7ed355c67"
+  "output_signature": "a661a546093c7675"
 }
