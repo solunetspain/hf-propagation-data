@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-08-13T05:31:30.389812+00:00",
+  "generated_at": "2026-08-13T05:41:33.805938+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -108,11 +108,13 @@
       },
       "forecast_6h": {
         "risk": "bajo",
-        "score": 0,
+        "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 290.0,
+        "max_cape_j_kg": 300.0,
         "max_precipitation_probability": 0,
-        "reasons": [],
+        "reasons": [
+          "CAPE moderado previsto 300 J/kg"
+        ],
         "times": [
           "2026-08-13T05:00",
           "2026-08-13T06:00",
