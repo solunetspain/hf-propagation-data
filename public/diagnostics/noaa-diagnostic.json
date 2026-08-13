@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-13T20:51:38.207452+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-13T21:01:34.676143+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -8,22 +8,6 @@
       "content_type": "application/json",
       "bytes": 1099,
       "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 4785,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/text/daily-geomagnetic-indices.txt",
-      "http_status": 200,
-      "content_type": "text/plain",
-      "bytes": 3877,
-      "usable": true,
-      "planetary_a_index": 1.33,
-      "product": "daily planetary A"
     },
     {
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
@@ -36,28 +20,28 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2679624,
+      "bytes": 2678894,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1511266,
+      "bytes": 1511214,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163502,
+      "bytes": 163503,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59112,
+      "bytes": 59109,
       "usable": true
     },
     {
@@ -89,10 +73,12 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "kp: Expecting value: line 1 column 4786 (char 4785)"
+  ],
   "validation": {
     "scales": true,
-    "kp": true,
+    "kp": false,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
@@ -103,7 +89,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +100,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "kp"
+  ]
 }
