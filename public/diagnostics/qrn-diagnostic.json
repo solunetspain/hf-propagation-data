@@ -1,38 +1,54 @@
 {
-  "generated_at": "2026-08-15T23:51:37.254065+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-15T23:55:31.881746+00:00",
+  "status": "error",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "IN91PO: HTTP Error 429: Too Many Requests",
+    "Galicia: HTTP Error 429: Too Many Requests",
+    "Cantabrico: HTTP Error 429: Too Many Requests",
+    "Centro: HTTP Error 429: Too Many Requests",
+    "Mediterraneo: HTTP Error 429: Too Many Requests",
+    "Andalucia: HTTP Error 429: Too Many Requests",
+    "Baleares: HTTP Error 429: Too Many Requests",
+    "Canarias: HTTP Error 429: Too Many Requests"
   ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     }
   },
   "aemet_lightning": {
