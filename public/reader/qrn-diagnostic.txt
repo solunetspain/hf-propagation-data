@@ -1,8 +1,11 @@
 {
-  "generated_at": "2026-08-15T11:56:06.356885+00:00",
+  "generated_at": "2026-08-15T12:01:40.140696+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "IN91PO: HTTP Error 503: Service Unavailable",
+    "Mediterraneo: HTTP Error 503: Service Unavailable",
+    "Baleares: <urlopen error _ssl.c:993: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,7 +14,8 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Galicia": {
       "status": "ok"
@@ -23,13 +27,15 @@
       "status": "ok"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Andalucia": {
       "status": "ok"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Canarias": {
       "status": "ok"
