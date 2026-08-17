@@ -1,6 +1,6 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-08-17T19:57:06.716270+00:00",
+  "generated_at": "2026-08-17T20:02:23.147428+00:00",
   "status": "ok",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
@@ -17,24 +17,52 @@
   "classification": "Observed reports after strict local post-filtering",
   "bands": {
     "20m": {
-      "report_count": 50,
-      "station_count": 51,
-      "route_count": 50,
+      "report_count": 20,
+      "station_count": 21,
+      "route_count": 20,
       "modes": {
-        "FT8": 50
+        "FT8": 20
       },
       "directions": {
-        "received_in_IN91": 50
+        "received_in_IN91": 20
       },
       "distance_km": {
         "minimum": 1076.1,
-        "median": 1465.4,
+        "median": 1619.0,
         "maximum": 10247.4
       },
-      "latest_observation_utc": "2026-08-17T19:50:45+00:00"
+      "latest_observation_utc": "2026-08-17T19:52:30+00:00"
     }
   },
   "examples": [
+    {
+      "timestamp_utc": "2026-08-17T19:52:30+00:00",
+      "frequency_hz": 14076602.0,
+      "band": "20m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "DL1LN",
+      "sender_locator": "JO54BH",
+      "receiver_callsign": "EB2EAS",
+      "receiver_locator": "IN91NP",
+      "snr_db": "-11",
+      "distance_km": 1624.9
+    },
+    {
+      "timestamp_utc": "2026-08-17T19:52:30+00:00",
+      "frequency_hz": 14075815.0,
+      "band": "20m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "U1BD",
+      "sender_locator": "KO59FX21JM",
+      "receiver_callsign": "EB2EAS",
+      "receiver_locator": "IN91NP",
+      "snr_db": "-20",
+      "distance_km": 2949.8
+    },
     {
       "timestamp_utc": "2026-08-17T19:50:45+00:00",
       "frequency_hz": 14076550.0,
@@ -219,20 +247,6 @@
     },
     {
       "timestamp_utc": "2026-08-17T19:48:15+00:00",
-      "frequency_hz": 14075725.0,
-      "band": "20m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "regional_IN91",
-      "sender_callsign": "DH5BM",
-      "sender_locator": "JO41UV",
-      "receiver_callsign": "EB2EAS",
-      "receiver_locator": "IN91NP",
-      "snr_db": "-20",
-      "distance_km": 1392.9
-    },
-    {
-      "timestamp_utc": "2026-08-17T19:48:15+00:00",
       "frequency_hz": 14074822.0,
       "band": "20m",
       "mode": "FT8",
@@ -244,6 +258,20 @@
       "receiver_locator": "IN91NP",
       "snr_db": "-14",
       "distance_km": 1820.6
+    },
+    {
+      "timestamp_utc": "2026-08-17T19:48:15+00:00",
+      "frequency_hz": 14075725.0,
+      "band": "20m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "DH5BM",
+      "sender_locator": "JO41UV",
+      "receiver_callsign": "EB2EAS",
+      "receiver_locator": "IN91NP",
+      "snr_db": "-20",
+      "distance_km": 1392.9
     },
     {
       "timestamp_utc": "2026-08-17T19:48:00+00:00",
@@ -286,43 +314,15 @@
       "receiver_locator": "IN91NP",
       "snr_db": "-23",
       "distance_km": 3344.3
-    },
-    {
-      "timestamp_utc": "2026-08-17T19:46:15+00:00",
-      "frequency_hz": 14075485.0,
-      "band": "20m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "regional_IN91",
-      "sender_callsign": "IU7GRJ",
-      "sender_locator": "JN81IC",
-      "receiver_callsign": "EB2EAS",
-      "receiver_locator": "IN91NP",
-      "snr_db": "-15",
-      "distance_km": 1465.9
-    },
-    {
-      "timestamp_utc": "2026-08-17T19:46:00+00:00",
-      "frequency_hz": 14076156.0,
-      "band": "20m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "regional_IN91",
-      "sender_callsign": "DL4RBR",
-      "sender_locator": "JN59QB",
-      "receiver_callsign": "EB2EAS",
-      "receiver_locator": "IN91NP",
-      "snr_db": "-24",
-      "distance_km": 1260.7
     }
   ],
   "content_type": "text/xml; charset=utf-8",
   "http_attempts": 1,
-  "upstream_report_count": 50,
-  "accepted_report_count": 50,
+  "upstream_report_count": 20,
+  "accepted_report_count": 20,
   "scope_summary": {
     "exact_in91po_report_count": 0,
-    "regional_in91_report_count": 50,
+    "regional_in91_report_count": 20,
     "preferred_scope": "regional_IN91",
     "exact_in91po_bands": {}
   },
