@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-17T23:56:14.889792+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-18T00:01:39.513714+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -13,7 +13,7 @@
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 4863,
+      "bytes": 4325,
       "usable": true
     },
     {
@@ -29,49 +29,42 @@
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 27925,
+      "bytes": 28003,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2727008,
+      "bytes": 2729975,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1554929,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 163701,
+      "bytes": 1556636,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59091,
+      "bytes": 59094,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7234,
+      "bytes": 7338,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 23395,
+      "bytes": 22838,
       "usable": true
     },
     {
@@ -89,21 +82,23 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "xray: Unterminated string starting at: line 1 column 163705 (char 163704)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": true,
+    "xray": false,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "xray"
+  ]
 }
