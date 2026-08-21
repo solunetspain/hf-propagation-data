@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-08-21T19:01:33.168220+00:00",
+  "generated_at": "2026-08-21T19:11:37.765750+00:00",
   "status": "ok",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-08-21T19:00:00+00:00",
+      "timestamp_utc": "2026-08-21T19:10:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -30,57 +30,50 @@
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-08-21T18:58:00+00:00",
+      "timestamp_utc": "2026-08-21T19:09:00+00:00",
       "kp": 0.0,
-      "estimated_kp": 0.0,
-      "kp_code": "0Z",
+      "estimated_kp": 0.33,
+      "kp_code": "0P",
       "classification": "estimated 1-minute Kp; auxiliary, not official 3-hour Kp"
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-08-21T18:55:00+00:00",
+        "timestamp_utc": "2026-08-21T19:05:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 2.375,
-        "speed_km_s": 456.25,
-        "temperature_k": 91176.5
+        "density_p_cm3": 2.37,
+        "speed_km_s": 461.95,
+        "temperature_k": 96152.5
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-08-21T18:55:00+00:00",
+        "timestamp_utc": "2026-08-21T19:06:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": 3.625,
-        "by_gsm_nt": -3.37,
-        "bz_gsm_nt": -0.245,
-        "bt_nt": 4.98
+        "bx_gsm_nt": 3.375,
+        "by_gsm_nt": -3.15,
+        "bz_gsm_nt": -1.285,
+        "bt_nt": 4.815
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
     "xray": {
-      "timestamp_utc": "2026-08-21T18:57:00+00:00",
-      "flux_w_m2": 1.2635661050808267e-06,
-      "class": "C1.3",
+      "timestamp_utc": "2026-08-21T19:08:00+00:00",
+      "flux_w_m2": 1.2049957831550273e-06,
+      "class": "C1.2",
       "energy": "0.1-0.8nm",
       "satellite": 18
     },
     "protons": {
-      "timestamp_utc": "2026-08-21T18:50:00+00:00",
-      "flux": 0.9296382665634155,
+      "timestamp_utc": "2026-08-21T19:00:00+00:00",
+      "flux": 0.8869513869285583,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
-    },
-    "electrons": {
-      "timestamp_utc": "2026-08-21T18:50:00+00:00",
-      "flux": 1229.8988037109375,
-      "energy": ">=2 MeV",
-      "units": null,
-      "satellite": 19
     },
     "solar_flux": {
       "timestamp_utc": "2026-08-20T22:00:00+00:00",
@@ -102,7 +95,7 @@
     "scales": {
       "1": {
         "DateStamp": "2026-08-21",
-        "TimeStamp": "19:00:00",
+        "TimeStamp": "19:10:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -161,7 +154,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-08-21T18:57:00+00:00",
+    "timestamp_utc": "2026-08-21T19:07:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -188,7 +181,7 @@
         "longitude": -8.4,
         "grid_latitude": 43.0,
         "grid_longitude": -10.0,
-        "highest_frequency_affected_1db_mhz": 1.0
+        "highest_frequency_affected_1db_mhz": 0.7
       },
       "Cantabrico": {
         "latitude": 43.3,
@@ -216,7 +209,7 @@
         "longitude": -5.99,
         "grid_latitude": 37.0,
         "grid_longitude": -6.0,
-        "highest_frequency_affected_1db_mhz": 0.3
+        "highest_frequency_affected_1db_mhz": 0.0
       },
       "Baleares": {
         "latitude": 39.57,
@@ -230,12 +223,12 @@
         "longitude": -15.42,
         "grid_latitude": 29.0,
         "grid_longitude": -14.0,
-        "highest_frequency_affected_1db_mhz": 1.1
+        "highest_frequency_affected_1db_mhz": 0.8
       }
     },
     "spain": {
       "median_mhz": 0.0,
-      "maximum_mhz": 1.1
+      "maximum_mhz": 0.8
     }
   },
   "source_urls": {
@@ -261,7 +254,7 @@
     "magnetic_field": true,
     "xray": true,
     "protons": true,
-    "electrons": true,
+    "electrons": false,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
