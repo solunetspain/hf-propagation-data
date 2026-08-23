@@ -139,10 +139,10 @@ jobs:
         run: |
           git fetch origin generated-data
           if git show origin/generated-data:public/data/prediction-history.json > /tmp/prediction-history.json 2>/dev/null; then
-  mv /tmp/prediction-history.json public/data/prediction-history.json
-else
-  test -s public/data/prediction-history.json || echo '{"entries":[],"summary":{}}' > public/data/prediction-history.json
-fi
+            mv /tmp/prediction-history.json public/data/prediction-history.json
+          else
+            test -s public/data/prediction-history.json || echo '{"entries":[],"summary":{}}' > public/data/prediction-history.json
+          fi
 
       - name: Update prediction history
         run: python scripts/validate_prediction_history.py
