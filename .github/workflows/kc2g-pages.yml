@@ -140,12 +140,16 @@ jobs:
           git fetch origin generated-data
           if git show origin/generated-data:public/data/prediction-history.json > /tmp/prediction-history.json 2>/dev/null; then
             mv /tmp/prediction-history.json public/data/prediction-history.json
-          else
-            test -s public/data/prediction-history.json || echo '{"entries":[],"summary":{}}' > public/data/prediction-history.json
+          fi
+          if ! test -s public/data/prediction-history.json; then
+            printf '%s\n' '{"entries":[],"summary":{}}' > public/data/prediction-history.json
           fi
 
       - name: Update prediction history
         run: python scripts/validate_prediction_history.py
+
+      - name: Verify prediction history was written
+        run: test -s public/data/prediction-history.json
 
       - name: Rebuild canonical report with updated history
         run: python scripts/build_pdf_style_report.py
