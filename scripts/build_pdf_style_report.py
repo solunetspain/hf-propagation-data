@@ -935,7 +935,7 @@ No hay tormenta solar ni radioapagón activo cuando las escalas son R0/S0/G0. Au
         "schema_version": "1.0",
         "status": "degraded" if not psk else "ok",
         "generated_at_utc": now.isoformat(),
-        "valid_until_utc": (now + timedelta(minutes=90)).isoformat(),
+        "valid_until_utc": (now + timedelta(minutes=180)).isoformat(),
         "regions": ["peninsula", "baleares", "canarias"],
         "publication": {"publisher": "hf-data-generator", "source_automation": "HF data cycle", "content_mode": "verbatim", "publish_web": True, "publish_chat": False, "flags": {"web": "publication.publish_web", "chat": "publication.publish_chat"}},
         "prediction_model": {"recommendations": recommendations, "bands": list(band_frequency_mhz), "validation_window_minutes": 60, "evaluation_delay_minutes": 60, "recommendation_method": "MUF margin + recent independent evidence + mature history", "calibration": get(prediction_history, "calibration", default={"status": "preparando", "weights_adjusted": False}), "evidence_policy": get(prediction_history, "evidence_policy", default={}), "stability": get(prediction_history, "stability", default="pendiente de varias capturas")},
