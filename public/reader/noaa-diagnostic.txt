@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-26T05:51:38.222052+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-26T06:01:37.967683+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -8,22 +8,6 @@
       "content_type": "application/json",
       "bytes": 1109,
       "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 4402,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/text/daily-geomagnetic-indices.txt",
-      "http_status": 200,
-      "content_type": "text/plain",
-      "bytes": 3877,
-      "usable": true,
-      "planetary_a_index": 1.33,
-      "product": "daily planetary A"
     },
     {
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
@@ -36,21 +20,21 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2834295,
+      "bytes": 2845351,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1602461,
+      "bytes": 1610506,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163029,
+      "bytes": 162567,
       "usable": true
     },
     {
@@ -64,7 +48,7 @@
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7175,
+      "bytes": 7173,
       "usable": true
     },
     {
@@ -89,10 +73,12 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "kp: Expecting value: line 1 column 4403 (char 4402)"
+  ],
   "validation": {
     "scales": true,
-    "kp": true,
+    "kp": false,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
@@ -103,7 +89,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +100,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "kp"
+  ]
 }
