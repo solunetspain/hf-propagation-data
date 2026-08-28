@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-08-28T06:51:29.047599+00:00",
-  "status": "ok",
+  "generated_at": "2026-08-28T07:01:34.923711+00:00",
+  "status": "partial",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-08-28T06:51:00+00:00",
+      "timestamp_utc": "2026-08-28T06:59:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -30,7 +30,7 @@
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-08-28T06:47:00+00:00",
+      "timestamp_utc": "2026-08-28T06:58:00+00:00",
       "kp": 0.0,
       "estimated_kp": 0.0,
       "kp_code": "0Z",
@@ -38,46 +38,39 @@
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-08-28T06:45:00+00:00",
+        "timestamp_utc": "2026-08-28T06:55:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 5.66,
-        "speed_km_s": 280.0,
-        "temperature_k": 29843.5
+        "density_p_cm3": 5.765,
+        "speed_km_s": 280.75,
+        "temperature_k": 29746.0
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-08-28T06:46:00+00:00",
+        "timestamp_utc": "2026-08-28T06:58:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": -1.485,
-        "by_gsm_nt": 0.79,
-        "bz_gsm_nt": -3.915,
-        "bt_nt": 4.255
+        "bx_gsm_nt": -1.535,
+        "by_gsm_nt": 1.85,
+        "bz_gsm_nt": -4.6,
+        "bt_nt": 5.185
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
-    "xray": {
-      "timestamp_utc": "2026-08-28T06:47:00+00:00",
-      "flux_w_m2": 4.441073144789698e-07,
-      "class": "B4.4",
-      "energy": "0.1-0.8nm",
-      "satellite": 18
-    },
     "protons": {
-      "timestamp_utc": "2026-08-28T06:40:00+00:00",
-      "flux": 0.25315162539482117,
+      "timestamp_utc": "2026-08-28T06:50:00+00:00",
+      "flux": 0.28330036997795105,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
     },
     "electrons": {
-      "timestamp_utc": "2026-08-28T06:40:00+00:00",
-      "flux": 659.6622924804688,
+      "timestamp_utc": "2026-08-28T06:55:00+00:00",
+      "flux": 469.8651123046875,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -102,7 +95,7 @@
     "scales": {
       "1": {
         "DateStamp": "2026-08-28",
-        "TimeStamp": "06:51:00",
+        "TimeStamp": "06:59:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -161,7 +154,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-08-28T06:48:00+00:00",
+    "timestamp_utc": "2026-08-28T06:58:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -188,7 +181,7 @@
         "longitude": -8.4,
         "grid_latitude": 43.0,
         "grid_longitude": -10.0,
-        "highest_frequency_affected_1db_mhz": 0.3
+        "highest_frequency_affected_1db_mhz": 0.4
       },
       "Cantabrico": {
         "latitude": 43.3,
@@ -230,7 +223,7 @@
         "longitude": -15.42,
         "grid_latitude": 29.0,
         "grid_longitude": -14.0,
-        "highest_frequency_affected_1db_mhz": 0.1
+        "highest_frequency_affected_1db_mhz": 0.2
       }
     },
     "spain": {
@@ -259,7 +252,7 @@
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": true,
+    "xray": false,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
@@ -276,5 +269,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "xray"
+  ]
 }
