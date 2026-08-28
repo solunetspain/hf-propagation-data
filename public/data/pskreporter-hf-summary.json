@@ -1,7 +1,7 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-08-28T14:11:48.901484+00:00",
-  "status": "partial",
+  "generated_at": "2026-08-28T14:21:47.782540+00:00",
+  "status": "ok",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
     "callsign": "IN91",
@@ -15,21 +15,183 @@
   "query_strategy": "Official PSKReporter grid query: callsign=IN91 and modify=grid",
   "scope": "Reports with sender or receiver locator beginning IN91, amateur HF, last hour",
   "classification": "Observed reports after strict local post-filtering",
-  "bands": {},
-  "examples": [],
+  "bands": {
+    "30m": {
+      "report_count": 6,
+      "station_count": 7,
+      "route_count": 6,
+      "modes": {
+        "FT8": 6
+      },
+      "directions": {
+        "received_in_IN91": 6
+      },
+      "distance_km": {
+        "minimum": 453.0,
+        "median": 984.6,
+        "maximum": 1361.1
+      },
+      "latest_observation_utc": "2026-08-28T14:15:44+00:00"
+    },
+    "10m": {
+      "report_count": 3,
+      "station_count": 4,
+      "route_count": 3,
+      "modes": {
+        "FT8": 3
+      },
+      "directions": {
+        "transmitted_from_IN91": 3
+      },
+      "distance_km": {
+        "minimum": 1483.9,
+        "median": 6471.7,
+        "maximum": 8202.5
+      },
+      "latest_observation_utc": "2026-08-28T14:21:30+00:00"
+    }
+  },
+  "examples": [
+    {
+      "timestamp_utc": "2026-08-28T14:21:30+00:00",
+      "frequency_hz": 28075547.0,
+      "band": "10m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2KV",
+      "sender_locator": "IN91OQ",
+      "receiver_callsign": "K8OD",
+      "receiver_locator": "EN74WI",
+      "snr_db": "19",
+      "distance_km": 6471.7
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:21:30+00:00",
+      "frequency_hz": 28075509.0,
+      "band": "10m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2KV",
+      "sender_locator": "IN91OQ",
+      "receiver_callsign": "GI4TMB",
+      "receiver_locator": "IO74EP",
+      "snr_db": "-14",
+      "distance_km": 1483.9
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:21:30+00:00",
+      "frequency_hz": 28075497.0,
+      "band": "10m",
+      "mode": "FT8",
+      "direction": "transmitted_from_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EA2KV",
+      "sender_locator": "IN91OQ",
+      "receiver_callsign": "AJ4F",
+      "receiver_locator": "EL29LM69IN",
+      "snr_db": "-9",
+      "distance_km": 8202.5
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:15:44+00:00",
+      "frequency_hz": 10137380.0,
+      "band": "30m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "OE8RPK",
+      "sender_locator": "JN76JS",
+      "receiver_callsign": "EA2KV",
+      "receiver_locator": "IN91OQ",
+      "snr_db": "-10",
+      "distance_km": 1361.1
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:15:44+00:00",
+      "frequency_hz": 10138339.0,
+      "band": "30m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "DC4CP",
+      "sender_locator": "JO30BS",
+      "receiver_callsign": "EA2KV",
+      "receiver_locator": "IN91OQ",
+      "snr_db": "2",
+      "distance_km": 1140.4
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:15:29+00:00",
+      "frequency_hz": 10137498.0,
+      "band": "30m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "F4FSY",
+      "sender_locator": "JN25KM",
+      "receiver_callsign": "EA2KV",
+      "receiver_locator": "IN91OQ",
+      "snr_db": "3",
+      "distance_km": 624.1
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:15:29+00:00",
+      "frequency_hz": 10137801.0,
+      "band": "30m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "HB9CQL",
+      "sender_locator": "JN37UM",
+      "receiver_callsign": "EA2KV",
+      "receiver_locator": "IN91OQ",
+      "snr_db": "-1",
+      "distance_km": 933.6
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:15:29+00:00",
+      "frequency_hz": 10137569.0,
+      "band": "30m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "EC1AP",
+      "sender_locator": "IN73DN",
+      "receiver_callsign": "EA2KV",
+      "receiver_locator": "IN91OQ",
+      "snr_db": "-8",
+      "distance_km": 453.0
+    },
+    {
+      "timestamp_utc": "2026-08-28T14:15:29+00:00",
+      "frequency_hz": 10136449.0,
+      "band": "30m",
+      "mode": "FT8",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "IK4LZH",
+      "sender_locator": "JN54QM",
+      "receiver_callsign": "EA2KV",
+      "receiver_locator": "IN91OQ",
+      "snr_db": "5",
+      "distance_km": 1035.6
+    }
+  ],
   "content_type": "text/xml; charset=utf-8",
   "http_attempts": 1,
-  "upstream_report_count": 0,
-  "accepted_report_count": 0,
+  "upstream_report_count": 9,
+  "accepted_report_count": 9,
   "scope_summary": {
     "exact_in91po_report_count": 0,
-    "regional_in91_report_count": 0,
+    "regional_in91_report_count": 9,
     "preferred_scope": "regional_IN91",
     "exact_in91po_bands": {}
   },
   "rejected_report_counts": {},
-  "upstream_grid_filter_honored": false,
+  "upstream_grid_filter_honored": true,
   "upstream_filter_note": "Grid query may match either sender or receiver in IN91; strict local post-filter remains mandatory.",
-  "weight_recommendation": 0,
-  "limitation": "No local IN91 amateur-HF reports found after strict filtering."
+  "weight_recommendation": 1,
+  "limitation": null
 }
