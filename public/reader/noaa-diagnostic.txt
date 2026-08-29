@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-29T23:41:37.601142+00:00",
+  "generated_at": "2026-08-29T23:51:33.583661+00:00",
   "status": "ok",
   "requests": [
     {
@@ -36,35 +36,42 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2830091,
+      "bytes": 2832304,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1680947,
+      "bytes": 1680876,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163313,
+      "bytes": 163297,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 59060,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7235,
+      "bytes": 7236,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/f107_cm_flux.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 23218,
+      "bytes": 23395,
       "usable": true
     },
     {
@@ -82,9 +89,7 @@
       "usable": true
     }
   ],
-  "errors": [
-    "protons: Extra data: line 1 column 59061 (char 59060)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
@@ -92,13 +97,13 @@
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
-    "protons": false,
+    "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
