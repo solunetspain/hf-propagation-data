@@ -1,7 +1,13 @@
 {
-  "generated_at": "2026-08-30T13:14:01.255712+00:00",
-  "status": "ok",
-  "errors": [],
+  "generated_at": "2026-08-30T13:21:38.734822+00:00",
+  "status": "partial",
+  "errors": [
+    {
+      "bucket_id": 33028,
+      "band": 0,
+      "error": "HTTPSConnectionPool(host='hf.dxview.org', port=443): Max retries exceeded with url: /map/refresh?alert=0&band=0&active=1&id=33028 (Caused by ConnectTimeoutError(<HTTPSConnection(host='hf.dxview.org', port=443) at 0x7fabc506cbf0>, 'Connection to hf.dxview.org timed out. (connect timeout=45)'))"
+    }
+  ],
   "validation": {
     "response_received": true,
     "format_parsed": true,
@@ -11,14 +17,9 @@
     "canarias_sample_available": true,
     "national_fallback_available": true
   },
-  "response_count": 56,
+  "response_count": 55,
   "expected_response_count": 56,
   "response_metadata": {
-    "33028:0": {
-      "status_code": 200,
-      "content_type": "application/json",
-      "cache_control": "public, max-age=10, immutable"
-    },
     "33028:3": {
       "status_code": 200,
       "content_type": "application/json",
@@ -423,5 +424,5 @@
       }
     ]
   },
-  "output_signature": "4ebf4471e1f2f0b2"
+  "output_signature": "399aace4762bbacc"
 }
