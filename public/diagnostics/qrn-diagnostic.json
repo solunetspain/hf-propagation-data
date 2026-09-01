@@ -1,8 +1,12 @@
 {
-  "generated_at": "2026-09-01T12:21:32.788442+00:00",
+  "generated_at": "2026-09-01T12:31:32.522875+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Cantabrico: <urlopen error _ssl.c:993: The handshake operation timed out>",
+    "Centro: Expecting value: line 1 column 1 (char 0)",
+    "Mediterraneo: Expecting value: line 1 column 1 (char 0)",
+    "Baleares: Expecting value: line 1 column 1 (char 0)"
   ],
   "validation": {
     "model_response_received": true,
@@ -17,19 +21,23 @@
       "status": "ok"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
     },
     "Andalucia": {
       "status": "ok"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
     },
     "Canarias": {
       "status": "ok"
