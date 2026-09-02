@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-02T05:21:33.233912+00:00",
-  "status": "partial",
+  "generated_at": "2026-09-02T05:31:32.422606+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -36,14 +36,21 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2633619,
+      "bytes": 2638032,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1539114,
+      "bytes": 1540276,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 163141,
       "usable": true
     },
     {
@@ -57,7 +64,7 @@
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7283,
+      "bytes": 7184,
       "usable": true
     },
     {
@@ -82,23 +89,21 @@
       "usable": true
     }
   ],
-  "errors": [
-    "xray: Extra data: line 1 column 163128 (char 163127)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": false,
+    "xray": true,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -109,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "xray"
-  ]
+  "missing_required_sections": []
 }
