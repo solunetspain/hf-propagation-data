@@ -1,53 +1,14 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-09-02T23:51:46.388494+00:00",
-  "status": "partial",
+  "generated_at": "2026-09-03T00:01:43.505560+00:00",
+  "status": "error",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
   "limitations": [
     "No direct lightning observations are used.",
     "Forecast CAPE never changes the current-risk classification."
   ],
-  "points": {
-    "Centro": {
-      "latitude": 40.42,
-      "longitude": -3.7,
-      "risk": "bajo",
-      "score": 0,
-      "current_risk": {
-        "risk": "bajo",
-        "score": 0,
-        "thunderstorm_code_present": false,
-        "reasons": [
-          "sin código actual de tormenta"
-        ],
-        "observation": {
-          "time": "2026-09-02T23:45",
-          "interval": 900,
-          "weather_code": 0,
-          "precipitation": 0.0,
-          "rain": 0.0,
-          "showers": 0.0
-        }
-      },
-      "forecast_6h": {
-        "risk": "bajo",
-        "score": 0,
-        "thunderstorm_code_present": false,
-        "max_cape_j_kg": 0.0,
-        "max_precipitation_probability": 0,
-        "reasons": [],
-        "times": [
-          "2026-09-02T23:00",
-          "2026-09-03T00:00",
-          "2026-09-03T01:00",
-          "2026-09-03T02:00",
-          "2026-09-03T03:00",
-          "2026-09-03T04:00"
-        ]
-      }
-    }
-  },
+  "points": {},
   "aemet_lightning": {
     "status": "error",
     "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"

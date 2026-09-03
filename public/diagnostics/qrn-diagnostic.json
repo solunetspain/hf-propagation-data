@@ -1,25 +1,26 @@
 {
-  "generated_at": "2026-09-02T23:51:46.388503+00:00",
-  "status": "partial",
+  "generated_at": "2026-09-03T00:01:43.505570+00:00",
+  "status": "error",
   "errors": [
     "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
-    "IN91PO: HTTP Error 503: Service Unavailable",
+    "IN91PO: The read operation timed out",
     "Galicia: HTTP Error 503: Service Unavailable",
     "Cantabrico: HTTP Error 503: Service Unavailable",
+    "Centro: HTTP Error 503: Service Unavailable",
     "Mediterraneo: HTTP Error 503: Service Unavailable",
     "Andalucia: HTTP Error 503: Service Unavailable",
     "Baleares: HTTP Error 503: Service Unavailable",
     "Canarias: HTTP Error 503: Service Unavailable"
   ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
   "points": {
     "IN91PO": {
       "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "error": "TimeoutError: The read operation timed out"
     },
     "Galicia": {
       "status": "error",
@@ -30,7 +31,8 @@
       "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Mediterraneo": {
       "status": "error",
