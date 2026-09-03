@@ -1,8 +1,15 @@
 {
-  "generated_at": "2026-09-03T09:41:38.625445+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-03T09:51:35.403982+00:00",
+  "status": "partial",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "IN91PO: The read operation timed out",
+    "Galicia: The read operation timed out",
+    "Cantabrico: <urlopen error _ssl.c:993: The handshake operation timed out>",
+    "Centro: <urlopen error _ssl.c:993: The handshake operation timed out>",
+    "Mediterraneo: The read operation timed out",
+    "Andalucia: Expecting value: line 1 column 1 (char 0)",
+    "Baleares: <urlopen error _ssl.c:993: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,25 +18,32 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Canarias": {
       "status": "ok"
