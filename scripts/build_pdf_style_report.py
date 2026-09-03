@@ -187,6 +187,32 @@ def modes_text(value: dict[str, Any]) -> str:
     parts = [f"{labels.get(key, key)} ({count} vista)" for key, count in sorted(modes.items()) if count]
     return " y ".join(parts) if parts else "Sin modos observados"
 
+def prediction_history_to_trend_history(history: dict[str, Any]) -> list[dict[str, Any]]:
+    """Adapt accumulated evaluation snapshots for the report trend renderer."""
+    entries = history.get("entries", []) if isinstance(history, dict) else []
+    result = []
+    for entry in entries:
+        snapshot = entry.get("evidence_snapshot", {}) if isinstance(entry, dict) else {}
+        if not isinstance(snapshot, dict):
+            continue
+        regions = {}
+        for region, data in snapshot.items():
+            if not isinstance(data, dict):
+                continue
+            bands = {}
+            for band, value in data.items():
+                if not isinstance(value, dict):
+                    continue
+                zones = value.get("dx_zones")
+                if zones is not None:
+                    bands[str(band)] = {"activity_zone_median": zones}
+            if bands:
+                regions[str(region)] = {"bands": bands}
+        if regions:
+            result.append({"regions": regions})
+    return result
+
+
 def trend_text(history: list[dict[str, Any]], region: str, band: str) -> str:
     values = []
     for item in history:
@@ -649,7 +675,7 @@ Si sabes poco de propagación, empieza aquí:
         ["Región", "foF2 mediana", "foF2 mín.-máx.", "Dispersión foF2", "MUF(3000) mediana", "MUF mín.-máx.", "Dispersión MUF", "FOT 85 %, cálculo"],
         [[label, num(get(summaries[key], "fof2_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'fof2_mhz', 'min'))}-{num(get(summaries[key], 'fof2_mhz', 'max'))} MHz", num(get(summaries[key], "fof2_mhz", "spread"), suffix=" MHz"), num(get(summaries[key], "mufd_mhz", "median"), suffix=" MHz"), f"{num(get(summaries[key], 'mufd_mhz', 'min'))}-{num(get(summaries[key], 'mufd_mhz', 'max'))} MHz", num(get(summaries[key], "mufd_mhz", "spread"), suffix=" MHz"), num(float(get(summaries[key], "mufd_mhz", "median", default=0) or 0)*.85, suffix=" MHz")] for key, label, _ in REGIONS]))
     blocks.append("\n\n".join(executive))
-    history = get(dx, "history", default=[])
+    history = prediction_history_to_trend_history(prediction_history)
     blocks.append("## 7. Tendencias\n\n" + table(
         ["Banda", "Península", "Baleares", "Canarias"],
         [[band_label(band), trend_text(history, "peninsula", band), trend_text(history, "baleares", band), trend_text(history, "canarias", band)]
