@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-04T17:21:36.771125+00:00",
-  "status": "partial",
+  "generated_at": "2026-09-04T17:31:37.547201+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -8,6 +8,22 @@
       "content_type": "application/json",
       "bytes": 1100,
       "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 4717,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/text/daily-geomagnetic-indices.txt",
+      "http_status": 200,
+      "content_type": "text/plain",
+      "bytes": 3877,
+      "usable": true,
+      "planetary_a_index": 6.0,
+      "product": "daily planetary A"
     },
     {
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
@@ -20,35 +36,35 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2219594,
+      "bytes": 2243980,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1261506,
+      "bytes": 1275781,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 162824,
+      "bytes": 162825,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59904,
+      "bytes": 59060,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7096,
+      "bytes": 7105,
       "usable": true
     },
     {
@@ -69,16 +85,14 @@
       "url": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
       "http_status": 200,
       "content_type": "text/plain",
-      "bytes": 42469,
+      "bytes": 42499,
       "usable": true
     }
   ],
-  "errors": [
-    "kp: <urlopen error [Errno 104] Connection reset by peer>"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
-    "kp": false,
+    "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
@@ -89,7 +103,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -100,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "kp"
-  ]
+  "missing_required_sections": []
 }
