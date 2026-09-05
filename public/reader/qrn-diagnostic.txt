@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-09-05T01:01:32.278699+00:00",
+  "generated_at": "2026-09-05T01:11:43.302368+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "IN91PO: <urlopen error _ssl.c:993: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,7 +12,8 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Galicia": {
       "status": "ok"
