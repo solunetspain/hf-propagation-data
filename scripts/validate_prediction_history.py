@@ -122,6 +122,17 @@ def main():
                 entry["evaluation"] = None
 
     recommendations = nested(report, "prediction_model", "recommendations", default={})
+    kc2g = load(data / "kc2g-spain.json", {})
+    noaa = load(data / "noaa-summary.json", {})
+    drap_points = {"peninsula": ("Galicia", "Cantabrico", "Centro", "Mediterraneo", "Andalucia"), "baleares": ("Baleares",), "canarias": ("Canarias",)}
+    physical_snapshot = {}
+    for region in REGIONS:
+        summary = nested(kc2g, "regions", {"peninsula":"mainland","baleares":"balearics","canarias":"canaries"}[region], "summary", default={})
+        muf = nested(summary, "mufd_mhz", "median", default=None)
+        drap = [nested(noaa, "drap", "points", point, "highest_frequency_affected_1db_mhz", default=None) for point in drap_points[region]]
+        drap = [float(x) for x in drap if isinstance(x, (int, float))]
+        physical_snapshot[region] = {"muf_mhz": muf, "fot_mhz": round(float(muf)*0.85, 2) if isinstance(muf, (int,float)) else None, "absorption_1db_mhz": max(drap) if drap else None, "activity_reports": sum(count_observations(psk, dx, region, band) for band in BANDS)}
+
     current = {
         "generated_at_utc": report.get("generated_at_utc", now.isoformat()),
         "recommendations": recommendations,
@@ -129,6 +140,7 @@ def main():
             region: {band: count_observations(psk, dx, region, band) for band in BANDS}
             for region in REGIONS
         },
+        "physical_snapshot": physical_snapshot,
         "evidence_snapshot": {
             region: {band: evidence_snapshot(psk, dx, region, band) for band in BANDS}
             for region in REGIONS
