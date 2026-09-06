@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-06T21:21:38.632960+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-06T21:31:33.398117+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -29,42 +29,42 @@
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 27925,
+      "bytes": 27847,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2620944,
+      "bytes": 2620195,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1498659,
+      "bytes": 1499956,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163415,
+      "bytes": 163416,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59763,
+      "bytes": 58926,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7277,
+      "bytes": 7278,
       "usable": true
     },
     {
@@ -75,13 +75,6 @@
       "usable": true
     },
     {
-      "url": "https://services.swpc.noaa.gov/text/daily-solar-indices.txt",
-      "http_status": 200,
-      "content_type": "text/plain",
-      "bytes": 2919,
-      "usable": true
-    },
-    {
       "url": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
       "http_status": 200,
       "content_type": "text/plain",
@@ -89,7 +82,9 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "sunspots: <urlopen error [Errno 104] Connection reset by peer>"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
@@ -100,10 +95,10 @@
     "protons": true,
     "electrons": true,
     "solar_flux": true,
-    "sunspots": true,
+    "sunspots": false,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "sunspots"
+  ]
 }
