@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-09-06T21:31:33.398128+00:00",
-  "status": "partial",
+  "generated_at": "2026-09-06T21:41:32.431514+00:00",
+  "status": "ok",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-09-06T21:29:00+00:00",
+      "timestamp_utc": "2026-09-06T21:40:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -30,54 +30,54 @@
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-09-06T21:26:00+00:00",
+      "timestamp_utc": "2026-09-06T21:36:00+00:00",
       "kp": 0.0,
-      "estimated_kp": 0.0,
-      "kp_code": "0Z",
+      "estimated_kp": 0.33,
+      "kp_code": "0P",
       "classification": "estimated 1-minute Kp; auxiliary, not official 3-hour Kp"
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-09-06T21:25:00+00:00",
+        "timestamp_utc": "2026-09-06T21:37:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 5.045,
-        "speed_km_s": 353.6,
-        "temperature_k": 76522.5
+        "density_p_cm3": 5.375,
+        "speed_km_s": 354.45,
+        "temperature_k": 82478.5
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-09-06T21:28:00+00:00",
+        "timestamp_utc": "2026-09-06T21:38:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": 6.335,
-        "by_gsm_nt": -3.64,
-        "bz_gsm_nt": -0.715,
-        "bt_nt": 7.35
+        "bx_gsm_nt": 6.62,
+        "by_gsm_nt": -3.745,
+        "bz_gsm_nt": -0.655,
+        "bt_nt": 7.605
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
     "xray": {
-      "timestamp_utc": "2026-09-06T21:26:00+00:00",
-      "flux_w_m2": 5.299106078382465e-07,
-      "class": "B5.3",
+      "timestamp_utc": "2026-09-06T21:37:00+00:00",
+      "flux_w_m2": 4.341678732089349e-07,
+      "class": "B4.3",
       "energy": "0.1-0.8nm",
       "satellite": 18
     },
     "protons": {
-      "timestamp_utc": "2026-09-06T21:20:00+00:00",
-      "flux": 0.6637752652168274,
+      "timestamp_utc": "2026-09-06T21:30:00+00:00",
+      "flux": 0.5681501030921936,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
     },
     "electrons": {
-      "timestamp_utc": "2026-09-06T21:25:00+00:00",
-      "flux": 240.59754943847656,
+      "timestamp_utc": "2026-09-06T21:30:00+00:00",
+      "flux": 183.22418212890625,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -89,13 +89,20 @@
       "reporting_schedule": "Noon",
       "ninety_day_mean_sfu": 127.0,
       "classification": "official NOAA F10.7 observation"
+    },
+    "sunspots": {
+      "timestamp_utc": "2026-09-05T00:00:00+00:00",
+      "date": "2026-09-05",
+      "sunspot_number": 70.0,
+      "classification": "NOAA SESC daily sunspot number",
+      "daily_f107_sfu_cross_check": 111.0
     }
   },
   "forecast": {
     "scales": {
       "1": {
         "DateStamp": "2026-09-06",
-        "TimeStamp": "21:29:00",
+        "TimeStamp": "21:40:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -154,7 +161,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-09-06T21:28:00+00:00",
+    "timestamp_utc": "2026-09-06T21:38:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -256,7 +263,7 @@
     "protons": true,
     "electrons": true,
     "solar_flux": true,
-    "sunspots": false,
+    "sunspots": true,
     "drap": true
   },
   "required_sections": [
@@ -269,7 +276,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "sunspots"
-  ]
+  "missing_required_sections": []
 }
