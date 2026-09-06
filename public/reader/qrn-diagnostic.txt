@@ -1,8 +1,14 @@
 {
-  "generated_at": "2026-09-06T17:31:33.068409+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-06T17:41:36.093752+00:00",
+  "status": "partial",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Cantabrico: The read operation timed out",
+    "Centro: HTTP Error 503: Service Unavailable",
+    "Mediterraneo: HTTP Error 503: Service Unavailable",
+    "Andalucia: HTTP Error 503: Service Unavailable",
+    "Baleares: HTTP Error 503: Service Unavailable",
+    "Canarias: HTTP Error 503: Service Unavailable"
   ],
   "validation": {
     "model_response_received": true,
@@ -17,22 +23,28 @@
       "status": "ok"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     }
   },
   "aemet_lightning": {
