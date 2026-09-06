@@ -1,8 +1,11 @@
 {
-  "generated_at": "2026-09-06T20:31:32.289668+00:00",
+  "generated_at": "2026-09-06T20:41:33.416285+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Cantabrico: The read operation timed out",
+    "Andalucia: <urlopen error _ssl.c:993: The handshake operation timed out>",
+    "Baleares: The read operation timed out"
   ],
   "validation": {
     "model_response_received": true,
@@ -17,7 +20,8 @@
       "status": "ok"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Centro": {
       "status": "ok"
@@ -26,10 +30,12 @@
       "status": "ok"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Canarias": {
       "status": "ok"
