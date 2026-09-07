@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-07T22:11:33.134824+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-07T22:16:26.714080+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -36,21 +36,14 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2602780,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 1508569,
+      "bytes": 2607264,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163258,
+      "bytes": 163259,
       "usable": true
     },
     {
@@ -89,13 +82,15 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "magnetic_field: Unterminated string starting at: line 1 column 1509804 (char 1509803)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
-    "magnetic_field": true,
+    "magnetic_field": false,
     "xray": true,
     "protons": true,
     "electrons": true,
@@ -103,7 +98,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "magnetic_field"
+  ]
 }
