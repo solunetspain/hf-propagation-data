@@ -369,9 +369,20 @@ def main() -> int:
                 "regions": regional,
                 "global_unassigned_spots": unassigned,
                 "quality_gate": {"minimum_spots": 5, "minimum_distinct_receivers": 3, "eligible_for_auxiliary_weight": eligible},
-                "limitation": None if spots else "Endpoint responded but no parseable HF spots were found in the bounded Telnet window.",
+                "limitation": (None if spots and regional_spots_attributed else (
+                    f"Endpoint responded with {len(spots)} parseable HF spots, but none had a verified receiver location for Península, Baleares or Canarias; "
+                    f"{unassigned} remain global/unassigned." if spots else
+                    "Endpoint responded but no parseable HF spots were found in the bounded Telnet window."
+                )),
             })
             diagnostic["status"] = result["status"]
+            diagnostic["interpretation"] = (
+                "RBN reports skimmer receptions, not completed QSOs. "
+                "Regional use requires a verified receiver locator; a zero regional count with global spots means coverage was received but not assignable."
+                if spots and not diagnostic["validation"]["regional_spots_attributed"]
+                else diagnostic["interpretation"]
+            )
+
             diagnostic["validation"].update({
                 "spots_parsed": len(spots),
                 "regional_spots_attributed": sum(v["report_count"] for v in regional.values()),
