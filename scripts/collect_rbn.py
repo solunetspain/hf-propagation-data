@@ -74,6 +74,15 @@ def region_from_coordinates(lat: float | None, lon: float | None) -> str | None:
     return None
 
 
+def normalize_receiver_callsign(value: str | None) -> str | None:
+    """Remove RBN skimmer suffixes before callbook lookup."""
+    if not value:
+        return None
+    token = value.strip().upper()
+    token = re.split(r"[-#]", token, maxsplit=1)[0]
+    return token or None
+
+
 def looks_like_callsign(token: str) -> bool:
     token = token.strip(" ,;:()[]")
     return bool(CALLSIGN_RE.fullmatch(token)) and any(c.isdigit() for c in token) and any(c.isalpha() for c in token)
@@ -343,7 +352,7 @@ def main() -> int:
                 if key in seen:
                     continue
                 seen.add(key)
-                location = resolver.resolve(str(spot["receiver_callsign"]) if spot.get("receiver_callsign") else None)
+                location = resolver.resolve(normalize_receiver_callsign(str(spot["receiver_callsign"])) if spot.get("receiver_callsign") else None)
                 if location:
                     spot.update({
                         "receiver_region": location["region"],
