@@ -203,9 +203,11 @@ class CallbookResolver:
             self.qrz_last_error = error[:200]
             return None
         locator = self._text(root, "grid") or self._text(root, "grid_square")
-        if not locator:
-            self.qrz_last_error = "QRZ respondió sin locator"
-        return self._location_record(locator, "QRZ")
+        latitude = self._text(root, "lat") or self._text(root, "latitude")
+        longitude = self._text(root, "lon") or self._text(root, "longitude")
+        if not locator and not (latitude and longitude):
+            self.qrz_last_error = "QRZ respondió sin locator ni coordenadas"
+        return self._location_record(locator, "QRZ", latitude, longitude)
 
     def _hamqth(self, callsign: str) -> dict[str, object] | None:
         username = os.getenv("HAMQTH_USERNAME", "").strip()
@@ -245,20 +247,27 @@ class CallbookResolver:
                 self.hamqth_session = None
             return None
         locator = self._text(root, "grid") or self._text(root, "grid_square")
-        if not locator:
-            self.hamqth_last_error = "HamQTH respondió sin locator"
-        return self._location_record(locator, "HamQTH")
+        latitude = self._text(root, "lat") or self._text(root, "latitude")
+        longitude = self._text(root, "lon") or self._text(root, "longitude")
+        if not locator and not (latitude and longitude):
+            self.hamqth_last_error = "HamQTH respondió sin locator ni coordenadas"
+        return self._location_record(locator, "HamQTH", latitude, longitude)
 
     @staticmethod
-    def _location_record(locator: str | None, source: str) -> dict[str, object] | None:
+    def _location_record(locator: str | None, source: str, latitude: str | None = None, longitude: str | None = None) -> dict[str, object] | None:
         point = maidenhead_center(locator) if locator else None
+        if not point and latitude and longitude:
+            try:
+                point = (float(latitude), float(longitude))
+            except ValueError:
+                point = None
         if not point:
             return None
         lat, lon = point
         region = region_from_coordinates(lat, lon)
         if not region:
             return None
-        return {"locator": locator.upper(), "latitude": round(lat, 5), "longitude": round(lon, 5), "region": region, "source": source}
+        return {"locator": locator.upper() if locator else None, "latitude": round(lat, 5), "longitude": round(lon, 5), "region": region, "source": source}
 
     def resolve(self, callsign: str | None) -> dict[str, object] | None:
         key = (callsign or "").upper().strip()
@@ -266,7 +275,7 @@ class CallbookResolver:
             self.unresolved += 1
             return None
         cached = self.cache.get(key)
-        if isinstance(cached, dict) and cached.get("region") and cached.get("locator"):
+        if isinstance(cached, dict) and cached.get("region") and (cached.get("locator") or cached.get("latitude") is not None):
             return cached
         try:
             record = self._qrz(key)
