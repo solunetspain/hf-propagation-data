@@ -1,14 +1,7 @@
 {
-  "generated_at": "2026-09-09T17:31:33.491013+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-09T17:41:35.912544+00:00",
+  "status": "partial",
   "requests": [
-    {
-      "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 1103,
-      "usable": true
-    },
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
@@ -36,14 +29,14 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2562628,
+      "bytes": 2563364,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1490150,
+      "bytes": 1491011,
       "usable": true
     },
     {
@@ -58,13 +51,6 @@
       "http_status": 200,
       "content_type": "application/json",
       "bytes": 59087,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 7142,
       "usable": true
     },
     {
@@ -89,21 +75,24 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "scales: The read operation timed out",
+    "electrons: The read operation timed out"
+  ],
   "validation": {
-    "scales": true,
+    "scales": false,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
     "protons": true,
-    "electrons": true,
+    "electrons": false,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 9,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +103,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "scales"
+  ]
 }
