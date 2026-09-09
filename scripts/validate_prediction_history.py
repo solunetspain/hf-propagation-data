@@ -2,6 +2,7 @@
 """Persist and score mature HF predictions against later PSKReporter/DXView observations."""
 from __future__ import annotations
 import json
+import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 
