@@ -280,6 +280,28 @@ def main():
                 values.append(sum(cycle) / len(cycle))
         return classify_recent_trend(values[-20:])
 
+    # Estabilidad: consistencia de los resultados por captura, no tasa de aciertos.
+    # Se exige una serie mínima de cuatro capturas maduras; con menos datos se marca como no calculada.
+    stability = {}
+    for region in REGIONS:
+        cycle_values = []
+        for entry in entries:
+            scores = []
+            for band in BANDS:
+                result = nested(entry, "evaluation", region, band, "result", default=None)
+                score = result_score(result)
+                if score is not None:
+                    scores.append(score)
+            if scores:
+                cycle_values.append(sum(scores) / len(scores))
+        recent = cycle_values[-20:]
+        if len(recent) >= 4:
+            spread = statistics.pstdev(recent)
+            score = round(max(0.0, min(100.0, 100.0 * (1.0 - min(spread / 0.5, 1.0)))), 1)
+            stability[region] = {"score": score, "samples": len(recent), "method": "100 - dispersión de resultados por captura"}
+        else:
+            stability[region] = {"score": None, "samples": len(recent), "method": "Sin serie suficiente"}
+
     for region in REGIONS:
         for band in BANDS:
             summary[region][band]["recent_trend"] = trend_for((region,), (band,))
@@ -306,6 +328,7 @@ def main():
             "note": "Los pesos no se ajustan automáticamente hasta disponer de una muestra suficiente y variada."
         },
         "generated_at_utc": now.isoformat(),
+        "stability": stability,
         "entries": entries,
         "summary": summary,
         "regional_totals": totals,
@@ -338,3 +361,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
