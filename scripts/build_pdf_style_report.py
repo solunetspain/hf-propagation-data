@@ -205,7 +205,8 @@ def prediction_history_to_trend_history(history: dict[str, Any]) -> list[dict[st
                     continue
                 zones = value.get("dx_zones")
                 if zones is not None:
-                    bands[str(band)] = {"activity_zone_median": zones}
+                    band_key = {"160m": "0", "80m": "3", "40m": "7", "20m": "14", "17m": "18", "15m": "21", "12m": "24", "10m": "28"}.get(str(band).replace(" ", ""), str(band))
+                    bands[band_key] = {"activity_zone_median": zones}
             if bands:
                 regions[str(region)] = {"bands": bands}
         if regions:
@@ -360,11 +361,12 @@ def confidence_components(region: str, source: dict[str, Any], dx_source: dict[s
         stability = max(0.0, min(100.0, float(stability)))
         stability_label = "Evaluable"
     except (TypeError, ValueError):
-        stability = 50.0
+        stability = None
         stability_label = "Sin serie suficiente"
-    instant = 0.55 * quality + 0.25 * coverage + 0.20 * stability
+    instant = ((0.55 * quality + 0.25 * coverage) / 0.80 if stability is None
+               else 0.55 * quality + 0.25 * coverage + 0.20 * stability)
     quality_label = "Alta" if coverage >= 70 and quality >= 85 else ("Moderada" if coverage >= 35 or quality >= 70 else "Limitada")
-    return {"quality": round(quality, 1), "coverage": round(coverage, 1), "stability": round(stability, 1), "stability_label": stability_label, "instant": round(instant, 1), "quality_label": quality_label}
+    return {"quality": round(quality, 1), "coverage": round(coverage, 1), "stability": round(stability, 1) if stability is not None else None, "stability_label": stability_label, "instant": round(instant, 1), "quality_label": quality_label}
 
 def reliability_index(region: str, source: dict[str, Any], dx_source: dict[str, Any], kc_source: dict[str, Any]) -> int:
     return round(confidence_components(region, source, dx_source, kc_source, {}).get("instant", 0))
@@ -809,7 +811,7 @@ Si sabes poco de propagación, empieza aquí:
         hist_value, hist_label, interval = history_item_text(historical)
         evaluations = int(get(historical, "confirmed_evaluations", default=0) or 0)
         components = regional_components[key]
-        confidence_rows.append([label, f"{regional_scores[key]:.1f} %".replace(".", ","), hist_value + " · " + hist_label, evaluations, interval, f"{components['quality_label']} · cobertura {components['coverage']:.1f} %".replace(".", ","), f"{components['stability']:.1f} % · {components['stability_label']}".replace(".", ",")])
+        confidence_rows.append([label, f"{regional_scores[key]:.1f} %".replace(".", ","), hist_value + " · " + hist_label, evaluations, interval, f"{components['quality_label']} · cobertura {components['coverage']:.1f} %".replace(".", ","), (f"{components['stability']:.1f} % · {components['stability_label']}".replace(".", ",") if components['stability'] is not None else "No calculada · Sin serie suficiente")])
     def domain_history_row(label, domain_key, quality):
         item = get(history, "domain_totals", domain_key, default={})
         value, sample_label, interval = history_item_text(item)
@@ -973,3 +975,4 @@ No hay tormenta solar ni radioapagón activo cuando las escalas son R0/S0/G0. Au
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
