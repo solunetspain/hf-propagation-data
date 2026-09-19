@@ -1,14 +1,7 @@
 {
-  "generated_at": "2026-09-19T03:21:34.276353+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-19T03:31:32.494253+00:00",
+  "status": "partial",
   "requests": [
-    {
-      "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 1096,
-      "usable": true
-    },
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
@@ -36,35 +29,35 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2859305,
+      "bytes": 2863723,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1648582,
+      "bytes": 1649949,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 162782,
+      "bytes": 162785,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59071,
+      "bytes": 59072,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7209,
+      "bytes": 7315,
       "usable": true
     },
     {
@@ -89,9 +82,11 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "scales: <urlopen error [Errno 104] Connection reset by peer>"
+  ],
   "validation": {
-    "scales": true,
+    "scales": false,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
@@ -103,7 +98,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "scales"
+  ]
 }
