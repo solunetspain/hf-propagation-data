@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-09-22T00:01:42.114314+00:00",
+  "generated_at": "2026-09-22T00:11:48.582591+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Mediterraneo: The read operation timed out"
   ],
   "validation": {
     "model_response_received": true,
@@ -23,7 +24,8 @@
       "status": "ok"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Andalucia": {
       "status": "ok"
