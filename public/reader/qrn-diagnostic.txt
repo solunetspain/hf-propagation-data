@@ -1,38 +1,54 @@
 {
-  "generated_at": "2026-09-23T11:31:36.797769+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-23T11:41:38.769276+00:00",
+  "status": "error",
   "errors": [
-    "AEMET rayos: Remote end closed connection without response"
+    "AEMET rayos: Remote end closed connection without response",
+    "IN91PO: The read operation timed out",
+    "Galicia: HTTP Error 503: Service Unavailable",
+    "Cantabrico: HTTP Error 503: Service Unavailable",
+    "Centro: HTTP Error 503: Service Unavailable",
+    "Mediterraneo: HTTP Error 503: Service Unavailable",
+    "Andalucia: HTTP Error 503: Service Unavailable",
+    "Baleares: HTTP Error 503: Service Unavailable",
+    "Canarias: HTTP Error 503: Service Unavailable"
   ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "TimeoutError: The read operation timed out"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     }
   },
   "aemet_lightning": {
