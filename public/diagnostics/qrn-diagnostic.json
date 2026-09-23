@@ -1,58 +1,42 @@
 {
-  "generated_at": "2026-09-23T11:41:38.769276+00:00",
-  "status": "error",
+  "generated_at": "2026-09-23T11:51:36.742492+00:00",
+  "status": "ok",
   "errors": [
-    "AEMET rayos: Remote end closed connection without response",
-    "IN91PO: The read operation timed out",
-    "Galicia: HTTP Error 503: Service Unavailable",
-    "Cantabrico: HTTP Error 503: Service Unavailable",
-    "Centro: HTTP Error 503: Service Unavailable",
-    "Mediterraneo: HTTP Error 503: Service Unavailable",
-    "Andalucia: HTTP Error 503: Service Unavailable",
-    "Baleares: HTTP Error 503: Service Unavailable",
-    "Canarias: HTTP Error 503: Service Unavailable"
+    "AEMET rayos: AEMET no devolvió la URL de datos de rayos"
   ],
   "validation": {
-    "model_response_received": false,
+    "model_response_received": true,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
   "points": {
     "IN91PO": {
-      "status": "error",
-      "error": "TimeoutError: The read operation timed out"
+      "status": "ok"
     },
     "Galicia": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     },
     "Cantabrico": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     },
     "Centro": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     },
     "Mediterraneo": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     },
     "Andalucia": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     },
     "Baleares": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     },
     "Canarias": {
-      "status": "error",
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "status": "ok"
     }
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "RemoteDisconnected: Remote end closed connection without response"
+    "error": "ValueError: AEMET no devolvió la URL de datos de rayos"
   }
 }
