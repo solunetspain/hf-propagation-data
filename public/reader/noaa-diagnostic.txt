@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-02T12:32:53.872193+00:00",
-  "status": "partial",
+  "generated_at": "2026-10-02T12:42:05.877165+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -10,45 +10,61 @@
       "usable": true
     },
     {
+      "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 4635,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/text/daily-geomagnetic-indices.txt",
+      "http_status": 200,
+      "content_type": "text/plain",
+      "bytes": 3877,
+      "usable": true,
+      "planetary_a_index": 4.0,
+      "product": "daily planetary A"
+    },
+    {
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 28003,
+      "bytes": 27925,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2861527,
+      "bytes": 2862273,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1605951,
+      "bytes": 1608087,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 158593,
+      "bytes": 158599,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59947,
+      "bytes": 59948,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7321,
+      "bytes": 7322,
       "usable": true
     },
     {
@@ -73,12 +89,10 @@
       "usable": true
     }
   ],
-  "errors": [
-    "kp: <urlopen error [Errno 104] Connection reset by peer>"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
-    "kp": false,
+    "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
@@ -89,7 +103,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -100,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "kp"
-  ]
+  "missing_required_sections": []
 }
