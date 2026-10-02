@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-10-02T17:51:33.852021+00:00",
+  "generated_at": "2026-10-02T18:01:33.714279+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: HTTP Error 503: Service Temporarily Unavailable",
+    "Mediterraneo: <urlopen error _ssl.c:993: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -23,7 +24,8 @@
       "status": "ok"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     "Andalucia": {
       "status": "ok"
@@ -37,6 +39,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "error": "HTTPError: HTTP Error 503: Service Temporarily Unavailable"
   }
 }
