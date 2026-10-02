@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-02T15:11:31.681528+00:00",
+  "generated_at": "2026-10-02T15:21:38.729431+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -22,12 +22,12 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
           "weather_code": 3,
-          "precipitation": 0.1,
+          "precipitation": 0.0,
           "rain": 0.0,
-          "showers": 0.1
+          "showers": 0.0
         }
       },
       "forecast_6h": {
@@ -35,7 +35,7 @@
         "score": 0,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 270.0,
-        "max_precipitation_probability": 43,
+        "max_precipitation_probability": 18,
         "reasons": [],
         "times": [
           "2026-10-02T15:00",
@@ -60,7 +60,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
           "weather_code": 3,
           "precipitation": 0.0,
@@ -98,7 +98,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
           "weather_code": 2,
           "precipitation": 0.0,
@@ -111,7 +111,7 @@
         "score": 1,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 400.0,
-        "max_precipitation_probability": 5,
+        "max_precipitation_probability": 0,
         "reasons": [
           "CAPE moderado previsto 400 J/kg"
         ],
@@ -138,9 +138,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
-          "weather_code": 1,
+          "weather_code": 3,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -148,13 +148,14 @@
       },
       "forecast_6h": {
         "risk": "alto",
-        "score": 4,
+        "score": 5,
         "thunderstorm_code_present": true,
         "max_cape_j_kg": 770.0,
-        "max_precipitation_probability": 65,
+        "max_precipitation_probability": 80,
         "reasons": [
           "tormenta prevista por weather_code 95/96/99",
-          "CAPE moderado previsto 770 J/kg"
+          "CAPE moderado previsto 770 J/kg",
+          "probabilidad de precipitación prevista 80%"
         ],
         "times": [
           "2026-10-02T15:00",
@@ -169,22 +170,22 @@
     "Mediterraneo": {
       "latitude": 39.47,
       "longitude": -0.38,
-      "risk": "bajo",
-      "score": 0,
+      "risk": "alto",
+      "score": 4,
       "current_risk": {
-        "risk": "bajo",
-        "score": 0,
-        "thunderstorm_code_present": false,
+        "risk": "alto",
+        "score": 4,
+        "thunderstorm_code_present": true,
         "reasons": [
-          "sin código actual de tormenta"
+          "weather_code actual de tormenta 95/96/99"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
-          "weather_code": 80,
-          "precipitation": 0.1,
+          "weather_code": 95,
+          "precipitation": 0.2,
           "rain": 0.0,
-          "showers": 0.1
+          "showers": 0.2
         }
       },
       "forecast_6h": {
@@ -192,11 +193,11 @@
         "score": 5,
         "thunderstorm_code_present": true,
         "max_cape_j_kg": 430.0,
-        "max_precipitation_probability": 98,
+        "max_precipitation_probability": 100,
         "reasons": [
           "tormenta prevista por weather_code 95/96/99",
           "CAPE moderado previsto 430 J/kg",
-          "probabilidad de precipitación prevista 98%"
+          "probabilidad de precipitación prevista 100%"
         ],
         "times": [
           "2026-10-02T15:00",
@@ -221,9 +222,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
-          "weather_code": 3,
+          "weather_code": 1,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -234,7 +235,7 @@
         "score": 2,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 1500.0,
-        "max_precipitation_probability": 13,
+        "max_precipitation_probability": 8,
         "reasons": [
           "CAPE máximo previsto 1500 J/kg"
         ],
@@ -261,7 +262,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
           "weather_code": 3,
           "precipitation": 0.0,
@@ -274,7 +275,7 @@
         "score": 1,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 810.0,
-        "max_precipitation_probability": 65,
+        "max_precipitation_probability": 55,
         "reasons": [
           "CAPE moderado previsto 810 J/kg"
         ],
@@ -301,12 +302,12 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-02T15:00",
+          "time": "2026-10-02T15:15",
           "interval": 900,
           "weather_code": 51,
           "precipitation": 0.1,
-          "rain": 0.1,
-          "showers": 0.0
+          "rain": 0.0,
+          "showers": 0.1
         }
       },
       "forecast_6h": {
@@ -332,6 +333,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "HTTPError: HTTP Error 503: Service Temporarily Unavailable"
+    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
   }
 }
