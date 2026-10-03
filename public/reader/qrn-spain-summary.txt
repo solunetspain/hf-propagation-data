@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-03T12:02:07.008400+00:00",
+  "generated_at": "2026-10-03T12:11:48.258515+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -24,7 +24,7 @@
         "observation": {
           "time": "2026-10-03T12:00",
           "interval": 900,
-          "weather_code": 80,
+          "weather_code": 3,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -34,7 +34,7 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 210.0,
+        "max_cape_j_kg": 130.0,
         "max_precipitation_probability": 30,
         "reasons": [],
         "times": [
@@ -72,10 +72,10 @@
         "risk": "medio",
         "score": 2,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 1110.0,
+        "max_cape_j_kg": 1100.0,
         "max_precipitation_probability": 8,
         "reasons": [
-          "CAPE máximo previsto 1110 J/kg"
+          "CAPE máximo previsto 1100 J/kg"
         ],
         "times": [
           "2026-10-03T12:00",
@@ -153,7 +153,7 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 160.0,
+        "max_cape_j_kg": 190.0,
         "max_precipitation_probability": 63,
         "reasons": [],
         "times": [
@@ -191,10 +191,10 @@
         "risk": "bajo",
         "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 370.0,
+        "max_cape_j_kg": 360.0,
         "max_precipitation_probability": 5,
         "reasons": [
-          "CAPE moderado previsto 370 J/kg"
+          "CAPE moderado previsto 360 J/kg"
         ],
         "times": [
           "2026-10-03T12:00",
@@ -221,7 +221,7 @@
         "observation": {
           "time": "2026-10-03T12:00",
           "interval": 900,
-          "weather_code": 2,
+          "weather_code": 1,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -231,10 +231,10 @@
         "risk": "bajo",
         "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 670.0,
+        "max_cape_j_kg": 770.0,
         "max_precipitation_probability": 5,
         "reasons": [
-          "CAPE moderado previsto 670 J/kg"
+          "CAPE moderado previsto 770 J/kg"
         ],
         "times": [
           "2026-10-03T12:00",
@@ -269,12 +269,12 @@
       },
       "forecast_6h": {
         "risk": "medio",
-        "score": 2,
+        "score": 3,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 960.0,
+        "max_cape_j_kg": 1030.0,
         "max_precipitation_probability": 73,
         "reasons": [
-          "CAPE moderado previsto 960 J/kg",
+          "CAPE máximo previsto 1030 J/kg",
           "probabilidad de precipitación prevista 73%"
         ],
         "times": [
@@ -302,7 +302,7 @@
         "observation": {
           "time": "2026-10-03T12:00",
           "interval": 900,
-          "weather_code": 0,
+          "weather_code": 1,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -312,10 +312,10 @@
         "risk": "bajo",
         "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 830.0,
+        "max_cape_j_kg": 530.0,
         "max_precipitation_probability": 2,
         "reasons": [
-          "CAPE moderado previsto 830 J/kg"
+          "CAPE moderado previsto 530 J/kg"
         ],
         "times": [
           "2026-10-03T12:00",
@@ -330,6 +330,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "error": "HTTPError: HTTP Error 503: Service Temporarily Unavailable"
   }
 }
