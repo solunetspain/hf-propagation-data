@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-04T21:41:37.718146+00:00",
+  "generated_at": "2026-10-04T21:51:34.961656+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -22,9 +22,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
-          "weather_code": 3,
+          "weather_code": 2,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -34,7 +34,7 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 200.0,
+        "max_cape_j_kg": 150.0,
         "max_precipitation_probability": 18,
         "reasons": [],
         "times": [
@@ -60,9 +60,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
-          "weather_code": 2,
+          "weather_code": 1,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -98,7 +98,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
           "weather_code": 3,
           "precipitation": 0.0,
@@ -138,22 +138,23 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
-          "weather_code": 3,
-          "precipitation": 0.1,
+          "weather_code": 80,
+          "precipitation": 0.2,
           "rain": 0.0,
-          "showers": 0.1
+          "showers": 0.2
         }
       },
       "forecast_6h": {
-        "risk": "medio",
-        "score": 2,
-        "thunderstorm_code_present": false,
-        "max_cape_j_kg": 560.0,
+        "risk": "alto",
+        "score": 5,
+        "thunderstorm_code_present": true,
+        "max_cape_j_kg": 430.0,
         "max_precipitation_probability": 75,
         "reasons": [
-          "CAPE moderado previsto 560 J/kg",
+          "tormenta prevista por weather_code 95/96/99",
+          "CAPE moderado previsto 430 J/kg",
           "probabilidad de precipitación prevista 75%"
         ],
         "times": [
@@ -179,9 +180,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
-          "weather_code": 3,
+          "weather_code": 2,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -191,10 +192,10 @@
         "risk": "bajo",
         "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 710.0,
+        "max_cape_j_kg": 580.0,
         "max_precipitation_probability": 20,
         "reasons": [
-          "CAPE moderado previsto 710 J/kg"
+          "CAPE moderado previsto 580 J/kg"
         ],
         "times": [
           "2026-10-04T21:00",
@@ -219,7 +220,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
           "weather_code": 3,
           "precipitation": 0.0,
@@ -231,10 +232,10 @@
         "risk": "bajo",
         "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 820.0,
+        "max_cape_j_kg": 530.0,
         "max_precipitation_probability": 3,
         "reasons": [
-          "CAPE moderado previsto 820 J/kg"
+          "CAPE moderado previsto 530 J/kg"
         ],
         "times": [
           "2026-10-04T21:00",
@@ -259,7 +260,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
           "weather_code": 3,
           "precipitation": 0.0,
@@ -271,10 +272,10 @@
         "risk": "medio",
         "score": 2,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 2150.0,
+        "max_cape_j_kg": 1830.0,
         "max_precipitation_probability": 28,
         "reasons": [
-          "CAPE máximo previsto 2150 J/kg"
+          "CAPE máximo previsto 1830 J/kg"
         ],
         "times": [
           "2026-10-04T21:00",
@@ -299,7 +300,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-10-04T21:30",
+          "time": "2026-10-04T21:45",
           "interval": 900,
           "weather_code": 1,
           "precipitation": 0.0,
@@ -329,6 +330,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "error": "HTTPError: HTTP Error 503: Service Temporarily Unavailable"
   }
 }
