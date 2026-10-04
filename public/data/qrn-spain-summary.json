@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-04T18:00:31.544254+00:00",
+  "generated_at": "2026-10-04T18:09:40.714084+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -147,13 +147,12 @@
         }
       },
       "forecast_6h": {
-        "risk": "alto",
-        "score": 4,
-        "thunderstorm_code_present": true,
+        "risk": "bajo",
+        "score": 1,
+        "thunderstorm_code_present": false,
         "max_cape_j_kg": 620.0,
         "max_precipitation_probability": 50,
         "reasons": [
-          "tormenta prevista por weather_code 95/96/99",
           "CAPE moderado previsto 620 J/kg"
         ],
         "times": [
@@ -221,8 +220,8 @@
         "observation": {
           "time": "2026-10-04T18:00",
           "interval": 900,
-          "weather_code": 80,
-          "precipitation": 0.1,
+          "weather_code": 3,
+          "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
         }
@@ -261,7 +260,7 @@
         "observation": {
           "time": "2026-10-04T18:00",
           "interval": 900,
-          "weather_code": 2,
+          "weather_code": 3,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -329,6 +328,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "error": "HTTPError: HTTP Error 503: Service Temporarily Unavailable"
   }
 }
