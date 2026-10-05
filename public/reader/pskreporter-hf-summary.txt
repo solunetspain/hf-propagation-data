@@ -1,6 +1,6 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-10-05T09:31:42.370079+00:00",
+  "generated_at": "2026-10-05T09:41:42.858597+00:00",
   "status": "ok",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
@@ -17,24 +17,38 @@
   "classification": "Observed reports after strict local post-filtering",
   "bands": {
     "40m": {
-      "report_count": 3,
-      "station_count": 4,
-      "route_count": 3,
+      "report_count": 4,
+      "station_count": 5,
+      "route_count": 4,
       "modes": {
-        "FT4": 3
+        "FT4": 4
       },
       "directions": {
-        "received_in_IN91": 3
+        "received_in_IN91": 4
       },
       "distance_km": {
         "minimum": 531.0,
-        "median": 830.1,
-        "maximum": 1361.0
+        "median": 1095.5,
+        "maximum": 1904.7
       },
-      "latest_observation_utc": "2026-10-05T09:28:51+00:00"
+      "latest_observation_utc": "2026-10-05T09:37:58+00:00"
     }
   },
   "examples": [
+    {
+      "timestamp_utc": "2026-10-05T09:37:58+00:00",
+      "frequency_hz": 7048854.0,
+      "band": "40m",
+      "mode": "FT4",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "OZ6Z",
+      "sender_locator": "JO47XG",
+      "receiver_callsign": "EA2FCW",
+      "receiver_locator": "IN91NO",
+      "snr_db": "-11",
+      "distance_km": 1904.7
+    },
     {
       "timestamp_utc": "2026-10-05T09:28:51+00:00",
       "frequency_hz": 7049307.0,
@@ -80,11 +94,11 @@
   ],
   "content_type": "text/xml; charset=utf-8",
   "http_attempts": 1,
-  "upstream_report_count": 3,
-  "accepted_report_count": 3,
+  "upstream_report_count": 4,
+  "accepted_report_count": 4,
   "scope_summary": {
     "exact_in91po_report_count": 0,
-    "regional_in91_report_count": 3,
+    "regional_in91_report_count": 4,
     "preferred_scope": "regional_IN91",
     "exact_in91po_bands": {}
   },
