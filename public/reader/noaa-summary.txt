@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-10-06T23:51:34.424717+00:00",
-  "status": "ok",
+  "generated_at": "2026-10-07T00:01:30.482258+00:00",
+  "status": "partial",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-10-06T23:48:00+00:00",
+      "timestamp_utc": "2026-10-06T23:59:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -21,16 +21,8 @@
         "Text": "none"
       }
     },
-    "geomagnetic": {
-      "timestamp_utc": "2026-10-06T00:00:00+00:00",
-      "kp": 2.0,
-      "a_index": 3.0,
-      "a_index_source": "NOAA estimated planetary A",
-      "station_count": 8,
-      "classification": "official 3-hour planetary Kp; estimated planetary A"
-    },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-10-06T23:47:00+00:00",
+      "timestamp_utc": "2026-10-06T23:56:00+00:00",
       "kp": 2.0,
       "estimated_kp": 1.67,
       "kp_code": "2M",
@@ -38,46 +30,46 @@
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-10-06T23:46:00+00:00",
-        "source": "SOLAR1",
-        "samples": 5,
-        "overall_quality": 0,
-        "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 2.54,
-        "speed_km_s": 415.6,
-        "temperature_k": 65357.0
-      },
-      "magnetic_field": {
-        "timestamp_utc": "2026-10-06T23:47:00+00:00",
+        "timestamp_utc": "2026-10-06T23:55:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": 0.975,
-        "by_gsm_nt": 0.6,
-        "bz_gsm_nt": -2.305,
-        "bt_nt": 2.63
+        "density_p_cm3": 2.655,
+        "speed_km_s": 409.35,
+        "temperature_k": 67382.0
+      },
+      "magnetic_field": {
+        "timestamp_utc": "2026-10-06T23:55:00+00:00",
+        "source": "SOLAR1",
+        "samples": 6,
+        "overall_quality": 0,
+        "selection": "active=true, overall_quality=0, median of up to 5 minutes",
+        "bx_gsm_nt": -0.465,
+        "by_gsm_nt": 2.055,
+        "bz_gsm_nt": -1.17,
+        "bt_nt": 2.555
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
     "xray": {
-      "timestamp_utc": "2026-10-06T23:48:00+00:00",
-      "flux_w_m2": 9.75310399553564e-07,
-      "class": "B9.8",
+      "timestamp_utc": "2026-10-06T23:58:00+00:00",
+      "flux_w_m2": 9.622530114938854e-07,
+      "class": "B9.6",
       "energy": "0.1-0.8nm",
       "satellite": 18
     },
     "protons": {
-      "timestamp_utc": "2026-10-06T23:40:00+00:00",
-      "flux": 0.419987291097641,
+      "timestamp_utc": "2026-10-06T23:50:00+00:00",
+      "flux": 0.36040934920310974,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
     },
     "electrons": {
-      "timestamp_utc": "2026-10-06T23:40:00+00:00",
-      "flux": 4186.44921875,
+      "timestamp_utc": "2026-10-06T23:50:00+00:00",
+      "flux": 4113.150390625,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -102,7 +94,7 @@
     "scales": {
       "1": {
         "DateStamp": "2026-10-06",
-        "TimeStamp": "23:48:00",
+        "TimeStamp": "23:59:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -161,7 +153,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-10-06T23:49:00+00:00",
+    "timestamp_utc": "2026-10-06T23:57:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -255,7 +247,7 @@
   },
   "validation": {
     "scales": true,
-    "kp": true,
+    "kp": false,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
@@ -276,5 +268,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "kp"
+  ]
 }
