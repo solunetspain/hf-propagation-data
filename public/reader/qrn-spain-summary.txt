@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-07T00:31:39.766453+00:00",
+  "generated_at": "2026-10-07T00:41:34.037034+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -34,10 +34,10 @@
         "risk": "bajo",
         "score": 1,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 660.0,
-        "max_precipitation_probability": 25,
+        "max_cape_j_kg": 560.0,
+        "max_precipitation_probability": 0,
         "reasons": [
-          "CAPE moderado previsto 660 J/kg"
+          "CAPE moderado previsto 560 J/kg"
         ],
         "times": [
           "2026-10-07T00:00",
@@ -64,7 +64,7 @@
         "observation": {
           "time": "2026-10-07T00:30",
           "interval": 900,
-          "weather_code": 3,
+          "weather_code": 45,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -75,7 +75,7 @@
         "score": 0,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 30.0,
-        "max_precipitation_probability": 13,
+        "max_precipitation_probability": 65,
         "reasons": [],
         "times": [
           "2026-10-07T00:00",
@@ -109,12 +109,15 @@
         }
       },
       "forecast_6h": {
-        "risk": "bajo",
-        "score": 0,
+        "risk": "medio",
+        "score": 2,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 230.0,
-        "max_precipitation_probability": 30,
-        "reasons": [],
+        "max_cape_j_kg": 300.0,
+        "max_precipitation_probability": 70,
+        "reasons": [
+          "CAPE moderado previsto 300 J/kg",
+          "probabilidad de precipitación prevista 70%"
+        ],
         "times": [
           "2026-10-07T00:00",
           "2026-10-07T01:00",
@@ -141,20 +144,19 @@
           "time": "2026-10-07T00:30",
           "interval": 900,
           "weather_code": 80,
-          "precipitation": 0.2,
+          "precipitation": 0.1,
           "rain": 0.0,
-          "showers": 0.2
+          "showers": 0.1
         }
       },
       "forecast_6h": {
-        "risk": "alto",
-        "score": 4,
+        "risk": "medio",
+        "score": 3,
         "thunderstorm_code_present": true,
         "max_cape_j_kg": 200.0,
-        "max_precipitation_probability": 75,
+        "max_precipitation_probability": 55,
         "reasons": [
-          "tormenta prevista por weather_code 95/96/99",
-          "probabilidad de precipitación prevista 75%"
+          "tormenta prevista por weather_code 95/96/99"
         ],
         "times": [
           "2026-10-07T00:00",
@@ -192,7 +194,7 @@
         "score": 0,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 180.0,
-        "max_precipitation_probability": 15,
+        "max_precipitation_probability": 33,
         "reasons": [],
         "times": [
           "2026-10-07T00:00",
@@ -269,10 +271,10 @@
         "risk": "medio",
         "score": 2,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 1740.0,
-        "max_precipitation_probability": 13,
+        "max_cape_j_kg": 1800.0,
+        "max_precipitation_probability": 25,
         "reasons": [
-          "CAPE máximo previsto 1740 J/kg"
+          "CAPE máximo previsto 1800 J/kg"
         ],
         "times": [
           "2026-10-07T00:00",
@@ -299,7 +301,7 @@
         "observation": {
           "time": "2026-10-07T00:30",
           "interval": 900,
-          "weather_code": 2,
+          "weather_code": 0,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -309,8 +311,8 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 190.0,
-        "max_precipitation_probability": 15,
+        "max_cape_j_kg": 170.0,
+        "max_precipitation_probability": 19,
         "reasons": [],
         "times": [
           "2026-10-07T00:00",
