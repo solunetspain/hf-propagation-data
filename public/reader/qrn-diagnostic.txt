@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-08T14:35:15.458431+00:00",
+  "generated_at": "2026-10-08T14:46:29.604704+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: <urlopen error [Errno 104] Connection reset by peer>"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
   ],
   "validation": {
     "model_response_received": true,
@@ -37,6 +37,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "URLError: <urlopen error [Errno 104] Connection reset by peer>"
+    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
   }
 }
