@@ -1,8 +1,13 @@
 {
-  "generated_at": "2026-10-14T00:52:38.521229+00:00",
-  "status": "ok",
+  "generated_at": "2026-10-14T01:01:40.666821+00:00",
+  "status": "partial",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Galicia: HTTP Error 503: Service Unavailable",
+    "Cantabrico: HTTP Error 503: Service Unavailable",
+    "Centro: HTTP Error 503: Service Unavailable",
+    "Mediterraneo: HTTP Error 503: Service Unavailable",
+    "Canarias: <urlopen error _ssl.c:993: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -14,16 +19,20 @@
       "status": "ok"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Andalucia": {
       "status": "ok"
@@ -32,7 +41,8 @@
       "status": "ok"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     }
   },
   "aemet_lightning": {
