@@ -1,7 +1,7 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-10-16T14:57:28.605321+00:00",
-  "status": "error",
+  "generated_at": "2026-10-16T15:10:57.486013+00:00",
+  "status": "partial",
   "scope": "Observed HF reports attributable to Península, Baleares or Canarias",
   "classification_method": "Spanish call area with locator cross-check",
   "query_fields": [
@@ -12,47 +12,1802 @@
     "JN"
   ],
   "query_window_seconds": 3600,
-  "raw_report_count": 0,
-  "accepted_report_count": 0,
-  "rejected_report_counts": {},
+  "raw_report_count": 1737,
+  "accepted_report_count": 76,
+  "rejected_report_counts": {
+    "no_regional_attribution": 1654,
+    "outside_supported_hf_band": 7
+  },
   "coverage": {
     "queries_total": 5,
-    "queries_successful": 0,
-    "query_success_pct": 0,
-    "regional_attribution_pct": 0.0,
-    "unique_stations": 0,
-    "unique_routes": 0
+    "queries_successful": 1,
+    "query_success_pct": 20,
+    "regional_attribution_pct": 4.4,
+    "unique_stations": 72,
+    "unique_routes": 76
   },
   "regions": {
     "peninsula": {
-      "status": "no_activity_observed",
-      "report_count": 0,
-      "bands": {},
-      "observations": [],
-      "consultation_reliability_pct": 0,
-      "evidence_weight_recommendation": 0
+      "status": "ok",
+      "report_count": 62,
+      "bands": {
+        "40m": {
+          "report_count": 4,
+          "station_count": 6,
+          "route_count": 4,
+          "unique_sender_count": 2,
+          "unique_receiver_count": 4,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "4": 1,
+            "5": 1,
+            "7": 1
+          },
+          "ea_areas": [
+            "EA4",
+            "EA5",
+            "EA7"
+          ],
+          "modes": {
+            "FT8": 4
+          },
+          "directions": {
+            "received_in_region": 3,
+            "transmitted_from_region": 1
+          },
+          "distance_km": {
+            "minimum": 1150.4,
+            "median": 1295.6,
+            "maximum": 1682.0
+          },
+          "latest_observation_utc": "2026-10-16T15:10:59+00:00"
+        },
+        "30m": {
+          "report_count": 2,
+          "station_count": 3,
+          "route_count": 2,
+          "unique_sender_count": 2,
+          "unique_receiver_count": 1,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "3": 1,
+            "5": 1
+          },
+          "ea_areas": [
+            "EA3",
+            "EA5"
+          ],
+          "modes": {
+            "FT8": 2
+          },
+          "directions": {
+            "transmitted_from_region": 2
+          },
+          "distance_km": {
+            "minimum": 1066.1,
+            "median": 1189.9,
+            "maximum": 1313.7
+          },
+          "latest_observation_utc": "2026-10-16T15:10:42+00:00"
+        },
+        "20m": {
+          "report_count": 9,
+          "station_count": 11,
+          "route_count": 9,
+          "unique_sender_count": 7,
+          "unique_receiver_count": 4,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "2": 3,
+            "5": 1,
+            "7": 1
+          },
+          "ea_areas": [
+            "EA2",
+            "EA5",
+            "EA7"
+          ],
+          "modes": {
+            "FT8": 9
+          },
+          "directions": {
+            "transmitted_from_region": 9
+          },
+          "distance_km": {
+            "minimum": 1241.8,
+            "median": 1815.8,
+            "maximum": 2120.1
+          },
+          "latest_observation_utc": "2026-10-16T15:11:04+00:00"
+        },
+        "15m": {
+          "report_count": 33,
+          "station_count": 24,
+          "route_count": 33,
+          "unique_sender_count": 11,
+          "unique_receiver_count": 17,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "1": 8,
+            "2": 2,
+            "3": 4,
+            "4": 4,
+            "5": 3,
+            "7": 2,
+            "9": 2
+          },
+          "ea_areas": [
+            "EA1",
+            "EA2",
+            "EA3",
+            "EA4",
+            "EA5",
+            "EA7",
+            "EA9"
+          ],
+          "modes": {
+            "FT8": 33
+          },
+          "directions": {
+            "received_in_region": 24,
+            "transmitted_from_region": 9
+          },
+          "distance_km": {
+            "minimum": 1220.6,
+            "median": 1663.5,
+            "maximum": 2112.7
+          },
+          "latest_observation_utc": "2026-10-16T15:11:29+00:00"
+        },
+        "12m": {
+          "report_count": 6,
+          "station_count": 9,
+          "route_count": 6,
+          "unique_sender_count": 4,
+          "unique_receiver_count": 5,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "1": 1,
+            "4": 1,
+            "7": 1
+          },
+          "ea_areas": [
+            "EA1",
+            "EA4",
+            "EA7"
+          ],
+          "modes": {
+            "FT8": 6
+          },
+          "directions": {
+            "received_in_region": 3,
+            "transmitted_from_region": 3
+          },
+          "distance_km": {
+            "minimum": 1754.3,
+            "median": 1949.9,
+            "maximum": 2108.0
+          },
+          "latest_observation_utc": "2026-10-16T15:11:15+00:00"
+        },
+        "10m": {
+          "report_count": 8,
+          "station_count": 12,
+          "route_count": 8,
+          "unique_sender_count": 7,
+          "unique_receiver_count": 6,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "1": 2,
+            "5": 1,
+            "7": 1
+          },
+          "ea_areas": [
+            "EA1",
+            "EA5",
+            "EA7"
+          ],
+          "modes": {
+            "FT8": 8
+          },
+          "directions": {
+            "received_in_region": 2,
+            "transmitted_from_region": 6
+          },
+          "distance_km": {
+            "minimum": 1353.0,
+            "median": 2088.4,
+            "maximum": 2249.5
+          },
+          "latest_observation_utc": "2026-10-16T15:11:30+00:00"
+        }
+      },
+      "observations": [
+        {
+          "timestamp_utc": "2026-10-16T15:11:30+00:00",
+          "frequency_hz": 28075014.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EB5FMC",
+          "receiver_callsign": "IT9EUT",
+          "distance_km": 1353.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:29+00:00",
+          "frequency_hz": 21075277.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA1ESW",
+          "receiver_callsign": "IT9CBE",
+          "distance_km": 1613.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:28+00:00",
+          "frequency_hz": 21075004.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA7L",
+          "receiver_callsign": "IU8CKP",
+          "distance_km": 1637.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:16+00:00",
+          "frequency_hz": 21075618.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "EA3IDY",
+          "distance_km": 1303.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:15+00:00",
+          "frequency_hz": 21075623.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "CR6K",
+          "distance_km": 2083.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:15+00:00",
+          "frequency_hz": 21075137.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9CBE",
+          "receiver_callsign": "CR7CDF",
+          "distance_km": 1981.7
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:15+00:00",
+          "frequency_hz": 21075624.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "CR7CDF",
+          "distance_km": 2112.7
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:15+00:00",
+          "frequency_hz": 24915920.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SSI",
+          "receiver_callsign": "CR7CDF",
+          "distance_km": 2108.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:15+00:00",
+          "frequency_hz": 28075502.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "CT7ATA",
+          "receiver_callsign": "IT9IST",
+          "distance_km": 2087.3
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:14+00:00",
+          "frequency_hz": 28075510.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "CR7CDG",
+          "receiver_callsign": "IU7QBB",
+          "distance_km": 2249.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:12+00:00",
+          "frequency_hz": 21075635.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "EA9RY",
+          "distance_km": 1641.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:12+00:00",
+          "frequency_hz": 21075617.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "EA1ESW",
+          "distance_km": 1758.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:12+00:00",
+          "frequency_hz": 21075646.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "EA4IPN",
+          "distance_km": 1664.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:04+00:00",
+          "frequency_hz": 14074615.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA2AWS",
+          "receiver_callsign": "IW9GDC",
+          "distance_km": 1421.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21075634.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "CT1EYQ",
+          "distance_km": 2109.2
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21075641.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "C31KC",
+          "distance_km": 1304.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21074579.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9GJK",
+          "receiver_callsign": "CT1EYQ",
+          "distance_km": 2093.8
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21075621.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "AM5GC",
+          "distance_km": 1657.9
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21075618.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "EA4T",
+          "distance_km": 1701.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:59+00:00",
+          "frequency_hz": 7057962.0,
+          "band": "40m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SVJ",
+          "receiver_callsign": "EA5U",
+          "distance_km": 1206.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:58+00:00",
+          "frequency_hz": 21074952.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA7L",
+          "receiver_callsign": "IT9CBE",
+          "distance_km": 1462.3
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:57+00:00",
+          "frequency_hz": 21075252.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA3HKA",
+          "receiver_callsign": "IU8CKP",
+          "distance_km": 1220.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:57+00:00",
+          "frequency_hz": 21075839.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA2DR",
+          "receiver_callsign": "IU8CKP",
+          "distance_km": 1663.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:45+00:00",
+          "frequency_hz": 24915932.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SSI",
+          "receiver_callsign": "CT1EYQ",
+          "distance_km": 2107.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:45+00:00",
+          "frequency_hz": 28075063.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EB1LA",
+          "receiver_callsign": "IW8PQ",
+          "distance_km": 1890.9
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:44+00:00",
+          "frequency_hz": 24915506.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA1IOK",
+          "receiver_callsign": "IT9CUE",
+          "distance_km": 1806.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:42+00:00",
+          "frequency_hz": 21076215.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA5D",
+          "receiver_callsign": "IU8CKP",
+          "distance_km": 1366.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:42+00:00",
+          "frequency_hz": 10136675.0,
+          "band": "30m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA5FD",
+          "receiver_callsign": "IT9WMD",
+          "distance_km": 1313.7
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:34+00:00",
+          "frequency_hz": 14076229.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA7KBG",
+          "receiver_callsign": "IW9GDC",
+          "distance_km": 1888.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:30+00:00",
+          "frequency_hz": 28075556.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IW8PQ",
+          "receiver_callsign": "CT7AJC",
+          "distance_km": 2089.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:30+00:00",
+          "frequency_hz": 28075560.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IW8PQ",
+          "receiver_callsign": "EA1ISQ",
+          "distance_km": 1901.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:29+00:00",
+          "frequency_hz": 7057960.0,
+          "band": "40m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SVJ",
+          "receiver_callsign": "F5BZB",
+          "distance_km": 1150.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:29+00:00",
+          "frequency_hz": 7057959.0,
+          "band": "40m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SVJ",
+          "receiver_callsign": "EA7GG",
+          "distance_km": 1682.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:17+00:00",
+          "frequency_hz": 14074621.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA5JMO",
+          "receiver_callsign": "IZ8JFA",
+          "distance_km": 1392.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:14+00:00",
+          "frequency_hz": 21075489.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9CBE",
+          "receiver_callsign": "EA1N",
+          "distance_km": 1766.8
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:14+00:00",
+          "frequency_hz": 21075490.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9CBE",
+          "receiver_callsign": "EA1FNS",
+          "distance_km": 1960.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:13+00:00",
+          "frequency_hz": 28075570.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA7DNE",
+          "receiver_callsign": "IU7QBB",
+          "distance_km": 2107.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:12+00:00",
+          "frequency_hz": 21074563.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9GJK",
+          "receiver_callsign": "EA1ESW",
+          "distance_km": 1728.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:12+00:00",
+          "frequency_hz": 21075489.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9CBE",
+          "receiver_callsign": "EA1ESW",
+          "distance_km": 1613.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:04+00:00",
+          "frequency_hz": 14075632.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "CT1FSA",
+          "receiver_callsign": "IW9GDC",
+          "distance_km": 2085.7
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:04+00:00",
+          "frequency_hz": 21075803.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA4IPN",
+          "receiver_callsign": "IW9GDC",
+          "distance_km": 1661.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:00+00:00",
+          "frequency_hz": 24917666.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA7R",
+          "receiver_callsign": "IT9LCC",
+          "distance_km": 1944.8
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:00+00:00",
+          "frequency_hz": 21074260.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "EA9RY",
+          "distance_km": 1566.8
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:59+00:00",
+          "frequency_hz": 14075270.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "F5OYA",
+          "receiver_callsign": "IZ8BRI",
+          "distance_km": 1241.8
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:57+00:00",
+          "frequency_hz": 21074241.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "EA1ESW",
+          "distance_km": 1769.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:45+00:00",
+          "frequency_hz": 14074592.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA2AWS",
+          "receiver_callsign": "IT9DVZ",
+          "distance_km": 1421.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:29+00:00",
+          "frequency_hz": 24915911.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SSI",
+          "receiver_callsign": "EA4GOY",
+          "distance_km": 1754.3
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:28+00:00",
+          "frequency_hz": 21074430.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "AM5GC",
+          "receiver_callsign": "IT9CBE",
+          "distance_km": 1515.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:27+00:00",
+          "frequency_hz": 14075619.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "CT1FSA",
+          "receiver_callsign": "IZ8JFA",
+          "distance_km": 2120.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:27+00:00",
+          "frequency_hz": 14076860.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "CT1ANO",
+          "receiver_callsign": "IZ8JFA",
+          "distance_km": 2103.7
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:27+00:00",
+          "frequency_hz": 21075239.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "EA3HMM",
+          "distance_km": 1300.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:13+00:00",
+          "frequency_hz": 10137055.0,
+          "band": "30m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA3HYJ",
+          "receiver_callsign": "IT9WMD",
+          "distance_km": 1066.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:12+00:00",
+          "frequency_hz": 14074662.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA2EED",
+          "receiver_callsign": "IZ8JFA",
+          "distance_km": 1815.8
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:04+00:00",
+          "frequency_hz": 21075795.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA2DR",
+          "receiver_callsign": "IW9GDC",
+          "distance_km": 1650.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:00+00:00",
+          "frequency_hz": 21074247.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "CR6K",
+          "distance_km": 2063.9
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:00+00:00",
+          "frequency_hz": 28075505.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "CS7BPG",
+          "receiver_callsign": "IT9IST",
+          "distance_km": 2119.9
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:00+00:00",
+          "frequency_hz": 24916985.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EG46PPA",
+          "receiver_callsign": "IT9LCC",
+          "distance_km": 1955.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:08:59+00:00",
+          "frequency_hz": 21074240.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "EA3IDY",
+          "distance_km": 1310.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:08:59+00:00",
+          "frequency_hz": 21074242.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "EA1N",
+          "distance_km": 1919.3
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:08:56+00:00",
+          "frequency_hz": 7074903.0,
+          "band": "40m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": "peninsula",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA4GG",
+          "receiver_callsign": "IZ8EYN",
+          "distance_km": 1385.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:08:45+00:00",
+          "frequency_hz": 21074266.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "9H2TM",
+          "receiver_callsign": "EA4RCW",
+          "distance_km": 1688.6
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:08:45+00:00",
+          "frequency_hz": 21075134.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "peninsula"
+          ],
+          "sender_region": null,
+          "receiver_region": "peninsula",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9CBE",
+          "receiver_callsign": "CR6K",
+          "distance_km": 1945.2
+        }
+      ],
+      "consultation_reliability_pct": 20,
+      "evidence_weight_recommendation": 2
     },
     "baleares": {
-      "status": "no_activity_observed",
-      "report_count": 0,
-      "bands": {},
-      "observations": [],
-      "consultation_reliability_pct": 0,
-      "evidence_weight_recommendation": 0
+      "status": "ok",
+      "report_count": 3,
+      "bands": {
+        "10m": {
+          "report_count": 3,
+          "station_count": 4,
+          "route_count": 3,
+          "unique_sender_count": 1,
+          "unique_receiver_count": 3,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "6": 3
+          },
+          "ea_areas": [
+            "EA6"
+          ],
+          "modes": {
+            "FT8": 3
+          },
+          "directions": {
+            "transmitted_from_region": 3
+          },
+          "distance_km": {
+            "minimum": 2254.8,
+            "median": 7939.2,
+            "maximum": 9118.0
+          },
+          "latest_observation_utc": "2026-10-16T15:08:30+00:00"
+        }
+      },
+      "observations": [
+        {
+          "timestamp_utc": "2026-10-16T15:08:30+00:00",
+          "frequency_hz": 28076101.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "baleares"
+          ],
+          "sender_region": "baleares",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA6EJ",
+          "receiver_callsign": "PP8ES",
+          "distance_km": 7939.2
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:06:59+00:00",
+          "frequency_hz": 28076034.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "baleares"
+          ],
+          "sender_region": "baleares",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA6EJ",
+          "receiver_callsign": "3B9FR",
+          "distance_km": 9118.0
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:06:45+00:00",
+          "frequency_hz": 28076099.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "baleares"
+          ],
+          "sender_region": "baleares",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA6EJ",
+          "receiver_callsign": "SV5BYP",
+          "distance_km": 2254.8
+        }
+      ],
+      "consultation_reliability_pct": 20,
+      "evidence_weight_recommendation": 2
     },
     "canarias": {
-      "status": "no_activity_observed",
-      "report_count": 0,
-      "bands": {},
-      "observations": [],
-      "consultation_reliability_pct": 0,
-      "evidence_weight_recommendation": 0
+      "status": "ok",
+      "report_count": 11,
+      "bands": {
+        "20m": {
+          "report_count": 3,
+          "station_count": 4,
+          "route_count": 3,
+          "unique_sender_count": 1,
+          "unique_receiver_count": 3,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "8": 3
+          },
+          "ea_areas": [
+            "EA8"
+          ],
+          "modes": {
+            "FT8": 3
+          },
+          "directions": {
+            "transmitted_from_region": 3
+          },
+          "distance_km": {
+            "minimum": 3314.4,
+            "median": 3380.2,
+            "maximum": 3396.3
+          },
+          "latest_observation_utc": "2026-10-16T15:09:31+00:00"
+        },
+        "15m": {
+          "report_count": 3,
+          "station_count": 4,
+          "route_count": 3,
+          "unique_sender_count": 3,
+          "unique_receiver_count": 1,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "8": 3
+          },
+          "ea_areas": [
+            "EA8"
+          ],
+          "modes": {
+            "FT8": 3
+          },
+          "directions": {
+            "received_in_region": 3
+          },
+          "distance_km": {
+            "minimum": 2767.5,
+            "median": 2863.3,
+            "maximum": 2866.2
+          },
+          "latest_observation_utc": "2026-10-16T15:11:00+00:00"
+        },
+        "12m": {
+          "report_count": 3,
+          "station_count": 4,
+          "route_count": 3,
+          "unique_sender_count": 2,
+          "unique_receiver_count": 2,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "8": 3
+          },
+          "ea_areas": [
+            "EA8"
+          ],
+          "modes": {
+            "FT8": 3
+          },
+          "directions": {
+            "received_in_region": 3
+          },
+          "distance_km": {
+            "minimum": 2416.1,
+            "median": 2614.5,
+            "maximum": 2900.5
+          },
+          "latest_observation_utc": "2026-10-16T15:10:44+00:00"
+        },
+        "10m": {
+          "report_count": 2,
+          "station_count": 3,
+          "route_count": 2,
+          "unique_sender_count": 2,
+          "unique_receiver_count": 1,
+          "snr_db": {
+            "median": null,
+            "minimum": null,
+            "maximum": null,
+            "sample_count": 0
+          },
+          "ea_area_counts": {
+            "8": 2
+          },
+          "ea_areas": [
+            "EA8"
+          ],
+          "modes": {
+            "FT8": 2
+          },
+          "directions": {
+            "received_in_region": 2
+          },
+          "distance_km": {
+            "minimum": 2429.2,
+            "median": 2545.9,
+            "maximum": 2662.7
+          },
+          "latest_observation_utc": "2026-10-16T15:10:00+00:00"
+        }
+      },
+      "observations": [
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21075137.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9CBE",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2767.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:11:00+00:00",
+          "frequency_hz": 21075624.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9MRM",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2863.3
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:44+00:00",
+          "frequency_hz": 24917270.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IS0AFM",
+          "receiver_callsign": "EA8DHH",
+          "distance_km": 2614.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:00+00:00",
+          "frequency_hz": 21074570.0,
+          "band": "15m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9GJK",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2866.2
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:10:00+00:00",
+          "frequency_hz": 28075402.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IS0LBE",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2429.2
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:31+00:00",
+          "frequency_hz": 14076862.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": "canarias",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA8AT",
+          "receiver_callsign": "IZ8JFA",
+          "distance_km": 3396.3
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:30+00:00",
+          "frequency_hz": 28076175.0,
+          "band": "10m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9JVG",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2662.7
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:30+00:00",
+          "frequency_hz": 24917142.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IS0AFM",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2416.1
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:15+00:00",
+          "frequency_hz": 24915919.0,
+          "band": "12m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": null,
+          "receiver_region": "canarias",
+          "direction": "received_in_region",
+          "sender_callsign": "IT9SSI",
+          "receiver_callsign": "EA8DF4UE",
+          "distance_km": 2900.5
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:04+00:00",
+          "frequency_hz": 14076873.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": "canarias",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA8AT",
+          "receiver_callsign": "IW9GDC",
+          "distance_km": 3314.4
+        },
+        {
+          "timestamp_utc": "2026-10-16T15:09:00+00:00",
+          "frequency_hz": 14076860.0,
+          "band": "20m",
+          "mode": "FT8",
+          "regions": [
+            "canarias"
+          ],
+          "sender_region": "canarias",
+          "receiver_region": null,
+          "direction": "transmitted_from_region",
+          "sender_callsign": "EA8AT",
+          "receiver_callsign": "IZ8BRI",
+          "distance_km": 3380.2
+        }
+      ],
+      "consultation_reliability_pct": 20,
+      "evidence_weight_recommendation": 2
     }
   },
   "national_fallback": {
-    "status": "no_activity_observed",
-    "report_count": 0,
-    "bands": {},
+    "status": "available",
+    "report_count": 76,
+    "bands": {
+      "40m": {
+        "report_count": 4,
+        "station_count": 6,
+        "route_count": 4,
+        "unique_sender_count": 2,
+        "unique_receiver_count": 4,
+        "snr_db": {
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "sample_count": 0
+        },
+        "ea_area_counts": {
+          "4": 1,
+          "5": 1,
+          "7": 1
+        },
+        "ea_areas": [
+          "EA4",
+          "EA5",
+          "EA7"
+        ],
+        "modes": {
+          "FT8": 4
+        },
+        "directions": {
+          "received_in_region": 3,
+          "transmitted_from_region": 1
+        },
+        "distance_km": {
+          "minimum": 1150.4,
+          "median": 1295.6,
+          "maximum": 1682.0
+        },
+        "latest_observation_utc": "2026-10-16T15:10:59+00:00"
+      },
+      "30m": {
+        "report_count": 2,
+        "station_count": 3,
+        "route_count": 2,
+        "unique_sender_count": 2,
+        "unique_receiver_count": 1,
+        "snr_db": {
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "sample_count": 0
+        },
+        "ea_area_counts": {
+          "3": 1,
+          "5": 1
+        },
+        "ea_areas": [
+          "EA3",
+          "EA5"
+        ],
+        "modes": {
+          "FT8": 2
+        },
+        "directions": {
+          "transmitted_from_region": 2
+        },
+        "distance_km": {
+          "minimum": 1066.1,
+          "median": 1189.9,
+          "maximum": 1313.7
+        },
+        "latest_observation_utc": "2026-10-16T15:10:42+00:00"
+      },
+      "20m": {
+        "report_count": 12,
+        "station_count": 12,
+        "route_count": 12,
+        "unique_sender_count": 8,
+        "unique_receiver_count": 4,
+        "snr_db": {
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "sample_count": 0
+        },
+        "ea_area_counts": {
+          "2": 3,
+          "5": 1,
+          "7": 1,
+          "8": 3
+        },
+        "ea_areas": [
+          "EA2",
+          "EA5",
+          "EA7",
+          "EA8"
+        ],
+        "modes": {
+          "FT8": 12
+        },
+        "directions": {
+          "transmitted_from_region": 12
+        },
+        "distance_km": {
+          "minimum": 1241.8,
+          "median": 1986.9,
+          "maximum": 3396.3
+        },
+        "latest_observation_utc": "2026-10-16T15:11:04+00:00"
+      },
+      "15m": {
+        "report_count": 36,
+        "station_count": 25,
+        "route_count": 36,
+        "unique_sender_count": 11,
+        "unique_receiver_count": 18,
+        "snr_db": {
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "sample_count": 0
+        },
+        "ea_area_counts": {
+          "1": 8,
+          "2": 2,
+          "3": 4,
+          "4": 4,
+          "5": 3,
+          "7": 2,
+          "8": 3,
+          "9": 2
+        },
+        "ea_areas": [
+          "EA1",
+          "EA2",
+          "EA3",
+          "EA4",
+          "EA5",
+          "EA7",
+          "EA8",
+          "EA9"
+        ],
+        "modes": {
+          "FT8": 36
+        },
+        "directions": {
+          "received_in_region": 27,
+          "transmitted_from_region": 9
+        },
+        "distance_km": {
+          "minimum": 1220.6,
+          "median": 1676.5,
+          "maximum": 2866.2
+        },
+        "latest_observation_utc": "2026-10-16T15:11:29+00:00"
+      },
+      "12m": {
+        "report_count": 9,
+        "station_count": 12,
+        "route_count": 9,
+        "unique_sender_count": 5,
+        "unique_receiver_count": 7,
+        "snr_db": {
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "sample_count": 0
+        },
+        "ea_area_counts": {
+          "1": 1,
+          "4": 1,
+          "7": 1,
+          "8": 3
+        },
+        "ea_areas": [
+          "EA1",
+          "EA4",
+          "EA7",
+          "EA8"
+        ],
+        "modes": {
+          "FT8": 9
+        },
+        "directions": {
+          "received_in_region": 6,
+          "transmitted_from_region": 3
+        },
+        "distance_km": {
+          "minimum": 1754.3,
+          "median": 2107.4,
+          "maximum": 2900.5
+        },
+        "latest_observation_utc": "2026-10-16T15:11:15+00:00"
+      },
+      "10m": {
+        "report_count": 13,
+        "station_count": 19,
+        "route_count": 13,
+        "unique_sender_count": 10,
+        "unique_receiver_count": 10,
+        "snr_db": {
+          "median": null,
+          "minimum": null,
+          "maximum": null,
+          "sample_count": 0
+        },
+        "ea_area_counts": {
+          "1": 2,
+          "5": 1,
+          "6": 3,
+          "7": 1,
+          "8": 2
+        },
+        "ea_areas": [
+          "EA1",
+          "EA5",
+          "EA6",
+          "EA7",
+          "EA8"
+        ],
+        "modes": {
+          "FT8": 13
+        },
+        "directions": {
+          "received_in_region": 4,
+          "transmitted_from_region": 9
+        },
+        "distance_km": {
+          "minimum": 1353.0,
+          "median": 2119.9,
+          "maximum": 9118.0
+        },
+        "latest_observation_utc": "2026-10-16T15:11:30+00:00"
+      }
+    },
     "use_only_when_regional_attribution_is_insufficient": true
   }
 }
