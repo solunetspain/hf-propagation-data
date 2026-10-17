@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-17T15:32:11.491856+00:00",
+  "generated_at": "2026-10-17T15:44:01.142245+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -24,7 +24,7 @@
         "observation": {
           "time": "2026-10-17T15:30",
           "interval": 900,
-          "weather_code": 1,
+          "weather_code": 2,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -34,7 +34,7 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 0.0,
+        "max_cape_j_kg": 40.0,
         "max_precipitation_probability": 0,
         "reasons": [],
         "times": [
@@ -62,7 +62,7 @@
         "observation": {
           "time": "2026-10-17T15:30",
           "interval": 900,
-          "weather_code": 1,
+          "weather_code": 2,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -108,11 +108,13 @@
       },
       "forecast_6h": {
         "risk": "bajo",
-        "score": 0,
+        "score": 1,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 70.0,
-        "max_precipitation_probability": 50,
-        "reasons": [],
+        "max_precipitation_probability": 97,
+        "reasons": [
+          "probabilidad de precipitación prevista 97%"
+        ],
         "times": [
           "2026-10-17T15:00",
           "2026-10-17T16:00",
@@ -149,7 +151,7 @@
         "score": 0,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 130.0,
-        "max_precipitation_probability": 38,
+        "max_precipitation_probability": 69,
         "reasons": [],
         "times": [
           "2026-10-17T15:00",
@@ -186,11 +188,11 @@
         "risk": "alto",
         "score": 4,
         "thunderstorm_code_present": true,
-        "max_cape_j_kg": 980.0,
-        "max_precipitation_probability": 58,
+        "max_cape_j_kg": 820.0,
+        "max_precipitation_probability": 37,
         "reasons": [
           "tormenta prevista por weather_code 95/96/99",
-          "CAPE moderado previsto 980 J/kg"
+          "CAPE moderado previsto 820 J/kg"
         ],
         "times": [
           "2026-10-17T15:00",
@@ -227,10 +229,11 @@
         "risk": "medio",
         "score": 2,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 1010.0,
-        "max_precipitation_probability": 28,
+        "max_cape_j_kg": 710.0,
+        "max_precipitation_probability": 70,
         "reasons": [
-          "CAPE máximo previsto 1010 J/kg"
+          "CAPE moderado previsto 710 J/kg",
+          "probabilidad de precipitación prevista 70%"
         ],
         "times": [
           "2026-10-17T15:00",
@@ -267,8 +270,8 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 130.0,
-        "max_precipitation_probability": 0,
+        "max_cape_j_kg": 140.0,
+        "max_precipitation_probability": 4,
         "reasons": [],
         "times": [
           "2026-10-17T15:00",
@@ -305,8 +308,8 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 40.0,
-        "max_precipitation_probability": 0,
+        "max_cape_j_kg": 130.0,
+        "max_precipitation_probability": 20,
         "reasons": [],
         "times": [
           "2026-10-17T15:00",
