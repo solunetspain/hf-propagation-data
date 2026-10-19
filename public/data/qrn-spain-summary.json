@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-19T18:00:33.192206+00:00",
+  "generated_at": "2026-10-19T18:13:37.811404+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -24,7 +24,7 @@
         "observation": {
           "time": "2026-10-19T18:00",
           "interval": 900,
-          "weather_code": 61,
+          "weather_code": 3,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -224,11 +224,11 @@
         "risk": "alto",
         "score": 4,
         "thunderstorm_code_present": true,
-        "max_cape_j_kg": 640.0,
+        "max_cape_j_kg": 490.0,
         "max_precipitation_probability": 63,
         "reasons": [
           "tormenta prevista por weather_code 95/96/99",
-          "CAPE moderado previsto 640 J/kg"
+          "CAPE moderado previsto 490 J/kg"
         ],
         "times": [
           "2026-10-19T18:00",
@@ -243,33 +243,33 @@
     "Baleares": {
       "latitude": 39.57,
       "longitude": 2.65,
-      "risk": "alto",
-      "score": 4,
+      "risk": "bajo",
+      "score": 0,
       "current_risk": {
-        "risk": "alto",
-        "score": 4,
-        "thunderstorm_code_present": true,
+        "risk": "bajo",
+        "score": 0,
+        "thunderstorm_code_present": false,
         "reasons": [
-          "weather_code actual de tormenta 95/96/99"
+          "sin código actual de tormenta"
         ],
         "observation": {
           "time": "2026-10-19T18:00",
           "interval": 900,
-          "weather_code": 95,
-          "precipitation": 0.5,
+          "weather_code": 81,
+          "precipitation": 0.6,
           "rain": 0.0,
-          "showers": 0.5
+          "showers": 0.6
         }
       },
       "forecast_6h": {
         "risk": "alto",
         "score": 5,
         "thunderstorm_code_present": true,
-        "max_cape_j_kg": 590.0,
+        "max_cape_j_kg": 730.0,
         "max_precipitation_probability": 95,
         "reasons": [
           "tormenta prevista por weather_code 95/96/99",
-          "CAPE moderado previsto 590 J/kg",
+          "CAPE moderado previsto 730 J/kg",
           "probabilidad de precipitación prevista 95%"
         ],
         "times": [
