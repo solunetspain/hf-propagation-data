@@ -1,8 +1,10 @@
 {
-  "generated_at": "2026-10-19T12:46:40.091407+00:00",
+  "generated_at": "2026-10-19T12:59:55.825410+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Baleares: HTTP Error 503: Service Unavailable",
+    "Canarias: HTTP Error 503: Service Unavailable"
   ],
   "validation": {
     "model_response_received": true,
@@ -29,10 +31,12 @@
       "status": "ok"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     }
   },
   "aemet_lightning": {
