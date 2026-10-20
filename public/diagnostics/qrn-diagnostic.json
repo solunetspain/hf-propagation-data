@@ -1,9 +1,8 @@
 {
-  "generated_at": "2026-10-20T07:06:59.636997+00:00",
+  "generated_at": "2026-10-20T07:19:21.053696+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
-    "Mediterraneo: <urlopen error _ssl.c:993: The handshake operation timed out>"
+    "AEMET rayos: HTTP Error 404: Not Found"
   ],
   "validation": {
     "model_response_received": true,
@@ -24,8 +23,7 @@
       "status": "ok"
     },
     "Mediterraneo": {
-      "status": "error",
-      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
+      "status": "ok"
     },
     "Andalucia": {
       "status": "ok"
@@ -39,6 +37,6 @@
   },
   "aemet_lightning": {
     "status": "error",
-    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "error": "HTTPError: HTTP Error 404: Not Found"
   }
 }
