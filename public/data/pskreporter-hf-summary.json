@@ -1,7 +1,7 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-10-21T00:46:17.029047+00:00",
-  "status": "ok",
+  "generated_at": "2026-10-21T00:57:50.863600+00:00",
+  "status": "partial",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
     "callsign": "IN91",
@@ -15,142 +15,21 @@
   "query_strategy": "Official PSKReporter grid query: callsign=IN91 and modify=grid",
   "scope": "Reports with sender or receiver locator beginning IN91, amateur HF, last hour",
   "classification": "Observed reports after strict local post-filtering",
-  "bands": {
-    "80m": {
-      "report_count": 6,
-      "station_count": 7,
-      "route_count": 6,
-      "modes": {
-        "FT8": 6
-      },
-      "directions": {
-        "received_in_IN91": 6
-      },
-      "distance_km": {
-        "minimum": 211.9,
-        "median": 1249.0,
-        "maximum": 2364.5
-      },
-      "latest_observation_utc": "2026-10-21T00:34:26+00:00"
-    }
-  },
-  "examples": [
-    {
-      "timestamp_utc": "2026-10-21T00:34:26+00:00",
-      "frequency_hz": 3575132.0,
-      "band": "80m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "9A5E",
-      "sender_locator": "JN75UV",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO73",
-      "snr_db": "-3",
-      "distance_km": 1399.2
-    },
-    {
-      "timestamp_utc": "2026-10-21T00:32:44+00:00",
-      "frequency_hz": 3575122.0,
-      "band": "80m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "G8FAT",
-      "sender_locator": "IO91VL",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO73",
-      "snr_db": "-10",
-      "distance_km": 1098.7
-    },
-    {
-      "timestamp_utc": "2026-10-21T00:32:27+00:00",
-      "frequency_hz": 3574384.0,
-      "band": "80m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "LA9JKA",
-      "sender_locator": "JP32FK",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO73",
-      "snr_db": "-11",
-      "distance_km": 2364.5
-    },
-    {
-      "timestamp_utc": "2026-10-21T00:32:26+00:00",
-      "frequency_hz": 3574182.0,
-      "band": "80m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "EA5IGV",
-      "sender_locator": "IM99TG09",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO73",
-      "snr_db": "-3",
-      "distance_km": 261.0
-    },
-    {
-      "timestamp_utc": "2026-10-21T00:31:56+00:00",
-      "frequency_hz": 3574980.0,
-      "band": "80m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "C31KC",
-      "sender_locator": "JN02SM22",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO73",
-      "snr_db": "1",
-      "distance_km": 211.9
-    },
-    {
-      "timestamp_utc": "2026-10-21T00:31:26+00:00",
-      "frequency_hz": 3573313.0,
-      "band": "80m",
-      "mode": "FT8",
-      "direction": "received_in_IN91",
-      "local_scope": "exact_IN91PO",
-      "sender_callsign": "DL1FLW",
-      "sender_locator": "JO61EH39",
-      "receiver_callsign": "EA2EWL",
-      "receiver_locator": "IN91PO73",
-      "snr_db": "-5",
-      "distance_km": 1468.7
-    }
-  ],
+  "bands": {},
+  "examples": [],
   "content_type": "text/xml; charset=utf-8",
   "http_attempts": 1,
-  "upstream_report_count": 6,
-  "accepted_report_count": 6,
+  "upstream_report_count": 0,
+  "accepted_report_count": 0,
   "scope_summary": {
-    "exact_in91po_report_count": 6,
-    "regional_in91_report_count": 6,
-    "preferred_scope": "exact_IN91PO",
-    "exact_in91po_bands": {
-      "80m": {
-        "report_count": 6,
-        "station_count": 7,
-        "route_count": 6,
-        "modes": {
-          "FT8": 6
-        },
-        "directions": {
-          "received_in_IN91": 6
-        },
-        "distance_km": {
-          "minimum": 211.9,
-          "median": 1249.0,
-          "maximum": 2364.5
-        },
-        "latest_observation_utc": "2026-10-21T00:34:26+00:00"
-      }
-    }
+    "exact_in91po_report_count": 0,
+    "regional_in91_report_count": 0,
+    "preferred_scope": "regional_IN91",
+    "exact_in91po_bands": {}
   },
   "rejected_report_counts": {},
-  "upstream_grid_filter_honored": true,
+  "upstream_grid_filter_honored": false,
   "upstream_filter_note": "Grid query may match either sender or receiver in IN91; strict local post-filter remains mandatory.",
-  "weight_recommendation": 1,
-  "limitation": null
+  "weight_recommendation": 0,
+  "limitation": "No local IN91 amateur-HF reports found after strict filtering."
 }
