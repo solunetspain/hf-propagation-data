@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-10-21T04:48:59.510893+00:00",
+  "generated_at": "2026-10-21T04:57:27.177581+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -72,8 +72,8 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 20.0,
-        "max_precipitation_probability": 3,
+        "max_cape_j_kg": 30.0,
+        "max_precipitation_probability": 0,
         "reasons": [],
         "times": [
           "2026-10-21T04:00",
@@ -108,11 +108,13 @@
       },
       "forecast_6h": {
         "risk": "bajo",
-        "score": 0,
+        "score": 1,
         "thunderstorm_code_present": false,
         "max_cape_j_kg": 10.0,
-        "max_precipitation_probability": 45,
-        "reasons": [],
+        "max_precipitation_probability": 100,
+        "reasons": [
+          "probabilidad de precipitación prevista 100%"
+        ],
         "times": [
           "2026-10-21T04:00",
           "2026-10-21T05:00",
@@ -290,20 +292,21 @@
         "observation": {
           "time": "2026-10-21T04:45",
           "interval": 900,
-          "weather_code": 3,
-          "precipitation": 0.0,
-          "rain": 0.0,
+          "weather_code": 51,
+          "precipitation": 0.1,
+          "rain": 0.1,
           "showers": 0.0
         }
       },
       "forecast_6h": {
-        "risk": "bajo",
-        "score": 1,
+        "risk": "medio",
+        "score": 2,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 470.0,
-        "max_precipitation_probability": 10,
+        "max_cape_j_kg": 620.0,
+        "max_precipitation_probability": 84,
         "reasons": [
-          "CAPE moderado previsto 470 J/kg"
+          "CAPE moderado previsto 620 J/kg",
+          "probabilidad de precipitación prevista 84%"
         ],
         "times": [
           "2026-10-21T04:00",
