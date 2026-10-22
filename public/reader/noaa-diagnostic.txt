@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-22T11:52:25.268121+00:00",
-  "status": "partial",
+  "generated_at": "2026-10-22T12:06:20.992917+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -13,7 +13,7 @@
       "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 4562,
+      "bytes": 4640,
       "usable": true
     },
     {
@@ -36,28 +36,35 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2496157,
+      "bytes": 2494700,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1480969,
+      "bytes": 1481013,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 162898,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59164,
+      "bytes": 59161,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7346,
+      "bytes": 7244,
       "usable": true
     },
     {
@@ -82,23 +89,21 @@
       "usable": true
     }
   ],
-  "errors": [
-    "xray: Extra data: line 1 column 162893 (char 162892)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": false,
+    "xray": true,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -109,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "xray"
-  ]
+  "missing_required_sections": []
 }
