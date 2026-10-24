@@ -1,8 +1,12 @@
 {
-  "generated_at": "2026-10-24T16:17:38.168842+00:00",
+  "generated_at": "2026-10-24T16:28:11.784958+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "Centro: HTTP Error 429: Too Many Requests",
+    "Mediterraneo: HTTP Error 429: Too Many Requests",
+    "Andalucia: HTTP Error 429: Too Many Requests",
+    "Baleares: HTTP Error 429: Too Many Requests"
   ],
   "validation": {
     "model_response_received": true,
@@ -20,16 +24,20 @@
       "status": "ok"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Canarias": {
       "status": "ok"
