@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-10-24T11:48:01.698039+00:00",
+  "generated_at": "2026-10-24T12:00:51.014200+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte"
+    "AEMET rayos: 'utf-8' codec can't decode byte 0x80 in position 6: invalid start byte",
+    "IN91PO: HTTP Error 503: Service Unavailable"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,7 +12,8 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     "Galicia": {
       "status": "ok"
