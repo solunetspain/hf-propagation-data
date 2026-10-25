@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-25T08:01:34.974439+00:00",
-  "status": "ok",
+  "generated_at": "2026-10-25T08:13:37.802596+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -36,35 +36,28 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2421993,
+      "bytes": 2425687,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1425607,
-      "usable": true
-    },
-    {
-      "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 163542,
+      "bytes": 1424789,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59112,
+      "bytes": 59963,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7178,
+      "bytes": 7282,
       "usable": true
     },
     {
@@ -89,21 +82,23 @@
       "usable": true
     }
   ],
-  "errors": [],
+  "errors": [
+    "xray: Extra data: line 1 column 163541 (char 163540)"
+  ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": true,
+    "xray": false,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 11,
+  "valid_sections": 10,
   "required_sections": [
     "drap",
     "kp",
@@ -114,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "xray"
+  ]
 }
