@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-26T08:36:29.691139+00:00",
-  "status": "partial",
+  "generated_at": "2026-10-26T08:45:13.615317+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -26,38 +26,38 @@
       "product": "daily planetary A"
     },
     {
-      "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 27925,
-      "usable": true
-    },
-    {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2405876,
+      "bytes": 2403663,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1427990,
+      "bytes": 1427295,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 163080,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59133,
+      "bytes": 59978,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7213,
+      "bytes": 7316,
       "usable": true
     },
     {
@@ -83,15 +83,15 @@
     }
   ],
   "errors": [
-    "xray: Unterminated string starting at: line 1 column 163051 (char 163050)"
+    "kp_estimated_1m: Extra data: line 1 column 27926 (char 27925)"
   ],
   "validation": {
     "scales": true,
     "kp": true,
-    "kp_estimated_1m": true,
+    "kp_estimated_1m": false,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": false,
+    "xray": true,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
@@ -109,7 +109,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "xray"
-  ]
+  "missing_required_sections": []
 }
