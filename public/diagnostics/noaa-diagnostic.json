@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27T11:02:12.966779+00:00",
+  "generated_at": "2026-10-27T11:16:37.033977+00:00",
   "status": "ok",
   "requests": [
     {
@@ -36,14 +36,14 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2434086,
+      "bytes": 2433314,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1484187,
+      "bytes": 1483804,
       "usable": true
     },
     {
@@ -51,6 +51,20 @@
       "http_status": 200,
       "content_type": "application/json",
       "bytes": 163094,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 59114,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 7196,
       "usable": true
     },
     {
@@ -75,10 +89,7 @@
       "usable": true
     }
   ],
-  "errors": [
-    "protons: <urlopen error [Errno 104] Connection reset by peer>",
-    "electrons: <urlopen error [Errno 104] Connection reset by peer>"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
@@ -86,13 +97,13 @@
     "solar_wind": true,
     "magnetic_field": true,
     "xray": true,
-    "protons": false,
-    "electrons": false,
+    "protons": true,
+    "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 9,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
