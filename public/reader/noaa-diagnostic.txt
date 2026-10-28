@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-28T09:01:45.344909+00:00",
-  "status": "partial",
+  "generated_at": "2026-10-28T09:14:45.481559+00:00",
+  "status": "ok",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -8,6 +8,22 @@
       "content_type": "application/json",
       "bytes": 1096,
       "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 4560,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/text/daily-geomagnetic-indices.txt",
+      "http_status": 200,
+      "content_type": "text/plain",
+      "bytes": 3877,
+      "usable": true,
+      "planetary_a_index": 6.0,
+      "product": "daily planetary A"
     },
     {
       "url": "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",
@@ -20,35 +36,35 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 2341086,
+      "bytes": 2336682,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1421948,
+      "bytes": 1421857,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163270,
+      "bytes": 162790,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59158,
+      "bytes": 60002,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7196,
+      "bytes": 7299,
       "usable": true
     },
     {
@@ -73,12 +89,10 @@
       "usable": true
     }
   ],
-  "errors": [
-    "kp: Expecting value: line 1 column 4484 (char 4483)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
-    "kp": false,
+    "kp": true,
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
@@ -89,7 +103,7 @@
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
@@ -100,7 +114,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "kp"
-  ]
+  "missing_required_sections": []
 }
