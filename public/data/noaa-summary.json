@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-11-07T02:17:27.136351+00:00",
+  "generated_at": "2026-11-07T02:34:41.948334+00:00",
   "status": "ok",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-11-07T02:15:00+00:00",
+      "timestamp_utc": "2026-11-07T02:32:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -30,54 +30,54 @@
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-11-07T02:12:00+00:00",
+      "timestamp_utc": "2026-11-07T02:29:00+00:00",
       "kp": 2.0,
-      "estimated_kp": 2.0,
-      "kp_code": "2Z",
+      "estimated_kp": 2.33,
+      "kp_code": "2P",
       "classification": "estimated 1-minute Kp; auxiliary, not official 3-hour Kp"
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-11-07T02:10:00+00:00",
+        "timestamp_utc": "2026-11-07T02:29:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 6.16,
-        "speed_km_s": 432.55,
-        "temperature_k": 329472.5
+        "density_p_cm3": 4.59,
+        "speed_km_s": 447.85,
+        "temperature_k": 242634.0
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-11-07T02:12:00+00:00",
+        "timestamp_utc": "2026-11-07T02:31:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": 6.06,
-        "by_gsm_nt": -8.13,
-        "bz_gsm_nt": 1.525,
-        "bt_nt": 10.395
+        "bx_gsm_nt": 7.305,
+        "by_gsm_nt": -8.525,
+        "bz_gsm_nt": 7.85,
+        "bt_nt": 13.885
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
     "xray": {
-      "timestamp_utc": "2026-11-07T02:14:00+00:00",
-      "flux_w_m2": 2.800448100970243e-06,
-      "class": "C2.8",
+      "timestamp_utc": "2026-11-07T02:31:00+00:00",
+      "flux_w_m2": 1.4632577176598716e-06,
+      "class": "C1.5",
       "energy": "0.1-0.8nm",
       "satellite": 18
     },
     "protons": {
-      "timestamp_utc": "2026-11-07T02:05:00+00:00",
-      "flux": 0.22214484214782715,
+      "timestamp_utc": "2026-11-07T02:25:00+00:00",
+      "flux": 0.2259000539779663,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
     },
     "electrons": {
-      "timestamp_utc": "2026-11-07T02:10:00+00:00",
-      "flux": 141.88536071777344,
+      "timestamp_utc": "2026-11-07T02:25:00+00:00",
+      "flux": 180.95103454589844,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -91,18 +91,18 @@
       "classification": "official NOAA F10.7 observation"
     },
     "sunspots": {
-      "timestamp_utc": "2026-11-05T00:00:00+00:00",
-      "date": "2026-11-05",
-      "sunspot_number": 89.0,
+      "timestamp_utc": "2026-11-06T00:00:00+00:00",
+      "date": "2026-11-06",
+      "sunspot_number": 91.0,
       "classification": "NOAA SESC daily sunspot number",
-      "daily_f107_sfu_cross_check": 124.0
+      "daily_f107_sfu_cross_check": 125.0
     }
   },
   "forecast": {
     "scales": {
       "1": {
         "DateStamp": "2026-11-07",
-        "TimeStamp": "02:15:00",
+        "TimeStamp": "02:32:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -161,7 +161,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-11-07T02:14:00+00:00",
+    "timestamp_utc": "2026-11-07T02:30:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -170,8 +170,8 @@
       "sampling": "nearest NOAA grid point"
     },
     "messages": {
-      "x_ray_message": "Elevated X-ray flux",
-      "x_ray_warning": "",
+      "x_ray_message": "Normal X-ray Background",
+      "x_ray_warning": "NO NEW X-RAY FLUX FOR 2 MINUTES",
       "proton_message": "Normal Proton Background",
       "proton_warning": ""
     },
