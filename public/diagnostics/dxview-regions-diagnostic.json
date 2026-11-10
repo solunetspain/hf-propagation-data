@@ -1,7 +1,18 @@
 {
-  "generated_at": "2026-11-10T22:24:18.938120+00:00",
-  "status": "ok",
-  "errors": [],
+  "generated_at": "2026-11-10T22:44:49.286788+00:00",
+  "status": "partial",
+  "errors": [
+    {
+      "bucket_id": 33028,
+      "band": 24,
+      "error": "503 Server Error: Service Unavailable for url: https://hf.dxview.org/map/refresh?alert=0&band=24&active=1&id=33028"
+    },
+    {
+      "bucket_id": 33028,
+      "band": 28,
+      "error": "503 Server Error: Service Unavailable for url: https://hf.dxview.org/map/refresh?alert=0&band=28&active=1&id=33028"
+    }
+  ],
   "validation": {
     "response_received": true,
     "format_parsed": true,
@@ -11,7 +22,7 @@
     "canarias_sample_available": true,
     "national_fallback_available": true
   },
-  "response_count": 56,
+  "response_count": 54,
   "expected_response_count": 56,
   "response_metadata": {
     "33028:0": {
@@ -40,16 +51,6 @@
       "cache_control": "public, max-age=10, immutable"
     },
     "33028:21": {
-      "status_code": 200,
-      "content_type": "application/json",
-      "cache_control": "public, max-age=10, immutable"
-    },
-    "33028:24": {
-      "status_code": 200,
-      "content_type": "application/json",
-      "cache_control": "public, max-age=10, immutable"
-    },
-    "33028:28": {
       "status_code": 200,
       "content_type": "application/json",
       "cache_control": "public, max-age=10, immutable"
@@ -423,5 +424,5 @@
       }
     ]
   },
-  "output_signature": "4a27d944064ce423"
+  "output_signature": "640ec10f9587ed5c"
 }
