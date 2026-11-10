@@ -1,8 +1,11 @@
 {
-  "generated_at": "2026-11-10T12:43:13.483054+00:00",
+  "generated_at": "2026-11-10T13:03:00.810225+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: HTTP Error 401: Unauthorized"
+    "AEMET rayos: HTTP Error 401: Unauthorized",
+    "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Cantabrico: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1011)>",
+    "Mediterraneo: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1011)>"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,19 +14,22 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Galicia": {
       "status": "ok"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1011)>"
     },
     "Centro": {
       "status": "ok"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1011)>"
     },
     "Andalucia": {
       "status": "ok"
