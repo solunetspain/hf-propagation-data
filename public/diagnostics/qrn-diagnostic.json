@@ -1,8 +1,13 @@
 {
-  "generated_at": "2026-11-12T17:44:06.706215+00:00",
-  "status": "ok",
+  "generated_at": "2026-11-12T18:01:53.573257+00:00",
+  "status": "partial",
   "errors": [
-    "AEMET rayos: HTTP Error 401: Unauthorized"
+    "AEMET rayos: HTTP Error 401: Unauthorized",
+    "Cantabrico: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Centro: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Mediterraneo: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Andalucia: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Baleares: <urlopen error _ssl.c:994: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -17,19 +22,24 @@
       "status": "ok"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Canarias": {
       "status": "ok"
