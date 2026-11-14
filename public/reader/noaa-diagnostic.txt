@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-14T08:36:25.165650+00:00",
-  "status": "ok",
+  "generated_at": "2026-11-14T08:56:53.206478+00:00",
+  "status": "partial",
   "requests": [
     {
       "url": "https://services.swpc.noaa.gov/products/noaa-scales.json",
@@ -33,31 +33,31 @@
       "usable": true
     },
     {
-      "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
-      "http_status": 200,
-      "content_type": "application/json",
-      "bytes": 2748019,
-      "usable": true
-    },
-    {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1545275,
+      "bytes": 1544132,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 163042,
+      "bytes": 163502,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 59093,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 7313,
+      "bytes": 7208,
       "usable": true
     },
     {
@@ -83,16 +83,16 @@
     }
   ],
   "errors": [
-    "protons: Extra data: line 1 column 59091 (char 59090)"
+    "solar_wind: Extra data: line 1 column 2746518 (char 2746517)"
   ],
   "validation": {
     "scales": true,
     "kp": true,
     "kp_estimated_1m": true,
-    "solar_wind": true,
+    "solar_wind": false,
     "magnetic_field": true,
     "xray": true,
-    "protons": false,
+    "protons": true,
     "electrons": true,
     "solar_flux": true,
     "sunspots": true,
@@ -109,5 +109,7 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": []
+  "missing_required_sections": [
+    "solar_wind"
+  ]
 }
