@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-11-15T16:37:23.924266+00:00",
+  "generated_at": "2026-11-15T16:57:52.093397+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: HTTP Error 401: Unauthorized"
+    "AEMET rayos: HTTP Error 401: Unauthorized",
+    "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,7 +12,8 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Galicia": {
       "status": "ok"
