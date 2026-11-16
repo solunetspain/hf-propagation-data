@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T04:01:39.653999+00:00",
+  "generated_at": "2026-11-16T04:11:39.645284+00:00",
   "status": "ok",
   "requests": [
     {
@@ -36,28 +36,35 @@
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 3118996,
+      "bytes": 3118978,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 1733472,
+      "bytes": 1731013,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 162816,
+      "bytes": 162361,
       "usable": true
     },
     {
       "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json",
       "http_status": 200,
       "content_type": "application/json",
-      "bytes": 59065,
+      "bytes": 59066,
+      "usable": true
+    },
+    {
+      "url": "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json",
+      "http_status": 200,
+      "content_type": "application/json",
+      "bytes": 7186,
       "usable": true
     },
     {
@@ -78,13 +85,11 @@
       "url": "https://services.swpc.noaa.gov/text/drap_global_frequencies.txt",
       "http_status": 200,
       "content_type": "text/plain",
-      "bytes": 42469,
+      "bytes": 42499,
       "usable": true
     }
   ],
-  "errors": [
-    "electrons: Expecting value: line 1 column 7194 (char 7193)"
-  ],
+  "errors": [],
   "validation": {
     "scales": true,
     "kp": true,
@@ -93,12 +98,12 @@
     "magnetic_field": true,
     "xray": true,
     "protons": true,
-    "electrons": false,
+    "electrons": true,
     "solar_flux": true,
     "sunspots": true,
     "drap": true
   },
-  "valid_sections": 10,
+  "valid_sections": 11,
   "required_sections": [
     "drap",
     "kp",
