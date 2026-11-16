@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from scripts.collect_pskreporter import HF_BANDS, band_for, distance_km, maidenhead_center
+from scripts.prediction_timing import validation_capture
 
 QUERY_FIELDS = ("IL", "IM", "IN", "JM", "JN")
 SPANISH_PREFIXES = ("EA", "EB", "EC", "ED", "EE", "EF", "AM", "AN", "AO")
@@ -249,6 +250,7 @@ def main() -> int:
     for field in QUERY_FIELDS:
         url = query_url(field)
         attempts = 0
+        started_at = now_iso()
         try:
             body, content_type, attempts = fetch_with_retries(
                 url, "SOLUNET-HF-PSKReporter-Regions/1.1"
@@ -266,6 +268,8 @@ def main() -> int:
                 "report_count": len(rows),
                 "content_type": content_type,
                 "attempts": attempts,
+                "started_at": started_at,
+                "finished_at": now_iso(),
             }
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{field}: {type(exc).__name__}: {exc}")
@@ -329,6 +333,7 @@ def main() -> int:
             "unique_routes": len({(row["sender_callsign"], row["receiver_callsign"]) for row in accepted}),
         },
         "regions": regions,
+        "validation_capture": validation_capture(accepted, query_results, now_iso()),
         "national_fallback": {
             "status": "available" if accepted else "no_activity_observed",
             "report_count": len(accepted),
@@ -403,3 +408,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

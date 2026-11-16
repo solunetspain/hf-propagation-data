@@ -267,3 +267,31 @@ Una opción adecuada para el código sería la licencia MIT. Los datos obtenidos
 
 Proyecto orientado a la generación de avisos de propagación HF para EA y DX, con especial atención a España y a la ubicación IN91PO.
 
+
+## Evaluación por hora objetivo
+
+Desde `6.0-event-time-validation`, una predicción emitida en T se compara
+exclusivamente con recepciones PSKReporter fechadas en `[T, T+60 minutos)`.
+Se evalúa a partir de T+75 minutos: los 15 minutos adicionales permiten recoger
+observaciones, sin admitir recepciones de fuera de la hora predicha. Si el
+validador se ejecuta tarde, consulta el diario persistido; nunca sustituye la
+ventana objetivo por los datos actuales.
+
+El colector exporta todas las recepciones aceptadas para validación, no solo las
+200 del resumen visual. Se deduplican entre consultas y ejecuciones mediante un
+identificador de recepción. `public/data/prediction-observations.json` conserva
+hasta 48 horas y 8 MiB. Si es necesario retirar datos antiguos, también se recorta
+la cobertura declarada: una pérdida de datos no se interpreta como ausencia de
+actividad. Los resultados finales conservan la ventana, el origen, los extremos
+temporales de la evidencia y su checksum.
+
+La ausencia solo es evaluable si las consultas cubren toda la ventana; consultas
+fallidas, limitadas a 5000 resultados o intervalos sin recoger dejan la predicción
+no confirmada. Esta comprobación temporal no demuestra cobertura radioeléctrica
+completa. DXView sigue siendo contexto predictivo, pero no evidencia de validación
+por hora mientras solo aporte resúmenes sin fecha individual de las recepciones.
+
+Las evaluaciones antiguas se preservan como `legacy_evaluation` y se identifican
+como `legacy_unverified`; no se mezclan con las nuevas estadísticas ni se recalculan
+con observaciones actuales. Es normal que la nueva fiabilidad aparezca pendiente
+hasta acumular predicciones maduras con evidencia temporal verificable.

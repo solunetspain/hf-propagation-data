@@ -7,6 +7,11 @@ import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from scripts.prediction_timing import TIMING_VERSION, GRACE_MINUTES, update_journal, evaluate_entry
+except ModuleNotFoundError:  # Direct invocation: python scripts/validate_prediction_history.py
+    from prediction_timing import TIMING_VERSION, GRACE_MINUTES, update_journal, evaluate_entry
+
 REGIONS = ("peninsula", "baleares", "canarias")
 BANDS = ("160m", "80m", "40m", "20m", "17m", "15m", "12m", "10m")
 BAND_KEYS = {"160m":"0","80m":"3","40m":"7","20m":"14","17m":"18","15m":"21","12m":"24","10m":"28"}
@@ -16,7 +21,7 @@ MAX_CYCLES = 100000
 MIN_CONFIRMING_OBSERVATIONS = 3
 MIN_REGION_RECEIVERS = 3
 CALIBRATION_MIN_EVALUATIONS = 50
-METHOD_VERSION = "5.0-rolling-evidence-stability"
+METHOD_VERSION = "6.0-event-time-validation"
 
 # Keep the public working file small, without discarding scoring evidence.
 ACTIVE_CYCLES = 1000
@@ -184,14 +189,18 @@ def main():
     dx = load(data / "dxview-regions-summary.json", {})
     history = load_history(history_path)
     now = datetime.now(timezone.utc)
+    journal = update_journal(data / "prediction-observations.json", psk, now)
     entries = history.get("entries", [])
     if not isinstance(entries, list):
         entries = []
-    # Re-evaluate old entries when the scoring method changes.
-    if history.get("method_version") != METHOD_VERSION:
-        for entry in entries:
-            if isinstance(entry, dict):
-                entry["evaluation"] = None
+    # Preserve old scores for audit, but never rescore old forecasts with today's
+    # observations or include unverified legacy scores in the new statistics.
+    for entry in entries:
+        if entry.get("validation_method_version") != TIMING_VERSION:
+            if entry.get("evaluation") is not None:
+                entry.setdefault("legacy_evaluation", entry["evaluation"])
+            entry["evaluation"] = None
+            entry["validation_status"] = "legacy_unverified"
 
     recommendations = nested(report, "prediction_model", "recommendations", default={})
     kc2g = load(data / "kc2g-spain.json", {})
@@ -206,6 +215,7 @@ def main():
         physical_snapshot[region] = {"muf_mhz": muf, "fot_mhz": round(float(muf)*0.85, 2) if isinstance(muf, (int,float)) else None, "absorption_1db_mhz": max(drap) if drap else None, "activity_reports": sum(count_observations(psk, dx, region, band) for band in BANDS)}
 
     current = {
+        "validation_method_version": TIMING_VERSION,
         "generated_at_utc": report.get("generated_at_utc", now.isoformat()),
         "recommendations": recommendations,
         "observations_at_prediction": {
@@ -224,37 +234,9 @@ def main():
     }
 
     for entry in entries:
-        if entry.get("evaluation") is not None:
-            continue
-        created = iso_datetime(entry.get("generated_at_utc"), now)
-        if (now - created).total_seconds() < EVALUATION_DELAY_MINUTES * 60:
-            continue
-        evaluation = {}
-        old_recommendations = entry.get("recommendations", {})
-        for region in REGIONS:
-            first = nested(old_recommendations, region, "first", default=None)
-            alternative = nested(old_recommendations, region, "alternative", default=None)
-            # Accept the existing list form for compatibility with earlier entries.
-            if isinstance(nested(old_recommendations, region, default=None), list):
-                bands = nested(old_recommendations, region, default=[])
-                first = bands[0] if bands else None
-                alternative = bands[1] if len(bands) > 1 else None
-            evaluation[region] = {}
-            region_source_valid = nested(psk, "regions", region, "status", default="") == "ok"
-            for band in BANDS:
-                observed = count_observations(psk, dx, region, band)
-                result = classify(
-                    normalize_band(band) == normalize_band(first),
-                    normalize_band(band) == normalize_band(alternative),
-                    observed,
-                    region_source_valid,
-                )
-                evaluation[region][band] = {
-                    "result": result,
-                    "observations": observed,
-                    "evaluated_at_utc": now.isoformat(),
-                }
-        entry["evaluation"] = evaluation
+        if entry.get("validation_method_version") == TIMING_VERSION and entry.get("evaluation") is None:
+            evaluate_entry(entry, journal, now, REGIONS, BANDS, classify)
+    evaluate_entry(current, journal, now, REGIONS, BANDS, classify)
 
     entries.append(current)
     entries = entries[-MAX_CYCLES:]
@@ -389,6 +371,8 @@ def main():
         "schema_version": "1.0",
         "window_minutes": WINDOW_MINUTES,
         "evaluation_delay_minutes": EVALUATION_DELAY_MINUTES,
+        "observation_grace_minutes": GRACE_MINUTES,
+        "temporal_validation": {"version": TIMING_VERSION, "legacy_entries_excluded": sum(entry.get("validation_status") == "legacy_unverified" for entry in entries), "policy": "Recepciones PSKReporter dentro de [emisión, emisión+60 min); 15 min de margen de recepción; sin sustitución por observaciones posteriores"},
         "max_cycles": MAX_CYCLES,
         "method_version": METHOD_VERSION,
         "minimum_confirming_observations": MIN_CONFIRMING_OBSERVATIONS,
@@ -418,7 +402,7 @@ def main():
             "note": "Los ámbitos se muestran como histórico agregado; no equivalen a una probabilidad de contacto."
         },
         "total": total,
-        "method": "ventana móvil de 60 minutos; evaluación posterior a 60 minutos; no confirmadas excluidas del denominador; parcial=0,5 evidencia; suavizado Beta(2,2); intervalo Wilson del 95 %; cobertura regional mínima de 3 receptores; otras bandas no recomendadas no se evalúan",
+        "method": "ventana objetivo de 60 minutos desde la emisión; evaluación tras 15 minutos de margen; evidencia por hora de recepción PSKReporter; evaluaciones antiguas excluidas; no confirmadas excluidas del denominador; parcial=0,5 evidencia; suavizado Beta(2,2); intervalo Wilson del 95 %; cobertura regional mínima de 3 receptores; otras bandas no recomendadas no se evalúan",
         "sources": ["KC2G", "NOAA", "QRN", "PSKReporter", "DXView", "RBN"],
         "evidence_policy": {
             "measured": ["NOAA", "PSKReporter", "DXView", "RBN"],

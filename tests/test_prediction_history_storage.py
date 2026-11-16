@@ -64,7 +64,7 @@ class HistoryStorageTests(unittest.TestCase):
                 os.chdir(previous)
             restored = load_history(path)
             self.assertEqual(len(restored["entries"]), 6)
-            self.assertTrue(all(item["evaluation"] is not None for item in restored["entries"][:-1]))
+            self.assertTrue(all(item["validation_status"] == "legacy_unverified" for item in restored["entries"][:-1]))
 
 
 if __name__ == "__main__":
