@@ -209,6 +209,25 @@ La hora de ejecución puede desplazarse unos minutos para evitar la saturación 
 
 ## Estado del proyecto
 
+### Almacenamiento del histórico de predicciones
+
+`public/data/prediction-history.json` conserva hasta 1000 entradas recientes,
+los resúmenes estadísticos y un manifiesto `entry_archives`. Las entradas anteriores
+se guardan en `public/data/prediction-history-archive/part-*.json`, con checksum
+SHA-256 y número de entradas en el manifiesto. Cada archivo se limita a 8 MiB.
+El límite existente de 100000 ciclos del cálculo se mantiene.
+
+El validador restaura todas las partes antes de calcular los resultados: archivar
+no excluye esas observaciones de las estadísticas. La primera ejecución migra
+automáticamente el histórico monolítico. Si falta una parte o su checksum no
+coincide, la ejecución falla para evitar sustituir el histórico por datos incompletos.
+Los consumidores que necesiten todas las entradas deben leer también las partes
+del manifiesto; los resúmenes siguen estando en el archivo principal.
+
+Actions restaura y persiste esas partes junto al archivo principal, descarga solo
+la última revisión de `generated-data` y comprueba que ningún archivo generado
+supere 90 MiB antes de subirlo a GitHub.
+
 - [ ] Lectura actual de KC2G validada de extremo a extremo.
 - [ ] Interpolación para IN91PO validada con datos reales.
 - [ ] Histórico de cuatro intervalos de 15 minutos validado.
@@ -247,3 +266,4 @@ Una opción adecuada para el código sería la licencia MIT. Los datos obtenidos
 ## Autor
 
 Proyecto orientado a la generación de avisos de propagación HF para EA y DX, con especial atención a España y a la ubicación IN91PO.
+

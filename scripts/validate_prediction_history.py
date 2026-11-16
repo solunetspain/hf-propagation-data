@@ -2,6 +2,7 @@
 """Persist and score mature HF predictions against later PSKReporter/DXView observations."""
 from __future__ import annotations
 import json
+import hashlib
 import statistics
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,6 +17,76 @@ MIN_CONFIRMING_OBSERVATIONS = 3
 MIN_REGION_RECEIVERS = 3
 CALIBRATION_MIN_EVALUATIONS = 50
 METHOD_VERSION = "5.0-rolling-evidence-stability"
+
+# Keep the public working file small, without discarding scoring evidence.
+ACTIVE_CYCLES = 1000
+HISTORY_FILE_BYTES = 8 * 1024 * 1024
+
+
+def json_bytes(value):
+    return (json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+
+
+def load_history(path):
+    if not path.exists():
+        return {"entries": []}
+    # A broken or incomplete archive must stop the run, never reset the history.
+    history = json.loads(path.read_text(encoding="utf-8"))
+    entries = []
+    for archive in history.get("entry_archives", []):
+        relative = Path(archive["path"])
+        if relative.parent != Path("prediction-history-archive") or relative.name != Path(relative.name).name:
+            raise ValueError("Invalid prediction history archive path")
+        payload = (path.parent / relative).read_bytes()
+        if hashlib.sha256(payload).hexdigest() != archive["sha256"]:
+            raise ValueError("Prediction history archive checksum mismatch")
+        part = json.loads(payload)["entries"]
+        if len(part) != archive["count"]:
+            raise ValueError("Prediction history archive count mismatch")
+        entries.extend(part)
+    entries.extend(history.get("entries", []))
+    history["entries"] = entries
+    return history
+
+
+def save_history(path, history, active_cycles=ACTIVE_CYCLES, max_bytes=HISTORY_FILE_BYTES):
+    """Shard old entries, retaining all entries used by the existing scoring window."""
+    entries = history["entries"]
+    encoded = [json_bytes(entry).rstrip(b"\n") for entry in entries]
+    split = max(0, len(entries) - active_cycles)
+    # Reserve space for summaries and the archive manifest in the working file.
+    active_bytes = sum(len(item) + 1 for item in encoded[split:])
+    while active_bytes > max_bytes // 2 and split < len(entries):
+        active_bytes -= len(encoded[split]) + 1
+        split += 1
+    prefix, suffix = b'{"entries":[', b']}\n'
+    chunks, chunk, size = [], [], len(prefix) + len(suffix)
+    for item in encoded[:split]:
+        if len(item) + len(prefix) + len(suffix) > max_bytes:
+            raise ValueError("One prediction entry exceeds the archive size limit")
+        if chunk and size + len(item) + 1 > max_bytes:
+            chunks.append(chunk)
+            chunk, size = [], len(prefix) + len(suffix)
+        size += len(item) + bool(chunk)
+        chunk.append(item)
+    if chunk:
+        chunks.append(chunk)
+    archives, payloads = [], []
+    for index, chunk in enumerate(chunks):
+        payload = prefix + b",".join(chunk) + suffix
+        relative = f"prediction-history-archive/part-{index:05d}.json"
+        archives.append({"path": relative, "count": len(chunk), "sha256": hashlib.sha256(payload).hexdigest()})
+        payloads.append((path.parent / relative, payload))
+    working = dict(history, entries=entries[split:], entry_archives=archives,
+                   total_entries=len(entries), active_cycles=active_cycles)
+    payload = json_bytes(working)
+    if len(payload) > max_bytes:
+        raise ValueError("Prediction history metadata exceeds the working file size limit")
+    for target, archive_payload in payloads:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(archive_payload)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(payload)
 
 def load(path: Path, default):
     try:
@@ -111,7 +182,7 @@ def main():
     report = load(data / "web-report-es.json", {})
     psk = load(data / "pskreporter-hf-regions.json", {})
     dx = load(data / "dxview-regions-summary.json", {})
-    history = load(history_path, {"schema_version": "1.0", "window_minutes": WINDOW_MINUTES, "max_cycles": MAX_CYCLES, "entries": []})
+    history = load_history(history_path)
     now = datetime.now(timezone.utc)
     entries = history.get("entries", [])
     if not isinstance(entries, list):
@@ -357,9 +428,9 @@ def main():
             "double_counting_control": "Las fuentes derivadas de la misma observación no se suman como observaciones independientes."
         },
     })
-    history_path.parent.mkdir(parents=True, exist_ok=True)
-    history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    save_history(history_path, history)
 
 if __name__ == "__main__":
     main()
+
 

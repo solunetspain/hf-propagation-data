@@ -54,7 +54,7 @@ jobs:
       - name: Restore last valid KC2G regional data
         if: steps.kc2g.outcome != 'success'
         run: |
-          git fetch origin generated-data
+          git fetch --depth=1 origin +refs/heads/generated-data:refs/remotes/origin/generated-data
           mkdir -p public/data public/diagnostics
           git show origin/generated-data:public/data/kc2g-spain.json > public/data/kc2g-spain.json
           git show origin/generated-data:public/diagnostics/kc2g-diagnostic.json > public/diagnostics/kc2g-diagnostic.json
@@ -137,12 +137,13 @@ jobs:
 
       - name: Restore prediction history
         run: |
-          git fetch origin generated-data
-          if git show origin/generated-data:public/data/prediction-history.json > /tmp/prediction-history.json 2>/dev/null; then
-            mv /tmp/prediction-history.json public/data/prediction-history.json
+          git fetch --depth=1 origin +refs/heads/generated-data:refs/remotes/origin/generated-data
+          mkdir -p public/data
+          if git cat-file -e origin/generated-data:public/data/prediction-history.json; then
+            git show origin/generated-data:public/data/prediction-history.json > public/data/prediction-history.json
           fi
-          if ! test -s public/data/prediction-history.json; then
-            printf '%s\n' '{"entries":[],"summary":{}}' > public/data/prediction-history.json
+          if git cat-file -e origin/generated-data:public/data/prediction-history-archive 2>/dev/null; then
+            git archive origin/generated-data public/data/prediction-history-archive | tar -x
           fi
 
       - name: Update prediction history
@@ -203,14 +204,23 @@ jobs:
             public/reader/dxview-regions-diagnostic.txt
           )
           snapshot="$RUNNER_TEMP/generated-data"
-          git fetch origin generated-data
+          git fetch --depth=1 origin +refs/heads/generated-data:refs/remotes/origin/generated-data
           git worktree add "$snapshot" origin/generated-data
           for file in "${files[@]}"; do
             if [[ -e "$file" ]]; then
               install -D -m 0644 "$file" "$snapshot/$file"
             fi
           done
+          if [[ -d public/data/prediction-history-archive ]]; then
+            mkdir -p "$snapshot/public/data/prediction-history-archive"
+            cp public/data/prediction-history-archive/*.json "$snapshot/public/data/prediction-history-archive/"
+          fi
           cd "$snapshot"
+          oversized=$(find public -type f -size +90M -print)
+          if [[ -n "$oversized" ]]; then
+            printf '::error::Generated files exceed the 90 MiB safety limit:\n%s\n' "$oversized"
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f -- public
@@ -256,3 +266,4 @@ jobs:
 # Pages deployment verified for the current site publication.\n# Canonical report rebuild trigger: keep the web consumer on the current 18-block schema.
 
 # Stable scheduled and manual execution: bounded build and deploy times.
+
