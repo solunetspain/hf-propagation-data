@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-17T13:31:37.115876+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-17T13:41:35.719910+00:00",
+  "status": "error",
   "errors": [
     "AEMET rayos: HTTP Error 401: Unauthorized",
     "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
@@ -9,10 +9,11 @@
     "Centro: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Mediterraneo: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Andalucia: <urlopen error _ssl.c:994: The handshake operation timed out>",
-    "Baleares: <urlopen error _ssl.c:994: The handshake operation timed out>"
+    "Baleares: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Canarias: <urlopen error _ssl.c:994: The handshake operation timed out>"
   ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
@@ -46,7 +47,8 @@
       "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     }
   },
   "aemet_lightning": {

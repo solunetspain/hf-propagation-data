@@ -1,53 +1,14 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-11-17T13:31:37.115866+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-17T13:41:35.719900+00:00",
+  "status": "error",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
   "limitations": [
     "No direct lightning observations are used.",
     "Forecast CAPE never changes the current-risk classification."
   ],
-  "points": {
-    "Canarias": {
-      "latitude": 28.1,
-      "longitude": -15.42,
-      "risk": "bajo",
-      "score": 0,
-      "current_risk": {
-        "risk": "bajo",
-        "score": 0,
-        "thunderstorm_code_present": false,
-        "reasons": [
-          "sin código actual de tormenta"
-        ],
-        "observation": {
-          "time": "2026-11-17T13:30",
-          "interval": 900,
-          "weather_code": 2,
-          "precipitation": 0.0,
-          "rain": 0.0,
-          "showers": 0.0
-        }
-      },
-      "forecast_6h": {
-        "risk": "bajo",
-        "score": 0,
-        "thunderstorm_code_present": false,
-        "max_cape_j_kg": 0.0,
-        "max_precipitation_probability": 0,
-        "reasons": [],
-        "times": [
-          "2026-11-17T13:00",
-          "2026-11-17T14:00",
-          "2026-11-17T15:00",
-          "2026-11-17T16:00",
-          "2026-11-17T17:00",
-          "2026-11-17T18:00"
-        ]
-      }
-    }
-  },
+  "points": {},
   "aemet_lightning": {
     "status": "error",
     "error": "HTTPError: HTTP Error 401: Unauthorized"
