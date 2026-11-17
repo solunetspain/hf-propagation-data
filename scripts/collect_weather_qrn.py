@@ -53,7 +53,20 @@ def fetch_aemet_lightning(api_key: str) -> dict[str, Any]:
         raise ValueError("AEMET no devolvió la URL de datos de rayos")
     data_req = urllib.request.Request(data_url, headers={"User-Agent": "SOLUNET-HF-AEMET/1.0"})
     with urllib.request.urlopen(data_req, timeout=30) as response:
-        payload = json.loads(response.read().decode("utf-8"))
+        content_type = response.headers.get("Content-Type", "")
+        payload_bytes = response.read()
+    if not content_type.lower().startswith("application/json"):
+        return {
+            "status": "map_received",
+            "event_count": None,
+            "regional_event_counts": None,
+            "source": AEMET_RAYOS_URL,
+            "content_type": content_type,
+            "bytes": len(payload_bytes),
+            "regional_validation": "pending",
+            "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región.",
+        }
+    payload = json.loads(payload_bytes.decode("utf-8"))
     events = payload if isinstance(payload, list) else payload.get("datos", []) if isinstance(payload, dict) else []
     counts = {name: 0 for name in REGION_BOXES}
     for event in events:
