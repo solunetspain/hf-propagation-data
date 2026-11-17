@@ -354,6 +354,8 @@ def build_region(
     fot_text = fmt(0.85 * fot if fot is not None else None, suffix=" MHz")
     primary = supported_band(summary)
     qrn, qrn_valid = qrn_assessment(sources["qrn"], region)
+    lightning_status = nested(sources["qrn"], "aemet_lightning", "status") or "not_configured"
+    lightning_validation = nested(sources["qrn"], "aemet_lightning", "regional_validation") or "unavailable"
     drap, drap_valid = drap_assessment(sources["noaa"], region)
     dx_bands = observed_bands(sources["dxview"], "dxview") if region == "peninsula" else []
     psk_bands = observed_bands(sources["psk"], "psk") if region == "peninsula" else []
@@ -429,7 +431,11 @@ def build_region(
             + ("La actividad observada compatible figura en el bloque 8." if observed else "No hay confirmación observacional regional suficiente.")
         ),
         "No hay geometría solar regional validada en esta versión del conjunto de datos; no se anuncia una ventana greyline concreta.",
-        f"Riesgo QRN actual modelado: **{qrn}**. Open-Meteo no aporta detección directa de rayos ni mide el ruido de la estación.",
+        (
+            f"Riesgo meteorológico modelado: **{qrn}**. "
+            f"Mapa AEMET de rayos: **{lightning_status}**; validación regional: **{lightning_validation}**. "
+            "La validación del ruido HF requiere una medición SDR local."
+        ),
         "No se afirma Es, long path, TEP ni recuperación sin evidencia compatible. Una apertura por encima de la MUF local exige confirmación antes de clasificar su mecanismo.",
         f"Índice operativo de confianza: **{confidence}% ({confidence_label})**. Es una rúbrica documental y predictiva, no una probabilidad calibrada de QSO.",
         "\n".join(f"- {item}" for item in uncertainties),
