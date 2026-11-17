@@ -1,6 +1,6 @@
 {
   "source": "PSKReporter",
-  "generated_at": "2026-11-17T20:41:41.102279+00:00",
+  "generated_at": "2026-11-17T20:54:42.840569+00:00",
   "status": "ok",
   "query_url": "https://retrieve.pskreporter.info/query?callsign=IN91&modify=grid&flowStartSeconds=-3600&frange=1800000-30000000&rptlimit=5000&rronly=1&noactive=1",
   "query_parameters": {
@@ -17,24 +17,52 @@
   "classification": "Observed reports after strict local post-filtering",
   "bands": {
     "20m": {
-      "report_count": 1,
-      "station_count": 2,
-      "route_count": 1,
+      "report_count": 3,
+      "station_count": 4,
+      "route_count": 3,
       "modes": {
-        "FT4": 1
+        "FT4": 3
       },
       "directions": {
-        "received_in_IN91": 1
+        "received_in_IN91": 3
       },
       "distance_km": {
-        "minimum": 6538.4,
+        "minimum": 5169.0,
         "median": 6538.4,
-        "maximum": 6538.4
+        "maximum": 7216.4
       },
-      "latest_observation_utc": "2026-11-17T20:40:52+00:00"
+      "latest_observation_utc": "2026-11-17T20:50:07+00:00"
     }
   },
   "examples": [
+    {
+      "timestamp_utc": "2026-11-17T20:50:07+00:00",
+      "frequency_hz": 14081134.0,
+      "band": "20m",
+      "mode": "FT4",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "N8NN",
+      "sender_locator": "EL98AX",
+      "receiver_callsign": "EA2Z",
+      "receiver_locator": "IN91MP",
+      "snr_db": "-10",
+      "distance_km": 7216.4
+    },
+    {
+      "timestamp_utc": "2026-11-17T20:41:30+00:00",
+      "frequency_hz": 14081123.0,
+      "band": "20m",
+      "mode": "FT4",
+      "direction": "received_in_IN91",
+      "local_scope": "regional_IN91",
+      "sender_callsign": "VE9HF",
+      "sender_locator": "FN65MU55",
+      "receiver_callsign": "EA2Z",
+      "receiver_locator": "IN91MP",
+      "snr_db": "-10",
+      "distance_km": 5169.0
+    },
     {
       "timestamp_utc": "2026-11-17T20:40:52+00:00",
       "frequency_hz": 14081329.0,
@@ -52,11 +80,11 @@
   ],
   "content_type": "text/xml; charset=utf-8",
   "http_attempts": 1,
-  "upstream_report_count": 1,
-  "accepted_report_count": 1,
+  "upstream_report_count": 3,
+  "accepted_report_count": 3,
   "scope_summary": {
     "exact_in91po_report_count": 0,
-    "regional_in91_report_count": 1,
+    "regional_in91_report_count": 3,
     "preferred_scope": "regional_IN91",
     "exact_in91po_bands": {}
   },
