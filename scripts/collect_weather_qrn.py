@@ -196,8 +196,8 @@ def main() -> int:
         try:
             result["aemet_lightning"] = fetch_aemet_lightning(args.aemet_api_key)
             diagnostic["aemet_lightning"] = result["aemet_lightning"]
-            diagnostic["validation"]["direct_lightning_observations_obtained"] = result["aemet_lightning"]["event_count"] >= 0
-            result["direct_lightning_detection_validated"] = True
+            diagnostic["validation"]["direct_lightning_observations_obtained"] = result["aemet_lightning"].get("status") == "parsed"
+            result["direct_lightning_detection_validated"] = result["aemet_lightning"].get("status") in ("parsed", "map_received")
             result["limitations"][0] = "AEMET observations cover only events returned by the API and the defined regional boxes."
         except Exception as exc:
             result["aemet_lightning"] = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
