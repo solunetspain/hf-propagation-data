@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+AEMET_RAYOS_URL = "https://opendata.aemet.es/opendata/api/red/rayos/mapa"
+
 POINTS = {
     # Centro exacto del locator Maidenhead IN91PO.
     "IN91PO": (41.6041667, -0.7083333),
@@ -20,6 +22,31 @@ POINTS = {
     "Baleares": (39.57, 2.65),
     "Canarias": (28.10, -15.42),
 }
+
+def fetch_aemet_lightning_map(api_key: str) -> dict[str, Any]:
+    req = urllib.request.Request(
+        AEMET_RAYOS_URL + "?api_key=" + urllib.parse.quote(api_key),
+        headers={"User-Agent": "SOLUNET-HF-AEMET/1.0", "Accept": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=30) as response:
+        wrapper = json.loads(response.read().decode("utf-8"))
+    data_url = wrapper.get("datos") if isinstance(wrapper, dict) else None
+    if not data_url:
+        raise ValueError("AEMET no devolvió la URL de datos del mapa de rayos")
+    data_req = urllib.request.Request(data_url, headers={"User-Agent": "SOLUNET-HF-AEMET/1.0"})
+    with urllib.request.urlopen(data_req, timeout=30) as response:
+        payload = response.read()
+        content_type = response.headers.get("Content-Type", "")
+    return {
+        "status": "map_received",
+        "source": AEMET_RAYOS_URL,
+        "data_url": data_url,
+        "content_type": content_type,
+        "bytes": len(payload),
+        "period_hours": 12,
+        "regional_validation": "pending",
+        "interpretation": "Mapa gráfico recibido; todavía no se ha georreferenciado automáticamente.",
+    }
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -100,6 +127,7 @@ def risk_for(data: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--aemet-api-key", default=None)
     parser.add_argument("--output", type=Path, default=Path("public/data/qrn-spain-summary.json"))
     parser.add_argument("--diagnostic", type=Path, default=Path("public/diagnostics/qrn-diagnostic.json"))
     args = parser.parse_args()
@@ -118,7 +146,14 @@ def main() -> int:
             "Forecast CAPE never changes the current-risk classification.",
         ],
         "points": {},
+        "aemet_lightning": {"status": "not_configured"},
     }
+    if args.aemet_api_key:
+        try:
+            result["aemet_lightning"] = fetch_aemet_lightning_map(args.aemet_api_key)
+        except Exception as exc:
+            result["aemet_lightning"] = {"status": "error", "source": AEMET_RAYOS_URL, "error": f"{type(exc).__name__}: {exc}"}
+
     diagnostic = {
         "generated_at": now_iso(),
         "status": "ok",
@@ -129,6 +164,7 @@ def main() -> int:
             "direct_lightning_observations_obtained": False,
         },
         "points": {},
+        "aemet_lightning": result.get("aemet_lightning", {"status": "not_configured"}),
     }
 
     for name, (lat, lon) in POINTS.items():
