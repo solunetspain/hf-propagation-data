@@ -88,12 +88,18 @@ def main() -> int:
             end = datetime.now(timezone.utc)
             product = next(iter(collection.search(dtstart=end - timedelta(minutes=30), dtend=end)))
             result["product"] = str(product)
+            entries = list(product.entries)
+            netcdf_entries = [name for name in entries if str(name).lower().endswith((".nc", ".nc4"))]
+            if not netcdf_entries:
+                raise ValueError("product manifest contains no NetCDF event entry")
+            entry = netcdf_entries[0]
+            result["entry"] = entry
             with tempfile.TemporaryDirectory() as td:
-                target = Path(td) / "product.bin"
+                target = Path(td) / Path(entry).name
                 old_handler = signal.signal(signal.SIGALRM, timeout_handler)
                 signal.alarm(240)
                 try:
-                    with product.open() as src, target.open("wb") as dst:
+                    with product.open(entry=entry) as src, target.open("wb") as dst:
                         shutil.copyfileobj(src, dst)
                 finally:
                     signal.alarm(0)
