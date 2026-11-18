@@ -6,7 +6,7 @@ This first adapter records product discovery and fails closed until the
 NetCDF event decoder is verified against the current LI-2-LEF schema.
 """
 from __future__ import annotations
-import json, os, sys, tempfile, zipfile
+import json, os, sys, tempfile, zipfile, time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -29,8 +29,17 @@ def main() -> int:
     else:
         try:
             import eumdac
-            token = eumdac.AccessToken((key, secret))
-            datastore = eumdac.DataStore(token)
+            last_error = None
+            for attempt in range(3):
+                try:
+                    token = eumdac.AccessToken((key, secret))
+                    datastore = eumdac.DataStore(token)
+                    break
+                except Exception as exc:
+                    last_error = exc
+                    if attempt == 2:
+                        raise
+                    time.sleep(2 ** attempt)
             collection = datastore.get_collection(COLLECTION)
             end = datetime.now(timezone.utc)
             products = collection.search(dtstart=end - timedelta(minutes=30), dtend=end)
