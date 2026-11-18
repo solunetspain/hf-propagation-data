@@ -6,7 +6,7 @@ This first adapter records product discovery and fails closed until the
 NetCDF event decoder is verified against the current LI-2-LEF schema.
 """
 from __future__ import annotations
-import json, os, sys, tempfile, zipfile, time
+import json, os, sys, tempfile, zipfile, time, socket, shutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -45,9 +45,14 @@ def main() -> int:
             products = collection.search(dtstart=end - timedelta(minutes=30), dtend=end)
             product = next(iter(products))
             result["product"] = str(product)
-            result["status"] = "product_found"
-            result["regional_validation"] = "pending"
-            result["reason"] = "LI-2-LEF product discovered; full download deferred to bounded decoder"
+            with tempfile.TemporaryDirectory() as td:
+                target = Path(td) / "product.bin"
+                socket.setdefaulttimeout(60)
+                with product.open() as src, target.open("wb") as dst:
+                    shutil.copyfileobj(src, dst)
+                result["downloaded_bytes"] = target.stat().st_size
+                result["status"] = "downloaded"
+                result["reason"] = "Product downloaded; decoder integration is the next bounded step"
         except Exception as exc:
             result["reason"] = f"{type(exc).__name__}: {exc}"
     out.parent.mkdir(parents=True, exist_ok=True)
