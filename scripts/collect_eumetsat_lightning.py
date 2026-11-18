@@ -38,7 +38,13 @@ def main() -> int:
             result["product"] = str(product)
             with tempfile.TemporaryDirectory() as td:
                 target = Path(td) / "product.zip"
-                product.download(target)
+                with product.open() as src:
+                    with target.open("wb") as dst:
+                        while True:
+                            chunk = src.read(1024 * 1024)
+                            if not chunk:
+                                break
+                            dst.write(chunk)
                 result["downloaded_bytes"] = target.stat().st_size
                 result["status"] = "downloaded"
                 result["reason"] = "LI-2-LEF product downloaded; NetCDF decoding requires schema mapping"
