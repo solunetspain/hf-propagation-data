@@ -16,7 +16,7 @@ class DownloadTimeout(Exception):
     pass
 
 def timeout_handler(signum, frame):
-    raise DownloadTimeout("bounded MTG-LI download exceeded 90 seconds")
+    raise DownloadTimeout("bounded MTG-LI download exceeded 240 seconds")
 
 def find_variables(group, found=None):
     found = found or {}
@@ -91,7 +91,7 @@ def main() -> int:
             with tempfile.TemporaryDirectory() as td:
                 target = Path(td) / "product.bin"
                 old_handler = signal.signal(signal.SIGALRM, timeout_handler)
-                signal.alarm(90)
+                signal.alarm(240)
                 try:
                     with product.open() as src, target.open("wb") as dst:
                         shutil.copyfileobj(src, dst)
