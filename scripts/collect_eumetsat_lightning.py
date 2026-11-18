@@ -36,19 +36,9 @@ def main() -> int:
             products = collection.search(dtstart=end - timedelta(minutes=30), dtend=end)
             product = next(iter(products))
             result["product"] = str(product)
-            with tempfile.TemporaryDirectory() as td:
-                target = Path(td) / "product.zip"
-                with product.open() as src:
-                    with target.open("wb") as dst:
-                        while True:
-                            chunk = src.read(1024 * 1024)
-                            if not chunk:
-                                break
-                            dst.write(chunk)
-                result["downloaded_bytes"] = target.stat().st_size
-                result["status"] = "downloaded"
-                result["reason"] = "LI-2-LEF product downloaded; NetCDF decoding requires schema mapping"
-
+            result["status"] = "product_found"
+            result["regional_validation"] = "pending"
+            result["reason"] = "LI-2-LEF product discovered; full download deferred to bounded decoder"
         except Exception as exc:
             result["reason"] = f"{type(exc).__name__}: {exc}"
     out.parent.mkdir(parents=True, exist_ok=True)
