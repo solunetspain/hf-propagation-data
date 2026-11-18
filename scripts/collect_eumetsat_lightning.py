@@ -95,7 +95,7 @@ def main() -> int:
             entries = list(product.entries)
             netcdf_entries = [name for name in entries if str(name).lower().endswith((".nc", ".nc4")) and "chk-" not in str(name).lower() and "manifest" not in str(name).lower()]
             if not netcdf_entries:
-                raise ValueError("product manifest contains no NetCDF event entry")
+                raise ValueError("product manifest contains no NetCDF event entry; entries=" + "|".join(map(str, entries)))
             entry = netcdf_entries[0]
             result["entry"] = entry
             with tempfile.TemporaryDirectory() as td:
