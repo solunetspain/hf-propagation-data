@@ -1,6 +1,6 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-11-18T12:32:45.895435+00:00",
+  "generated_at": "2026-11-18T12:44:30.012082+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
@@ -9,6 +9,84 @@
     "Forecast CAPE never changes the current-risk classification."
   ],
   "points": {
+    "IN91PO": {
+      "latitude": 41.6041667,
+      "longitude": -0.7083333,
+      "risk": "bajo",
+      "score": 0,
+      "current_risk": {
+        "risk": "bajo",
+        "score": 0,
+        "thunderstorm_code_present": false,
+        "reasons": [
+          "sin código actual de tormenta"
+        ],
+        "observation": {
+          "time": "2026-11-18T12:30",
+          "interval": 900,
+          "weather_code": 2,
+          "precipitation": 0.0,
+          "rain": 0.0,
+          "showers": 0.0
+        }
+      },
+      "forecast_6h": {
+        "risk": "bajo",
+        "score": 0,
+        "thunderstorm_code_present": false,
+        "max_cape_j_kg": 100.0,
+        "max_precipitation_probability": 8,
+        "reasons": [],
+        "times": [
+          "2026-11-18T12:00",
+          "2026-11-18T13:00",
+          "2026-11-18T14:00",
+          "2026-11-18T15:00",
+          "2026-11-18T16:00",
+          "2026-11-18T17:00"
+        ]
+      }
+    },
+    "Galicia": {
+      "latitude": 42.75,
+      "longitude": -8.4,
+      "risk": "bajo",
+      "score": 0,
+      "current_risk": {
+        "risk": "bajo",
+        "score": 0,
+        "thunderstorm_code_present": false,
+        "reasons": [
+          "sin código actual de tormenta"
+        ],
+        "observation": {
+          "time": "2026-11-18T12:30",
+          "interval": 900,
+          "weather_code": 61,
+          "precipitation": 0.4,
+          "rain": 0.4,
+          "showers": 0.0
+        }
+      },
+      "forecast_6h": {
+        "risk": "bajo",
+        "score": 1,
+        "thunderstorm_code_present": false,
+        "max_cape_j_kg": 210.0,
+        "max_precipitation_probability": 100,
+        "reasons": [
+          "probabilidad de precipitación prevista 100%"
+        ],
+        "times": [
+          "2026-11-18T12:00",
+          "2026-11-18T13:00",
+          "2026-11-18T14:00",
+          "2026-11-18T15:00",
+          "2026-11-18T16:00",
+          "2026-11-18T17:00"
+        ]
+      }
+    },
     "Cantabrico": {
       "latitude": 43.3,
       "longitude": -3.0,
@@ -34,7 +112,7 @@
         "risk": "bajo",
         "score": 0,
         "thunderstorm_code_present": false,
-        "max_cape_j_kg": 30.0,
+        "max_cape_j_kg": 50.0,
         "max_precipitation_probability": 43,
         "reasons": [],
         "times": [
