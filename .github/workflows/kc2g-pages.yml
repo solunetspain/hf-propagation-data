@@ -88,13 +88,6 @@ jobs:
         continue-on-error: true
         run: python scripts/collect_noaa.py
 
-      - name: Collect MTG-LI lightning product
-        continue-on-error: true
-        env:
-          EUMETSAT_CONSUMER_KEY: ${{ secrets.EUMETSAT_CONSUMER_KEY }}
-          EUMETSAT_CONSUMER_SECRET: ${{ secrets.EUMETSAT_CONSUMER_SECRET }}
-        run: python scripts/collect_eumetsat_lightning.py
-
       - name: Collect modelled QRN risk
         continue-on-error: true
         env:
