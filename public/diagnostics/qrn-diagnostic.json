@@ -1,36 +1,53 @@
 {
-  "generated_at": "2026-11-18T14:51:32.713695+00:00",
-  "status": "ok",
-  "errors": [],
+  "generated_at": "2026-11-18T15:01:50.241784+00:00",
+  "status": "error",
+  "errors": [
+    "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Galicia: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Cantabrico: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Centro: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Mediterraneo: HTTP Error 429: Too Many Requests",
+    "Andalucia: HTTP Error 429: Too Many Requests",
+    "Baleares: HTTP Error 429: Too Many Requests",
+    "Canarias: HTTP Error 429: Too Many Requests"
+  ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     }
   },
   "aemet_lightning": {
