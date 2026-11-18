@@ -93,7 +93,7 @@ def main() -> int:
             product = next(iter(collection.search(dtstart=end - timedelta(minutes=30), dtend=end)))
             result["product"] = str(product)
             entries = list(product.entries)
-            netcdf_entries = [name for name in entries if str(name).lower().endswith((".nc", ".nc4")) and "chk-" not in str(name).lower() and "manifest" not in str(name).lower()]
+            netcdf_entries = [name for name in entries if str(name).lower().endswith((".nc", ".nc4")) and "chk-trail" not in str(name).lower() and "manifest" not in str(name).lower()]
             if not netcdf_entries:
                 raise ValueError("product manifest contains no NetCDF event entry; entries=" + "|".join(map(str, entries)))
             entry = netcdf_entries[0]
