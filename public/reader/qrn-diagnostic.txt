@@ -1,8 +1,10 @@
 {
-  "generated_at": "2026-11-18T23:21:35.984204+00:00",
+  "generated_at": "2026-11-18T23:31:45.996147+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: HTTP Error 429: Too Many Requests"
+    "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Galicia: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Cantabrico: <urlopen error _ssl.c:994: The handshake operation timed out>"
   ],
   "validation": {
     "model_response_received": true,
@@ -11,13 +13,16 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Centro": {
       "status": "ok"
@@ -36,7 +41,13 @@
     }
   },
   "aemet_lightning": {
-    "status": "error",
-    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+    "status": "map_received",
+    "event_count": null,
+    "regional_event_counts": null,
+    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
+    "content_type": "image/gif;charset=ISO-8859-15",
+    "bytes": 9489,
+    "regional_validation": "pending",
+    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
   }
 }
