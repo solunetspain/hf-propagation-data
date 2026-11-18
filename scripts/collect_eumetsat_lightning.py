@@ -22,8 +22,12 @@ def find_variables(group, found=None):
     found = found or {}
     for name, var in getattr(group, "variables", {}).items():
         key = name.lower()
-        if key in {"latitude", "lat", "longitude", "lon", "long"}:
-            found[key] = var
+        standard = str(getattr(var, "standard_name", "")).lower()
+        long_name = str(getattr(var, "long_name", "")).lower()
+        if key in {"latitude", "lat"} or "latitude" in key or standard == "latitude" or "latitude" in long_name:
+            found.setdefault("latitude", var)
+        if key in {"longitude", "lon", "long"} or "longitude" in key or standard == "longitude" or "longitude" in long_name:
+            found.setdefault("longitude", var)
     for child in getattr(group, "groups", {}).values():
         find_variables(child, found)
     return found
@@ -36,7 +40,7 @@ def decode_netcdf(path: Path):
         lat = next((vars_[k][:] for k in ("latitude", "lat") if k in vars_), None)
         lon = next((vars_[k][:] for k in ("longitude", "lon", "long") if k in vars_), None)
         if lat is None or lon is None:
-            raise ValueError("NetCDF latitude/longitude variables not found")
+            raise ValueError("NetCDF latitude/longitude variables not found; available=" + ",".join(sorted(vars_)))
         lat = np.asarray(lat).reshape(-1)
         lon = np.asarray(lon).reshape(-1)
         n = min(lat.size, lon.size)
