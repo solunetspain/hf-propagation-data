@@ -6,7 +6,7 @@ This first adapter records product discovery and fails closed until the
 NetCDF event decoder is verified against the current LI-2-LEF schema.
 """
 from __future__ import annotations
-import json, os, sys, tempfile
+import json, os, sys, tempfile, zipfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -36,8 +36,13 @@ def main() -> int:
             products = collection.search(dtstart=end - timedelta(minutes=30), dtend=end)
             product = next(iter(products))
             result["product"] = str(product)
-            result["status"] = "product_found"
-            result["reason"] = "LI-2-LEF product discovered; NetCDF regional decoding pending"
+            with tempfile.TemporaryDirectory() as td:
+                target = Path(td) / "product.zip"
+                product.download(target)
+                result["downloaded_bytes"] = target.stat().st_size
+                result["status"] = "downloaded"
+                result["reason"] = "LI-2-LEF product downloaded; NetCDF decoding requires schema mapping"
+
         except Exception as exc:
             result["reason"] = f"{type(exc).__name__}: {exc}"
     out.parent.mkdir(parents=True, exist_ok=True)
