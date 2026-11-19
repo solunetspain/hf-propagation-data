@@ -1,8 +1,7 @@
 {
-  "generated_at": "2026-11-19T08:01:39.878284+00:00",
+  "generated_at": "2026-11-19T08:11:40.513388+00:00",
   "status": "ok",
   "errors": [
-    "AEMET rayos: HTTP Error 429: Too Many Requests",
     "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Galicia: <urlopen error _ssl.c:994: The handshake operation timed out>"
   ],
@@ -40,7 +39,13 @@
     }
   },
   "aemet_lightning": {
-    "status": "error",
-    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+    "status": "map_received",
+    "event_count": null,
+    "regional_event_counts": null,
+    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
+    "content_type": "image/gif;charset=ISO-8859-15",
+    "bytes": 9887,
+    "regional_validation": "pending",
+    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
   }
 }
