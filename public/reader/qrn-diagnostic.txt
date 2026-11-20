@@ -1,7 +1,9 @@
 {
-  "generated_at": "2026-11-20T03:01:37.978906+00:00",
+  "generated_at": "2026-11-20T03:11:34.174717+00:00",
   "status": "ok",
-  "errors": [],
+  "errors": [
+    "AEMET rayos: Remote end closed connection without response"
+  ],
   "validation": {
     "model_response_received": true,
     "current_and_forecast_separated": true,
@@ -34,13 +36,7 @@
     }
   },
   "aemet_lightning": {
-    "status": "map_received",
-    "event_count": null,
-    "regional_event_counts": null,
-    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
-    "content_type": "image/gif;charset=ISO-8859-15",
-    "bytes": 9793,
-    "regional_validation": "pending",
-    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
+    "status": "error",
+    "error": "RemoteDisconnected: Remote end closed connection without response"
   }
 }
