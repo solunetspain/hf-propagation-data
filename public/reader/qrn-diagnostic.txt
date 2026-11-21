@@ -1,46 +1,58 @@
 {
-  "generated_at": "2026-11-21T20:31:35.371447+00:00",
-  "status": "ok",
-  "errors": [],
+  "generated_at": "2026-11-21T20:41:45.897067+00:00",
+  "status": "error",
+  "errors": [
+    "AEMET rayos: HTTP Error 429: Too Many Requests",
+    "IN91PO: HTTP Error 429: Too Many Requests",
+    "Galicia: HTTP Error 429: Too Many Requests",
+    "Cantabrico: HTTP Error 429: Too Many Requests",
+    "Centro: HTTP Error 429: Too Many Requests",
+    "Mediterraneo: HTTP Error 429: Too Many Requests",
+    "Andalucia: HTTP Error 429: Too Many Requests",
+    "Baleares: HTTP Error 429: Too Many Requests",
+    "Canarias: HTTP Error 429: Too Many Requests"
+  ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Centro": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Mediterraneo": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Andalucia": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Baleares": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "HTTPError: HTTP Error 429: Too Many Requests"
     }
   },
   "aemet_lightning": {
-    "status": "map_received",
-    "event_count": null,
-    "regional_event_counts": null,
-    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
-    "content_type": "image/gif;charset=ISO-8859-15",
-    "bytes": 9857,
-    "regional_validation": "pending",
-    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
+    "status": "error",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
   }
 }
