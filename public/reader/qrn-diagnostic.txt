@@ -1,9 +1,7 @@
 {
-  "generated_at": "2026-11-22T20:41:39.849927+00:00",
+  "generated_at": "2026-11-22T20:51:41.307162+00:00",
   "status": "ok",
-  "errors": [
-    "AEMET rayos: HTTP Error 429: Too Many Requests"
-  ],
+  "errors": [],
   "validation": {
     "model_response_received": true,
     "current_and_forecast_separated": true,
@@ -36,7 +34,13 @@
     }
   },
   "aemet_lightning": {
-    "status": "error",
-    "error": "HTTPError: HTTP Error 429: Too Many Requests"
+    "status": "map_received",
+    "event_count": null,
+    "regional_event_counts": null,
+    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
+    "content_type": "image/gif;charset=ISO-8859-15",
+    "bytes": 9419,
+    "regional_validation": "pending",
+    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
   }
 }
