@@ -1,11 +1,11 @@
 {
   "source": "Open-Meteo model-based QRN risk plus optional AEMET lightning observations",
-  "generated_at": "2026-11-22T23:11:37.869068+00:00",
+  "generated_at": "2026-11-22T23:21:34.503516+00:00",
   "status": "ok",
   "classification": "Modelled thunderstorm/QRN risk, not direct lightning detection. Current conditions and six-hour forecast are reported separately.",
   "direct_lightning_detection_validated": false,
   "limitations": [
-    "AEMET observations cover only events returned by the API and the defined regional boxes.",
+    "No direct lightning observations are used.",
     "Forecast CAPE never changes the current-risk classification."
   ],
   "points": {
@@ -22,7 +22,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
           "weather_code": 0,
           "precipitation": 0.0,
@@ -60,9 +60,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
-          "weather_code": 2,
+          "weather_code": 3,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -98,7 +98,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
           "weather_code": 0,
           "precipitation": 0.0,
@@ -136,7 +136,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
           "weather_code": 0,
           "precipitation": 0.0,
@@ -174,7 +174,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
           "weather_code": 0,
           "precipitation": 0.0,
@@ -212,7 +212,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
           "weather_code": 0,
           "precipitation": 0.0,
@@ -250,7 +250,7 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
           "weather_code": 0,
           "precipitation": 0.0,
@@ -288,9 +288,9 @@
           "sin código actual de tormenta"
         ],
         "observation": {
-          "time": "2026-11-22T23:00",
+          "time": "2026-11-22T23:15",
           "interval": 900,
-          "weather_code": 2,
+          "weather_code": 3,
           "precipitation": 0.0,
           "rain": 0.0,
           "showers": 0.0
@@ -315,13 +315,7 @@
     }
   },
   "aemet_lightning": {
-    "status": "map_received",
-    "event_count": null,
-    "regional_event_counts": null,
-    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
-    "content_type": "image/gif;charset=ISO-8859-15",
-    "bytes": 9419,
-    "regional_validation": "pending",
-    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
+    "status": "error",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
   }
 }
