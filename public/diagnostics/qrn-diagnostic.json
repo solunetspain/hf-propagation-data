@@ -1,17 +1,19 @@
 {
-  "generated_at": "2026-11-23T23:41:41.029566+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-23T23:51:38.014804+00:00",
+  "status": "error",
   "errors": [
+    "AEMET rayos: HTTP Error 429: Too Many Requests",
     "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Galicia: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Cantabrico: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Centro: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Mediterraneo: <urlopen error _ssl.c:994: The handshake operation timed out>",
     "Andalucia: <urlopen error _ssl.c:994: The handshake operation timed out>",
-    "Baleares: <urlopen error _ssl.c:994: The handshake operation timed out>"
+    "Baleares: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Canarias: <urlopen error _ssl.c:994: The handshake operation timed out>"
   ],
   "validation": {
-    "model_response_received": true,
+    "model_response_received": false,
     "current_and_forecast_separated": true,
     "direct_lightning_observations_obtained": false
   },
@@ -45,17 +47,12 @@
       "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Canarias": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     }
   },
   "aemet_lightning": {
-    "status": "map_received",
-    "event_count": null,
-    "regional_event_counts": null,
-    "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
-    "content_type": "image/gif;charset=ISO-8859-15",
-    "bytes": 9190,
-    "regional_validation": "pending",
-    "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
+    "status": "error",
+    "error": "HTTPError: HTTP Error 429: Too Many Requests"
   }
 }
