@@ -1,7 +1,11 @@
 {
-  "generated_at": "2026-11-25T09:51:34.563402+00:00",
+  "generated_at": "2026-11-25T10:01:39.675177+00:00",
   "status": "ok",
-  "errors": [],
+  "errors": [
+    "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Galicia: <urlopen error _ssl.c:994: The handshake operation timed out>",
+    "Cantabrico: <urlopen error _ssl.c:994: The handshake operation timed out>"
+  ],
   "validation": {
     "model_response_received": true,
     "current_and_forecast_separated": true,
@@ -9,13 +13,16 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Galicia": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Cantabrico": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Centro": {
       "status": "ok"
