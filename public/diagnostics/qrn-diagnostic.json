@@ -1,7 +1,9 @@
 {
-  "generated_at": "2026-11-26T00:01:34.756438+00:00",
+  "generated_at": "2026-11-26T00:11:41.290233+00:00",
   "status": "ok",
-  "errors": [],
+  "errors": [
+    "IN91PO: <urlopen error _ssl.c:994: The handshake operation timed out>"
+  ],
   "validation": {
     "model_response_received": true,
     "current_and_forecast_separated": true,
@@ -9,7 +11,8 @@
   },
   "points": {
     "IN91PO": {
-      "status": "ok"
+      "status": "error",
+      "error": "URLError: <urlopen error _ssl.c:994: The handshake operation timed out>"
     },
     "Galicia": {
       "status": "ok"
@@ -39,7 +42,7 @@
     "regional_event_counts": null,
     "source": "https://opendata.aemet.es/opendata/api/red/rayos/mapa",
     "content_type": "image/gif;charset=ISO-8859-15",
-    "bytes": 11654,
+    "bytes": 11846,
     "regional_validation": "pending",
     "interpretation": "Mapa gráfico recibido; requiere georreferenciación para validar por región."
   }
