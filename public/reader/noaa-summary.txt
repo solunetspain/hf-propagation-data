@@ -1,10 +1,10 @@
 {
   "source": "NOAA/SWPC compact summary",
-  "generated_at": "2026-11-28T08:21:36.849054+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-28T08:31:38.238005+00:00",
+  "status": "ok",
   "current": {
     "scales": {
-      "timestamp_utc": "2026-11-28T08:19:00+00:00",
+      "timestamp_utc": "2026-11-28T08:29:00+00:00",
       "R": {
         "Scale": "0",
         "Text": "none",
@@ -30,47 +30,54 @@
       "classification": "official 3-hour planetary Kp; estimated planetary A"
     },
     "geomagnetic_estimated_1m": {
-      "timestamp_utc": "2026-11-28T08:17:00+00:00",
-      "kp": 3.0,
-      "estimated_kp": 2.67,
-      "kp_code": "3M",
+      "timestamp_utc": "2026-11-28T08:26:00+00:00",
+      "kp": 2.0,
+      "estimated_kp": 2.33,
+      "kp_code": "2P",
       "classification": "estimated 1-minute Kp; auxiliary, not official 3-hour Kp"
     },
     "solar_wind": {
       "plasma": {
-        "timestamp_utc": "2026-11-28T08:16:00+00:00",
+        "timestamp_utc": "2026-11-28T08:26:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "density_p_cm3": 7.58,
-        "speed_km_s": 425.35,
-        "temperature_k": 279327.5
+        "density_p_cm3": 7.065,
+        "speed_km_s": 422.7,
+        "temperature_k": 254595.5
       },
       "magnetic_field": {
-        "timestamp_utc": "2026-11-28T08:17:00+00:00",
+        "timestamp_utc": "2026-11-28T08:29:00+00:00",
         "source": "SOLAR1",
         "samples": 6,
         "overall_quality": 0,
         "selection": "active=true, overall_quality=0, median of up to 5 minutes",
-        "bx_gsm_nt": 1.625,
-        "by_gsm_nt": 9.4,
-        "bz_gsm_nt": 0.67,
-        "bt_nt": 10.175
+        "bx_gsm_nt": 6.525,
+        "by_gsm_nt": 5.375,
+        "bz_gsm_nt": -7.45,
+        "bt_nt": 12.325
       },
       "plasma_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json",
       "mag_url_used": "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json"
     },
+    "xray": {
+      "timestamp_utc": "2026-11-28T08:28:00+00:00",
+      "flux_w_m2": 5.392109869717387e-07,
+      "class": "B5.4",
+      "energy": "0.1-0.8nm",
+      "satellite": 18
+    },
     "protons": {
-      "timestamp_utc": "2026-11-28T08:10:00+00:00",
-      "flux": 0.21819758415222168,
+      "timestamp_utc": "2026-11-28T08:20:00+00:00",
+      "flux": 0.19861125946044922,
       "energy": ">=10 MeV",
       "units": null,
       "satellite": 18
     },
     "electrons": {
-      "timestamp_utc": "2026-11-28T08:10:00+00:00",
-      "flux": 176.74937438964844,
+      "timestamp_utc": "2026-11-28T08:20:00+00:00",
+      "flux": 165.6204833984375,
       "energy": ">=2 MeV",
       "units": null,
       "satellite": 19
@@ -95,7 +102,7 @@
     "scales": {
       "1": {
         "DateStamp": "2026-11-28",
-        "TimeStamp": "08:19:00",
+        "TimeStamp": "08:29:00",
         "R": {
           "Scale": null,
           "Text": null,
@@ -154,7 +161,7 @@
   },
   "drap": {
     "status": "parsed",
-    "timestamp_utc": "2026-11-28T08:18:00+00:00",
+    "timestamp_utc": "2026-11-28T08:28:00+00:00",
     "metric": "highest frequency affected by at least 1 dB of D-region absorption",
     "units": "MHz",
     "grid": {
@@ -181,7 +188,7 @@
         "longitude": -8.4,
         "grid_latitude": 43.0,
         "grid_longitude": -10.0,
-        "highest_frequency_affected_1db_mhz": 0.2
+        "highest_frequency_affected_1db_mhz": 0.3
       },
       "Cantabrico": {
         "latitude": 43.3,
@@ -202,7 +209,7 @@
         "longitude": -0.38,
         "grid_latitude": 39.0,
         "grid_longitude": -2.0,
-        "highest_frequency_affected_1db_mhz": 0.7
+        "highest_frequency_affected_1db_mhz": 0.6
       },
       "Andalucia": {
         "latitude": 37.39,
@@ -252,7 +259,7 @@
     "kp_estimated_1m": true,
     "solar_wind": true,
     "magnetic_field": true,
-    "xray": false,
+    "xray": true,
     "protons": true,
     "electrons": true,
     "solar_flux": true,
@@ -269,7 +276,5 @@
     "sunspots",
     "xray"
   ],
-  "missing_required_sections": [
-    "xray"
-  ]
+  "missing_required_sections": []
 }
